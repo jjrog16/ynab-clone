@@ -1,0 +1,20 @@
+@use "colors";
+@use "dimens";
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 400px;
+  background-color: colors.$dark-blue;
+}
+
+.current-budget {
+  color: colors.$white;
+  margin: dimens.$medium dimens.$small 0 dimens.$small;
+}
+
+.user-account {
+  color: colors.$account-text;
+  margin: dimens.$small dimens.$small dimens.$medium dimens.$small;
+}

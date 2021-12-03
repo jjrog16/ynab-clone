@@ -1,11 +1,11 @@
 import React from "react";
-import "../styles/SideBar.css";
+import "../styles/css/SideBar.css";
 
 function SideBar() {
   return (
     <div className="sidebar-container">
       <div className="account-header">
-        <div className="current-budget">My Budget</div>
+        <h2 className="current-budget">My Budget</h2>
         <div className="user-account">example@email.com</div>
       </div>
       <div className="overview-sections">

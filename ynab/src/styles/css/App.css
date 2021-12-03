@@ -1,0 +1,10 @@
+.App {
+  display: flex;
+  height: 100vh;
+}
+
+* {
+  border: 1px red double;
+}
+
+/*# sourceMappingURL=App.css.map */

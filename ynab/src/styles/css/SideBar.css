@@ -1,0 +1,19 @@
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 400px;
+  background-color: #244564;
+}
+
+.current-budget {
+  color: #fff;
+  margin: 24px 8px 0 8px;
+}
+
+.user-account {
+  color: #bcc6d0;
+  margin: 8px 8px 24px 8px;
+}
+
+/*# sourceMappingURL=SideBar.css.map */
