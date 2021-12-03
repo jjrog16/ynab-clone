@@ -11,10 +11,16 @@
 
 .current-budget {
   color: colors.$white;
-  margin: dimens.$medium dimens.$small 0 dimens.$small;
+  margin: dimens.$large dimens.$small 0 dimens.$small;
 }
 
 .user-account {
   color: colors.$account-text;
-  margin: dimens.$small dimens.$small dimens.$medium dimens.$small;
+  margin: dimens.$small dimens.$small dimens.$large dimens.$small;
+}
+
+.page-overview {
+  margin: dimens.$medium;
+  color: colors.$white;
+  background-color: colors.$light-blue;
 }
