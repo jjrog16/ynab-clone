@@ -1,9 +1,12 @@
 .sidebar-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 400px;
   background-color: #244564;
+}
+
+.account-header {
+  margin-bottom: 24px;
 }
 
 .current-budget {
@@ -16,10 +19,40 @@
   margin: 8px 8px 24px 8px;
 }
 
+.overview-sections {
+  margin: 0;
+}
+
 .page-overview {
-  margin: 16px;
+  padding: 16px;
   color: #fff;
   background-color: #4795d8;
+}
+
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.budget-title {
+  font-weight: bold;
+  color: #fff;
+}
+
+.budget-total-amount {
+  font-weight: bold;
+  color: #fff;
+}
+
+.account {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px;
+  font-weight: bold;
+  color: #fff;
 }
 
 /*# sourceMappingURL=SideBar.css.map */
