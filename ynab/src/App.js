@@ -1,15 +1,18 @@
-import "../src/styles/App.css";
+import "../src/styles/css/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SideBar from "./components/SideBar";
+import Budget from "./components/pages/Budget";
 
 function App() {
   return (
-    <>
+    <div className="App">
       <BrowserRouter>
+        <SideBar />
         <Routes>
-          <Route></Route>
+          <Route path="/" element={<Budget />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 
