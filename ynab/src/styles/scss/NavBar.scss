@@ -1,0 +1,13 @@
+@use "colors";
+@use "dimens";
+
+.navbar {
+  background-color: colors.$light-gray;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ready-to-assign {
+  display: flex;
+  background-color: colors.$light-green;
+}

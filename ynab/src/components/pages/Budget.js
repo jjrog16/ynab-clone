@@ -5,11 +5,13 @@ import AutoAssignSideBar from "../AutoAssignSideBar";
 
 function Budget() {
   return (
-    <div>
+    <div className="budget-page">
       <NavBar />
       <div className="budget-container">
         <div className="budget-wrapper">
-          <div className="category-group-bar">Category Group Bar</div>
+          <div className="category-group-bar">
+            <p className="add-category-group">+ Category Group</p>
+          </div>
           <div className="budget-contents">Budget Contents</div>
         </div>
         <AutoAssignSideBar />

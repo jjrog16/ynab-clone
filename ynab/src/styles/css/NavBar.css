@@ -1,0 +1,12 @@
+.navbar {
+  background-color: #f5f5fa;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ready-to-assign {
+  display: flex;
+  background-color: #cdea9f;
+}
+
+/*# sourceMappingURL=NavBar.css.map */
