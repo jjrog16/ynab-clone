@@ -9,6 +9,14 @@
   justify-content: space-between;
 }
 
+.budget-wrapper {
+  width: 100%;
+}
+
+.category-group-bar {
+  border: 1px solid #d1d1d6;
+}
+
 .add-category-group {
   color: #4795d8;
 }
