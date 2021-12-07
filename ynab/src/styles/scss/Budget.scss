@@ -1,3 +1,15 @@
+@use "colors";
+.budget-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .budget-container {
   display: flex;
+  justify-content: space-between;
+}
+
+.add-category-group {
+  color: colors.$light-blue;
 }
