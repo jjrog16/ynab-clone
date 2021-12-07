@@ -12,7 +12,7 @@ function Budget() {
           <div className="category-group-bar">
             <p className="add-category-group">+ Category Group</p>
           </div>
-          <div className="budget-contents">Budget Contents</div>
+          <div className="budget-contents"></div>
         </div>
         <AutoAssignSideBar />
       </div>
