@@ -40,5 +40,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@firebase/firestore": "^3.4.1",
+    "install": "^0.13.0"
   }
 }
