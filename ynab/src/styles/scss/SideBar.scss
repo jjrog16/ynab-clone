@@ -30,32 +30,3 @@
   color: colors.$white;
   background-color: colors.$light-blue;
 }
-
-.all-acounts {
-}
-
-.budget-header {
-  display: flex;
-  justify-content: space-between;
-  padding: dimens.$medium;
-  font-weight: bold;
-  color: colors.$white;
-}
-
-.budget-title {
-  font-weight: bold;
-  color: colors.$white;
-}
-
-.budget-total-amount {
-  font-weight: bold;
-  color: colors.$white;
-}
-
-.account {
-  display: flex;
-  justify-content: space-between;
-  padding: dimens.$large;
-  font-weight: bold;
-  color: colors.$white;
-}

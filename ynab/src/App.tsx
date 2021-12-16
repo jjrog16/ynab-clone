@@ -13,17 +13,31 @@ import {
   onSnapshot,
   getDocs,
   DocumentData,
+  QuerySnapshot,
 } from "@firebase/firestore";
 
 function App() {
-  const [allAccounts, setAllAccounts] = useState<DocumentData[]>([]);
+  //
+  const [allAccounts, setAllAccounts] = useState<QuerySnapshot[] | undefined>();
 
   useEffect(() => {
     async function loadAccounts() {
       const accountQuery = query(collection(getFirestore(), "accounts"));
-      const accounts = await getDocs(accountQuery);
-      const arrOfAccounts = accounts.docs.map((doc) => doc.data());
-      setAllAccounts(arrOfAccounts);
+      try {
+        const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
+          accountQuery
+        );
+
+        // We are passing a QuerySnapshot array so that
+        // we are able to use the id passed for each account item in
+        // Accounts key
+        if (accountsAsQuerySnapshot) setAllAccounts([accountsAsQuerySnapshot]);
+      } catch (e) {
+        console.log("An error occurred when trying to load your accounts");
+        console.log(`Error: ${e}`);
+      }
+
+      //const arrOfAccounts = accounts.docs.map((doc) => doc.data());
     }
     loadAccounts();
     return () => {};
@@ -32,7 +46,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <SideBar />
+        <SideBar accounts={allAccounts} />
         <Routes>
           <Route path="/" element={<Budget />} />
         </Routes>
