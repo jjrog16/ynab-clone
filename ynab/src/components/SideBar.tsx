@@ -2,10 +2,9 @@ import React from "react";
 import "../styles/css/SideBar.css";
 import { useState } from "react";
 import Accounts from "./Accounts";
-import { DocumentData, QuerySnapshot } from "@firebase/firestore";
-import AccountItem from "./AccountItem";
+import { QueryDocumentSnapshot } from "@firebase/firestore";
 
-function SideBar(props: { accounts: QuerySnapshot[] | undefined }) {
+function SideBar(props: { accounts: QueryDocumentSnapshot[] | undefined }) {
   return (
     <div className="sidebar-container">
       <div className="account-header">

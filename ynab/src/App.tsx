@@ -8,36 +8,31 @@ import { getFirebaseConfig } from "./firebase-config";
 import {
   getFirestore,
   collection,
-  addDoc,
   query,
-  onSnapshot,
   getDocs,
-  DocumentData,
   QuerySnapshot,
+  QueryDocumentSnapshot,
+  Query,
 } from "@firebase/firestore";
 
 function App() {
-  //
-  const [allAccounts, setAllAccounts] = useState<QuerySnapshot[] | undefined>();
+  const [allAccounts, setAllAccounts] = useState<QueryDocumentSnapshot[]>();
 
   useEffect(() => {
     async function loadAccounts() {
-      const accountQuery = query(collection(getFirestore(), "accounts"));
+      const accountQuery: Query = query(collection(getFirestore(), "accounts"));
       try {
         const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
           accountQuery
         );
 
-        // We are passing a QuerySnapshot array so that
-        // we are able to use the id passed for each account item in
-        // Accounts key
-        if (accountsAsQuerySnapshot) setAllAccounts([accountsAsQuerySnapshot]);
+        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+          accountsAsQuerySnapshot.docs;
+        setAllAccounts(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
       }
-
-      //const arrOfAccounts = accounts.docs.map((doc) => doc.data());
     }
     loadAccounts();
     return () => {};
