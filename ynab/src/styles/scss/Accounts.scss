@@ -24,8 +24,9 @@
 
 .account-wrapper {
   display: flex;
-  justify-content: space-between;
-  padding: dimens.$large;
   font-weight: bold;
   color: colors.$white;
+}
+
+.account-items {
 }

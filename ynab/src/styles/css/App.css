@@ -5,4 +5,9 @@
   width: 100%;
 }
 
+ul {
+  list-style-type: none;
+  padding-inline-start: 0%;
+}
+
 /*# sourceMappingURL=App.css.map */
