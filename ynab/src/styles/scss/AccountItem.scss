@@ -1,0 +1,7 @@
+@use "colors";
+@use "dimens";
+
+.account {
+  display: flex;
+  margin: dimens.$medium;
+}
