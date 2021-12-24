@@ -29,30 +29,4 @@
   background-color: #4795d8;
 }
 
-.budget-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.budget-title {
-  font-weight: bold;
-  color: #fff;
-}
-
-.budget-total-amount {
-  font-weight: bold;
-  color: #fff;
-}
-
-.account {
-  display: flex;
-  justify-content: space-between;
-  padding: 24px;
-  font-weight: bold;
-  color: #fff;
-}
-
 /*# sourceMappingURL=SideBar.css.map */

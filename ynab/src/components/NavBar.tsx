@@ -7,7 +7,7 @@ function NavBar() {
       <div className="date">DEC 2021</div>
       <div className="ready-to-assign">
         <div className="ready-to-assign-left">
-          <div className="ready-to-assign-amount">$1,000.00</div>
+          <div className="ready-to-assign-amount">$xxx.xx</div>
           <p className="ready-to-assign-title">Ready to Assign</p>
         </div>
         <div className="read-to-assign-right">
