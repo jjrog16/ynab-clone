@@ -37,7 +37,9 @@ function App() {
       }
     }
     loadAccounts();
-    return () => {};
+    return () => {
+      //cleanup
+    };
   }, []);
 
   return (
