@@ -20,12 +20,14 @@ function App() {
 
   useEffect(() => {
     async function loadAccounts() {
+      // Query to get all accounts in Firebase
       const accountQuery: Query = query(collection(getFirestore(), "accounts"));
       try {
+        // Asynchronous load of all accounts based off query
         const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
           accountQuery
         );
-
+        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
         const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
           accountsAsQuerySnapshot.docs;
         setAllAccounts(arrayOfQueryDocumentSnapshots);

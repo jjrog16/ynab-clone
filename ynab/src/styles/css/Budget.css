@@ -13,12 +13,28 @@
   width: 100%;
 }
 
-.category-group-bar {
+.category-group-bar, .category-assign-activity-available-bar {
   border: 1px solid #d1d1d6;
 }
 
 .add-category-group {
   color: #4795d8;
+}
+
+.category-assign-activity-available-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-assign-activity-available-bar-right {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.category-assign-activity-available-bar-item {
+  padding-left: 16px;
+  padding-right: 16px;
+  color: #656568;
 }
 
 /*# sourceMappingURL=Budget.css.map */

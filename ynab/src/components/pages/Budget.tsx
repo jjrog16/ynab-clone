@@ -12,6 +12,24 @@ function Budget() {
           <div className="category-group-bar">
             <p className="add-category-group">+ Category Group</p>
           </div>
+          <div className="category-assign-activity-available-bar">
+            <div className="category-assign-activity-available-bar-left">
+              <p className="category-assign-activity-available-bar-item">
+                CATEGORY
+              </p>
+            </div>
+            <div className="category-assign-activity-available-bar-right">
+              <p className="category-assign-activity-available-bar-item">
+                ASSIGNED
+              </p>
+              <p className="category-assign-activity-available-bar-item">
+                ACTIVITY
+              </p>
+              <p className="category-assign-activity-available-bar-item">
+                AVAILABLE
+              </p>
+            </div>
+          </div>
           <div className="budget-contents"></div>
         </div>
         <AutoAssignSideBar />

@@ -1,4 +1,5 @@
 @use "colors";
+@use "dimens";
 .budget-page {
   display: flex;
   flex-direction: column;
@@ -20,4 +21,24 @@
 
 .add-category-group {
   color: colors.$light-blue;
+}
+
+.category-assign-activity-available-bar {
+  display: flex;
+  justify-content: space-between;
+  @extend .category-group-bar;
+}
+
+.category-assign-activity-available-bar-left {
+}
+
+.category-assign-activity-available-bar-right {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.category-assign-activity-available-bar-item {
+  padding-left: dimens.$medium;
+  padding-right: dimens.$medium;
+  color: colors.$dark-gray;
 }
