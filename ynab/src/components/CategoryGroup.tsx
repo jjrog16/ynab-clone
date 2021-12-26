@@ -10,6 +10,7 @@ import {
   where,
 } from "@firebase/firestore";
 import React, { useEffect, useState } from "react";
+import "../styles/css/CategoryGroup.css";
 import Category from "./Category";
 
 function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
@@ -45,9 +46,10 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
     };
   }, []);
 
+  const categoryGroupTitle: string = props.group.data().title;
   return (
     <>
-      <div className="category-group-title">{props.group.data().title}</div>
+      <div className="category-group-title">{categoryGroupTitle}</div>
       <ul className="group-items">
         {allCategories?.map((category) => {
           return <Category key={category.data().id} info={category} />;

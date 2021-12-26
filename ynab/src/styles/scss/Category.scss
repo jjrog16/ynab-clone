@@ -1,0 +1,13 @@
+@use "colors";
+@use "dimens";
+
+.category {
+  display: flex;
+  justify-content: space-between;
+  padding: dimens.$medium;
+  border: 1px solid colors.$medium-gray;
+}
+
+.category-name {
+  color: colors.$main-app-text;
+}
