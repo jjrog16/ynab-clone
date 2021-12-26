@@ -1,0 +1,9 @@
+@use "colors";
+@use "dimens";
+
+.category-group-title {
+  background-color: colors.$light-gray;
+  color: colors.$dark-blue;
+  font-weight: bold;
+  padding: dimens.$medium;
+}

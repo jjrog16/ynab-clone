@@ -1,0 +1,12 @@
+.category {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid #d1d1d6;
+}
+
+.category-name {
+  color: #383e42;
+}
+
+/*# sourceMappingURL=Category.css.map */
