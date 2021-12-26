@@ -13,7 +13,7 @@ import {
   QuerySnapshot,
 } from "@firebase/firestore";
 import CategoryGroup from "../CategoryGroup";
-import AddCategoryGroupPopup from "../AddCategoryGroupPopup";
+import AddComponentPopup from "../AddComponentPopup";
 
 function Budget() {
   // Read what is in the database as an array of QueryDocumentSnapshot, and display
@@ -21,39 +21,48 @@ function Budget() {
   const [allCategoryGroups, setAllCategoryGroups] =
     useState<QueryDocumentSnapshot[]>();
 
+  // Use for initial render of Category Groups and Categories
   useEffect(() => {
-    async function loadGroups() {
-      // Query to get all accounts in Firebase
-      const groupsQuery: Query = query(
-        collection(getFirestore(), "categoryGroups")
-      );
-      try {
-        // Asynchronous load of all accounts based off query
-        const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(groupsQuery);
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          groupsAsQuerySnapshot.docs;
-
-        // Store the array of CategoryGroups
-        setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
-      } catch (e) {
-        console.log("An error occurred when trying to load your accounts");
-        console.log(`Error: ${e}`);
-      }
-    }
-    loadGroups();
+    loadGroups(groupsQuery);
 
     return () => {
       //cleanup
     };
   }, []);
 
-  // Shows if popup should be visible
+  // Query to get all accounts in Firebase
+  const groupsQuery: Query = query(
+    collection(getFirestore(), "categoryGroups")
+  );
+
+  /**
+   * Load Category Groups from Firebase
+   * @param query The firebase query to get Docs and store the results as
+   * an array of QueryDocumentSnapshot
+   */
+  async function loadGroups(query: Query) {
+    try {
+      // Asynchronous load of all accounts based off query
+      const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+      // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+      const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+        groupsAsQuerySnapshot.docs;
+
+      // Store the array of CategoryGroups
+      setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
+    } catch (e) {
+      console.log("An error occurred when trying to load your accounts");
+      console.log(`Error: ${e}`);
+    }
+  }
+
+  // Controls if popup should be visible
   const [popupStatus, setPopupStatus] = useState(false);
 
-  // Sort responses once they are in
+  // Sort responses based on position once they are in
   allCategoryGroups?.sort((a, b) => a.data().position - b.data().position);
 
+  // The latest position is the last position number of the array, or return -1
   const latestPosition = allCategoryGroups
     ? allCategoryGroups[allCategoryGroups.length - 1].data().position
     : -1;
@@ -73,7 +82,11 @@ function Budget() {
               + Category Group
             </p>
             {popupStatus ? (
-              <AddCategoryGroupPopup currentPosition={latestPosition} />
+              <AddComponentPopup
+                currentPosition={latestPosition}
+                rerender={() => loadGroups(groupsQuery)}
+                setPopupStatus={setPopupStatus}
+              />
             ) : null}
           </div>
           <div className="category-assign-activity-available-bar">
