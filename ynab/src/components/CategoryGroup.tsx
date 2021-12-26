@@ -1,8 +1,8 @@
 import {
   collection,
-  DocumentData,
   getDocs,
   getFirestore,
+  orderBy,
   Query,
   query,
   QueryDocumentSnapshot,
@@ -14,12 +14,13 @@ import "../styles/css/CategoryGroup.css";
 import Category from "./Category";
 
 function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
+  // Array of Categories that relate to each category group
   const [allCategories, setAllCategories] = useState<QueryDocumentSnapshot[]>();
 
   useEffect(() => {
     async function loadCategories() {
-      // Query to get all categories in Firebase
-
+      // Query to get all categories in Firebase based on corresponding to its
+      // correct Category Group parent id
       const categoriesQuery: Query = query(
         collection(getFirestore(), "categories"),
         where("groupId", "==", `${props.group.id}`)
@@ -30,7 +31,7 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
         const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(
           categoriesQuery
         );
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+        // Array of QueryDocumentSnapshots that allows for mapping
         const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
           categoriesAsQuerySnapshot.docs;
         setAllCategories(arrayOfQueryDocumentSnapshots);
@@ -46,6 +47,10 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
   }, []);
 
   const categoryGroupTitle: string = props.group.data().title;
+
+  //Sort responses once they are in
+  allCategories?.sort((a, b) => a.data().position - b.data().position);
+
   return (
     <>
       <div className="category-group-title">{categoryGroupTitle}</div>

@@ -6,13 +6,14 @@ import {
   collection,
   getDocs,
   getFirestore,
+  orderBy,
   query,
   Query,
   QueryDocumentSnapshot,
   QuerySnapshot,
 } from "@firebase/firestore";
-import GroupItems from "../CategoryGroup";
 import CategoryGroup from "../CategoryGroup";
+import AddCategoryGroupPopup from "../AddCategoryGroupPopup";
 
 function Budget() {
   // Read what is in the database as an array of QueryDocumentSnapshot, and display
@@ -32,6 +33,8 @@ function Budget() {
         // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
         const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
           groupsAsQuerySnapshot.docs;
+
+        // Store the array of CategoryGroups
         setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
@@ -39,10 +42,21 @@ function Budget() {
       }
     }
     loadGroups();
+
     return () => {
       //cleanup
     };
   }, []);
+
+  // Shows if popup should be visible
+  const [popupStatus, setPopupStatus] = useState(false);
+
+  // Sort responses once they are in
+  allCategoryGroups?.sort((a, b) => a.data().position - b.data().position);
+
+  const latestPosition = allCategoryGroups
+    ? allCategoryGroups[allCategoryGroups.length - 1].data().position
+    : -1;
 
   return (
     <div className="budget-page">
@@ -52,10 +66,15 @@ function Budget() {
           <div className="category-group-bar">
             <p
               className="add-category-group"
-              onClick={() => console.log("Add Category Group clicked")}
+              onClick={() => {
+                setPopupStatus(!popupStatus);
+              }}
             >
               + Category Group
             </p>
+            {popupStatus ? (
+              <AddCategoryGroupPopup currentPosition={latestPosition} />
+            ) : null}
           </div>
           <div className="category-assign-activity-available-bar">
             <div className="category-assign-activity-available-bar-left">

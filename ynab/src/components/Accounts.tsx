@@ -7,6 +7,7 @@ function Accounts(props: { accounts: QueryDocumentSnapshot[] | undefined }) {
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
+    // Collect each account balance amount and calculate the total amount for all accounts
     props.accounts?.map((account) => {
       const balance: DocumentData = account.data();
       setTotalAmount((prevAmount) => prevAmount + balance.amount);
