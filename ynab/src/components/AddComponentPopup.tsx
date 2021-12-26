@@ -1,21 +1,26 @@
-import { addDoc, collection, getFirestore } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  CollectionReference,
+  getFirestore,
+} from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
 import "../styles/css/AddComponentPopup.css";
 
 function AddComponentPopup(props: {
-  currentPosition: number;
+  componentObjectAdded: any;
+  addLocationForDb: CollectionReference;
   rerender: any;
   setPopupStatus: any;
 }) {
   const [inputState, setInputState] = useState<string>("");
 
-  async function addNewCategoryGroupToDb() {
-    // Location to place new CategoryGroup
-    const categoryGroupLocation = collection(getFirestore(), "categoryGroups");
-    await addDoc(categoryGroupLocation, {
-      position: props.currentPosition + 1,
-      title: inputState,
-    });
+  async function addComponentToDb(location: CollectionReference) {
+    // Change the title of the component based on the input
+    props.componentObjectAdded["title"] = inputState;
+
+    // Add the doc based on location passed and the object type passed in props
+    await addDoc(location, props.componentObjectAdded);
 
     // Load from Firebase to cause a rerender since a new addition has been added
     props.rerender();
@@ -38,7 +43,9 @@ function AddComponentPopup(props: {
       </div>
       <div className="btn-container">
         <button onClick={() => props.setPopupStatus(false)}>Cancel</button>
-        <button onClick={() => addNewCategoryGroupToDb()}>OK</button>
+        <button onClick={() => addComponentToDb(props.addLocationForDb)}>
+          OK
+        </button>
       </div>
     </div>
   );

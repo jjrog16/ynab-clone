@@ -4,6 +4,7 @@ import NavBar from "../NavBar";
 import AutoAssignSideBar from "../AutoAssignSideBar";
 import {
   collection,
+  CollectionReference,
   getDocs,
   getFirestore,
   orderBy,
@@ -67,6 +68,18 @@ function Budget() {
     ? allCategoryGroups[allCategoryGroups.length - 1].data().position
     : -1;
 
+  // The location for where the AddComponentPopup will send data
+  const location: CollectionReference = collection(
+    getFirestore(),
+    "categoryGroups"
+  );
+
+  // Db Object formatting
+  const categoryGroupObj = {
+    position: latestPosition + 1,
+    title: "",
+  };
+
   return (
     <div className="budget-page">
       <NavBar />
@@ -83,7 +96,8 @@ function Budget() {
             </p>
             {popupStatus ? (
               <AddComponentPopup
-                currentPosition={latestPosition}
+                componentObjectAdded={categoryGroupObj}
+                addLocationForDb={location}
                 rerender={() => loadGroups(groupsQuery)}
                 setPopupStatus={setPopupStatus}
               />
