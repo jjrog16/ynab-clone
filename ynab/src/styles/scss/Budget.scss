@@ -21,6 +21,8 @@
 
 .add-category-group {
   color: colors.$light-blue;
+  /* Prevents highlighting text when user double-clicks*/
+  user-select: none;
 }
 
 .category-assign-activity-available-bar {

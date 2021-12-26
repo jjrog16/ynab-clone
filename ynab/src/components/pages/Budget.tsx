@@ -50,7 +50,12 @@ function Budget() {
       <div className="budget-container">
         <div className="budget-wrapper">
           <div className="category-group-bar">
-            <p className="add-category-group">+ Category Group</p>
+            <p
+              className="add-category-group"
+              onClick={() => console.log("Add Category Group clicked")}
+            >
+              + Category Group
+            </p>
           </div>
           <div className="category-assign-activity-available-bar">
             <div className="category-assign-activity-available-bar-left">
@@ -74,7 +79,12 @@ function Budget() {
             <div className="groups-wrapper">
               <div className="groups">
                 {allCategoryGroups?.map((categoryGroup) => {
-                  return <CategoryGroup group={categoryGroup} />;
+                  return (
+                    <CategoryGroup
+                      key={categoryGroup.id}
+                      group={categoryGroup}
+                    />
+                  );
                 })}
               </div>
             </div>

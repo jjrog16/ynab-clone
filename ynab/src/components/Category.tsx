@@ -7,7 +7,7 @@ function Category(props: { info: QueryDocumentSnapshot }) {
   const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
   return (
     <>
-      <li className="category">
+      <li key={props.info.id} className="category">
         <div className="category-name">{category.title}</div>
         <div className="category-amount">{categoryAvailableFixed}</div>
       </li>

@@ -14,7 +14,6 @@ import "../styles/css/CategoryGroup.css";
 import Category from "./Category";
 
 function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
-  console.log(props.group.id);
   const [allCategories, setAllCategories] = useState<QueryDocumentSnapshot[]>();
 
   useEffect(() => {
@@ -50,9 +49,9 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
   return (
     <>
       <div className="category-group-title">{categoryGroupTitle}</div>
-      <ul className="group-items">
+      <ul key={props.group.id} className="group-items">
         {allCategories?.map((category) => {
-          return <Category key={category.data().id} info={category} />;
+          return <Category key={category.id} info={category} />;
         })}
       </ul>
     </>
