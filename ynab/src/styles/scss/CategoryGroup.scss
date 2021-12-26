@@ -1,9 +1,33 @@
 @use "colors";
 @use "dimens";
 
-.category-group-title {
+.category-group-title-section {
   background-color: colors.$light-gray;
   color: colors.$dark-blue;
   font-weight: bold;
   padding: dimens.$medium;
+  display: flex;
+  padding-right: dimens.$medium;
+  user-select: none;
+  &:hover {
+    .plus-add-category {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: colors.$light-blue;
+      color: colors.$white;
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+      text-align: center;
+    }
+  }
+}
+
+.category-group-title {
+  padding-right: dimens.$small;
+}
+
+.plus-add-category {
+  display: none;
 }
