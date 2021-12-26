@@ -1,8 +1,30 @@
-.category-group-title {
+.category-group-title-section {
   background-color: #f5f5fa;
   color: #25374f;
   font-weight: bold;
   padding: 16px;
+  display: flex;
+  padding-right: 16px;
+  user-select: none;
+}
+.category-group-title-section:hover .plus-add-category {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #4795d8;
+  color: #fff;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+}
+
+.category-group-title {
+  padding-right: 8px;
+}
+
+.plus-add-category {
+  display: none;
 }
 
 /*# sourceMappingURL=CategoryGroup.css.map */

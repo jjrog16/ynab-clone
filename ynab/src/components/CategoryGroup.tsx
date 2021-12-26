@@ -53,7 +53,10 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
 
   return (
     <>
-      <div className="category-group-title">{categoryGroupTitle}</div>
+      <div className="category-group-title-section">
+        <div className="category-group-title">{categoryGroupTitle}</div>
+        <div className="plus-add-category">+</div>
+      </div>
       <ul key={props.group.id} className="group-items">
         {allCategories?.map((category) => {
           return <Category key={category.id} info={category} />;
