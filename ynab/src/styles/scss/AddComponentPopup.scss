@@ -1,12 +1,13 @@
-.add-category-popup-container {
+@use "colors";
+@use "dimens";
+
+.add-component-popup-container {
   display: block;
   position: fixed;
-  background-color: #fff;
-  padding: 24px;
+  background-color: colors.$white;
+  padding: dimens.$large;
   border: 1px solid #eee;
   box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.06);
   border-radius: 4px;
   z-index: 1;
 }
-
-/*# sourceMappingURL=AddCategoryGroupPopup.css.map */

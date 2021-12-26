@@ -1,8 +1,12 @@
 import { addDoc, collection, getFirestore } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
-import "../styles/css/AddCategoryGroupPopup.css";
+import "../styles/css/AddComponentPopup.css";
 
-function AddCategoryGroupPopup(props: { currentPosition: number }) {
+function AddComponentPopup(props: {
+  currentPosition: number;
+  rerender: any;
+  setPopupStatus: any;
+}) {
   const [inputState, setInputState] = useState<string>("");
 
   async function addNewCategoryGroupToDb() {
@@ -12,26 +16,32 @@ function AddCategoryGroupPopup(props: { currentPosition: number }) {
       position: props.currentPosition + 1,
       title: inputState,
     });
+
+    // Load from Firebase to cause a rerender since a new addition has been added
+    props.rerender();
+
+    // Dismiss the popup
+    props.setPopupStatus(false);
   }
 
   return (
-    <div className="add-category-popup-container">
-      <div className="new-category-group">
+    <div className="add-component-popup-container">
+      <div className="new-component">
         <form>
           <input
             type="text"
-            id="et-add-new-category-group"
+            id="et-add-new-component"
             value={inputState}
             onChange={(e) => setInputState(e.target.value)}
           ></input>
         </form>
       </div>
       <div className="btn-container">
-        <button>Cancel</button>
+        <button onClick={() => props.setPopupStatus(false)}>Cancel</button>
         <button onClick={() => addNewCategoryGroupToDb()}>OK</button>
       </div>
     </div>
   );
 }
 
-export default AddCategoryGroupPopup;
+export default AddComponentPopup;
