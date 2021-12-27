@@ -1,18 +1,15 @@
-import {
-  addDoc,
-  collection,
-  CollectionReference,
-  getFirestore,
-} from "@firebase/firestore";
+import { addDoc, CollectionReference } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
 import "../styles/css/AddComponentPopup.css";
 
-function AddComponentPopup(props: {
+interface Props {
   componentObjectAdded: any;
   addLocationForDb: CollectionReference;
   rerender: any;
   setPopupStatus: any;
-}) {
+}
+
+function AddComponentPopup(props: Props) {
   const [inputState, setInputState] = useState<string>("");
 
   async function addComponentToDb(location: CollectionReference) {

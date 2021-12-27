@@ -2,7 +2,11 @@ import { QueryDocumentSnapshot } from "@firebase/firestore";
 import React from "react";
 import "../styles/css/Category.css";
 
-function Category(props: { info: QueryDocumentSnapshot }) {
+interface Props {
+  info: QueryDocumentSnapshot;
+}
+
+function Category(props: Props) {
   const category = props.info.data();
   const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
   return (

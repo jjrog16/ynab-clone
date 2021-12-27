@@ -9,12 +9,17 @@ import {
   QuerySnapshot,
   where,
 } from "@firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../styles/css/CategoryGroup.css";
 import AddComponentPopup from "./AddComponentPopup";
 import Category from "./Category";
+import EditComponentPopup from "./EditComponentPopup";
 
-function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
+interface Props {
+  group: QueryDocumentSnapshot;
+}
+
+function CategoryGroup(props: Props) {
   // Array of Categories that relate to each category group
   const [allCategories, setAllCategories] = useState<QueryDocumentSnapshot[]>();
 
@@ -32,6 +37,10 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
     where("groupId", "==", `${props.group.id}`)
   );
 
+  /**
+   * Load Categories from Firebase
+   * @param query Type of Firebase query used to load data. Used to get all Categories
+   */
   async function loadCategories(query: Query) {
     try {
       // Asynchronous load of all accounts based off query
@@ -70,23 +79,38 @@ function CategoryGroup(props: { group: QueryDocumentSnapshot }) {
   const location = collection(getFirestore(), "categories");
 
   // Db Object formatting
-  const categoryObj = {
+  const newCategoryObj = {
     position: latestPosition + 1,
     title: "",
     available: 0,
     groupId: props.group.id,
   };
 
+  // Implement context menu
+
+  function handleContextMenu(event: React.MouseEvent) {
+    event.preventDefault();
+    //<EditComponentPopup componentObjectAdded={undefined} addLocationForDb={location} rerender={undefined} setPopupStatus={undefined} />
+  }
+  useEffect(() => {
+    return () => {
+      //cleanup
+    };
+  }, []);
+
   return (
     <>
-      <div className="category-group-title-section">
+      <div
+        className="category-group-title-section"
+        onContextMenu={(event) => handleContextMenu(event)}
+      >
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div className="plus-add-category" onClick={() => setPopupStatus(true)}>
           +
         </div>
         {popupStatus ? (
           <AddComponentPopup
-            componentObjectAdded={categoryObj}
+            componentObjectAdded={newCategoryObj}
             addLocationForDb={location}
             rerender={() => loadCategories(categoriesQuery)}
             setPopupStatus={setPopupStatus}
