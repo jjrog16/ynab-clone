@@ -61,8 +61,10 @@ function CategoryGroup(props: Props) {
   //Sort responses once they are in
   allCategories?.sort((a, b) => a.data().position - b.data().position);
 
+  // Implement adding Category //
+
   // Controls if popup should be visible
-  const [popupStatus, setPopupStatus] = useState(false);
+  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // The latest position is the last position number of the array, or return -1
   let latestPosition: number = 0;
@@ -86,17 +88,20 @@ function CategoryGroup(props: Props) {
     groupId: props.group.id,
   };
 
-  // Implement context menu
+  // Implement context menu //
+
+  // Use for knowing where the right click occurred
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+
+  // Use to know whether or not to show the component for editing a
+  const [editComponentPopupStatus, setEditComponentPopupStatus] =
+    useState<boolean>(false);
 
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
-    //<EditComponentPopup componentObjectAdded={undefined} addLocationForDb={location} rerender={undefined} setPopupStatus={undefined} />
+    setAnchorPoint({ x: event.pageX, y: event.pageY });
+    setEditComponentPopupStatus(true);
   }
-  useEffect(() => {
-    return () => {
-      //cleanup
-    };
-  }, []);
 
   return (
     <>
@@ -104,16 +109,22 @@ function CategoryGroup(props: Props) {
         className="category-group-title-section"
         onContextMenu={(event) => handleContextMenu(event)}
       >
+        {editComponentPopupStatus ? (
+          <EditComponentPopup coordinates={anchorPoint} />
+        ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>
-        <div className="plus-add-category" onClick={() => setPopupStatus(true)}>
+        <div
+          className="plus-add-category"
+          onClick={() => setAddComponentPopupStatus(true)}
+        >
           +
         </div>
-        {popupStatus ? (
+        {addComponentPopupStatus ? (
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
             addLocationForDb={location}
             rerender={() => loadCategories(categoriesQuery)}
-            setPopupStatus={setPopupStatus}
+            setPopupStatus={setAddComponentPopupStatus}
           />
         ) : null}
       </div>

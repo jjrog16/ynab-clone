@@ -9,4 +9,9 @@
   z-index: 1;
 }
 
+.edit-components-btn-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 /*# sourceMappingURL=EditComponentPopup.css.map */
