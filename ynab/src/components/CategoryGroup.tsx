@@ -1,5 +1,8 @@
 import {
   collection,
+  CollectionReference,
+  doc,
+  DocumentReference,
   getDocs,
   getFirestore,
   orderBy,
@@ -17,6 +20,7 @@ import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   group: QueryDocumentSnapshot;
+  rerender: any;
 }
 
 function CategoryGroup(props: Props) {
@@ -78,9 +82,15 @@ function CategoryGroup(props: Props) {
   }
 
   // The location for where the AddComponentPopup will send data
-  const location = collection(getFirestore(), "categories");
+  const categoryDbLocation = collection(getFirestore(), "categories");
 
-  // Db Object formatting
+  // The location for where EditComponentPopup will send data
+  const categoryGroupDbLocation: DocumentReference = doc(
+    getFirestore(),
+    "categoryGroups"
+  );
+
+  // Db Object formatting for adding a new category
   const newCategoryObj = {
     position: latestPosition + 1,
     title: "",
@@ -89,6 +99,12 @@ function CategoryGroup(props: Props) {
   };
 
   // Implement context menu //
+
+  // Db Object formatting for when editing a Category Group
+  const editedCategoryGroupObj = {
+    position: props.group.data().position,
+    title: props.group.data().title,
+  };
 
   // Use for knowing where the right click occurred
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -110,7 +126,15 @@ function CategoryGroup(props: Props) {
         onContextMenu={(event) => handleContextMenu(event)}
       >
         {editComponentPopupStatus ? (
-          <EditComponentPopup coordinates={anchorPoint} />
+          <EditComponentPopup
+            coordinates={anchorPoint}
+            categoryGroup={props.group}
+            componentObjectAdded={editedCategoryGroupObj}
+            editLocationForDb={categoryGroupDbLocation}
+            rerender={props.rerender}
+            popupStatus={editComponentPopupStatus}
+            setPopupStatus={setEditComponentPopupStatus}
+          />
         ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div
@@ -122,8 +146,9 @@ function CategoryGroup(props: Props) {
         {addComponentPopupStatus ? (
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
-            addLocationForDb={location}
+            addLocationForDb={categoryDbLocation}
             rerender={() => loadCategories(categoriesQuery)}
+            popupStatus={addComponentPopupStatus}
             setPopupStatus={setAddComponentPopupStatus}
           />
         ) : null}

@@ -58,7 +58,7 @@ function Budget() {
   }
 
   // Controls if popup should be visible
-  const [popupStatus, setPopupStatus] = useState(false);
+  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // Sort responses based on position once they are in
   allCategoryGroups?.sort((a, b) => a.data().position - b.data().position);
@@ -69,7 +69,7 @@ function Budget() {
     : -1;
 
   // The location for where the AddComponentPopup will send data
-  const location: CollectionReference = collection(
+  const categoryGroupDbLocation: CollectionReference = collection(
     getFirestore(),
     "categoryGroups"
   );
@@ -89,17 +89,18 @@ function Budget() {
             <p
               className="add-category-group"
               onClick={() => {
-                setPopupStatus(!popupStatus);
+                setAddComponentPopupStatus(!addComponentPopupStatus);
               }}
             >
               + Category Group
             </p>
-            {popupStatus ? (
+            {addComponentPopupStatus ? (
               <AddComponentPopup
                 componentObjectAdded={categoryGroupObj}
-                addLocationForDb={location}
+                addLocationForDb={categoryGroupDbLocation}
                 rerender={() => loadGroups(groupsQuery)}
-                setPopupStatus={setPopupStatus}
+                popupStatus={addComponentPopupStatus}
+                setPopupStatus={setAddComponentPopupStatus}
               />
             ) : null}
           </div>
@@ -129,6 +130,7 @@ function Budget() {
                     <CategoryGroup
                       key={categoryGroup.id}
                       group={categoryGroup}
+                      rerender={() => loadGroups(groupsQuery)}
                     />
                   );
                 })}
