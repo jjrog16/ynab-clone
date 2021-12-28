@@ -18,8 +18,20 @@
 
 .account-wrapper {
   display: flex;
+  flex-direction: column;
   font-weight: bold;
   color: #fff;
+}
+
+.account-items {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.account {
+  display: flex;
+  justify-content: space-between;
 }
 
 /*# sourceMappingURL=Accounts.css.map */
