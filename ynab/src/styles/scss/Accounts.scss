@@ -24,10 +24,18 @@
 
 .account-wrapper {
   display: flex;
+  flex-direction: column;
   font-weight: bold;
   color: colors.$white;
 }
 
 .account-items {
-  width: max-content;
+  display: flex;
+  flex-direction: column;
+  padding: dimens.$small;
+}
+
+.account {
+  display: flex;
+  justify-content: space-between;
 }
