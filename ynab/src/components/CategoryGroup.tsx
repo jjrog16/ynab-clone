@@ -84,12 +84,6 @@ function CategoryGroup(props: Props) {
   // The location for where the AddComponentPopup will send data
   const categoryDbLocation = collection(getFirestore(), "categories");
 
-  // The location for where EditComponentPopup will send data
-  const categoryGroupDbLocation: DocumentReference = doc(
-    getFirestore(),
-    "categoryGroups"
-  );
-
   // Db Object formatting for adding a new category
   const newCategoryObj = {
     position: latestPosition + 1,
@@ -99,6 +93,14 @@ function CategoryGroup(props: Props) {
   };
 
   // Implement context menu //
+
+  // The location for where EditComponentPopup will send data
+  // Needs the collection with db, the name of the collection,
+  // and the ID of the item being changed
+  const categoryGroupDbLocation: DocumentReference = doc(
+    collection(getFirestore(), "categoryGroups"),
+    props.group.id
+  );
 
   // Db Object formatting for when editing a Category Group
   const editedCategoryGroupObj = {
@@ -128,7 +130,7 @@ function CategoryGroup(props: Props) {
         {editComponentPopupStatus ? (
           <EditComponentPopup
             coordinates={anchorPoint}
-            categoryGroup={props.group}
+            component={props.group}
             componentObjectAdded={editedCategoryGroupObj}
             editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerender}
@@ -155,7 +157,13 @@ function CategoryGroup(props: Props) {
       </div>
       <ul key={props.group.id} className="group-items">
         {allCategories?.map((category) => {
-          return <Category key={category.id} info={category} />;
+          return (
+            <Category
+              key={category.id}
+              info={category}
+              rerender={() => loadCategories(categoriesQuery)}
+            />
+          );
         })}
       </ul>
     </>

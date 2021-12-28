@@ -9,7 +9,7 @@ import "../styles/css/EditComponentPopup.css";
 
 interface Props {
   coordinates: { x: number; y: number };
-  categoryGroup: QueryDocumentSnapshot;
+  component: QueryDocumentSnapshot;
   componentObjectAdded: { position: number; title: string };
   editLocationForDb: DocumentReference;
   rerender: any;
@@ -29,28 +29,19 @@ function EditComponentPopup(props: Props) {
    */
   async function editComponentInDb(location: DocumentReference) {
     // Change the title of the component based on input if the input has changed
-    if (props.componentObjectAdded["title"] === inputState) {
+    if (props.componentObjectAdded["title"] !== inputState) {
       props.componentObjectAdded["title"] = inputState;
+
+      // Set the Docu based on the location passed and the object type passed in props
+      await setDoc(location, props.componentObjectAdded);
+
+      // Load from Firebase to cause a rerender since there is a change
+      props.rerender();
     }
-
-    // Set the Docu based on the location passed and the object type passed in props
-    await setDoc(location, props.componentObjectAdded);
-
-    // Load from Firebase to cause a rerender since there is a change
-    props.rerender();
 
     // Dismiss the popup
     removePopup();
   }
-
-  useEffect(() => {
-    if (props.popupStatus) {
-      document.addEventListener("click", removePopup);
-    }
-    return () => {
-      document.removeEventListener("click", removePopup);
-    };
-  }, []);
 
   // Sets popup status to false to remove popup from view.
   function removePopup() {
@@ -76,8 +67,10 @@ function EditComponentPopup(props: Props) {
           <button onClick={() => console.log("Delete")}>Delete</button>
         </div>
         <div className="right-side-buttons">
-          <button onClick={() => console.log("Cancel")}>Cancel</button>
-          <button onClick={() => console.log("OK")}>OK</button>
+          <button onClick={() => removePopup()}>Cancel</button>
+          <button onClick={() => editComponentInDb(props.editLocationForDb)}>
+            OK
+          </button>
         </div>
       </div>
     </div>

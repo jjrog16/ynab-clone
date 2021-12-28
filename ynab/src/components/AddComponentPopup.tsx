@@ -27,15 +27,6 @@ function AddComponentPopup(props: Props) {
     removePopup();
   }
 
-  useEffect(() => {
-    if (props.popupStatus) {
-      document.addEventListener("click", removePopup);
-    }
-    return () => {
-      document.removeEventListener("click", removePopup);
-    };
-  }, []);
-
   // Sets popup status to false to remove popup from view.
   function removePopup() {
     props.setPopupStatus(false);
