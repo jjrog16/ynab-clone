@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "../../styles/css/Budget.css";
 import NavBar from "../NavBar";
 import AutoAssignSideBar from "../AutoAssignSideBar";
@@ -22,14 +22,11 @@ function Budget() {
   const [allCategoryGroups, setAllCategoryGroups] =
     useState<QueryDocumentSnapshot[]>();
 
-  // Use for initial render of Category Groups and Categories
-  useEffect(() => {
-    loadGroups(groupsQuery);
+  // Status for loading API call
+  const [isSending, setIsSending] = useState(false);
 
-    return () => {
-      //cleanup
-    };
-  }, []);
+  // Keep track of when the component is unmounted
+  const isMounted = useRef(true);
 
   // Query to get all accounts in Firebase
   const groupsQuery: Query = query(
@@ -41,27 +38,55 @@ function Budget() {
    * @param query The firebase query to get Docs and store the results as
    * an array of QueryDocumentSnapshot
    */
-  async function loadGroups(query: Query) {
-    try {
-      // Asynchronous load of all accounts based off query
-      const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-      // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-      const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-        groupsAsQuerySnapshot.docs;
+  const loadCategoryGroups = useCallback(
+    async (query: Query) => {
+      try {
+        console.log("loadCategoryGroups called");
+        console.log(`isSending state in loadCategoryGroups: ${isSending}`);
+        // don't send again while we are sending
+        if (isSending) return;
 
-      // Store the array of CategoryGroups
-      setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
-    } catch (e) {
-      console.log("An error occurred when trying to load your accounts");
-      console.log(`Error: ${e}`);
-    }
-  }
+        // update state
+        setIsSending(true);
+
+        // Asynchronous load of all accounts based off query
+        const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+          groupsAsQuerySnapshot.docs;
+
+        // once the request is sent, update state again
+        // only update if we are still mounted
+        if (isMounted.current) setIsSending(false);
+
+        // Store the array of CategoryGroups
+        setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
+      } catch (e) {
+        console.log("An error occurred when trying to load your accounts");
+        console.log(`Error: ${e}`);
+      }
+    },
+    [isSending]
+  );
+
+  // Use for initial render of Category Groups and Categories
+  // Dependencies need to be empty to allow for rerendering
+  useEffect(() => {
+    loadCategoryGroups(groupsQuery);
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // Sort responses based on position once they are in
   allCategoryGroups?.sort((a, b) => a.data().position - b.data().position);
+
+  // Type of component being passed for Edit
+  const componentType = "categoryGroups";
 
   // The latest position is the last position number of the array, or return -1
   const latestPosition = allCategoryGroups
@@ -71,7 +96,7 @@ function Budget() {
   // The location for where the AddComponentPopup will send data
   const categoryGroupDbLocation: CollectionReference = collection(
     getFirestore(),
-    "categoryGroups"
+    componentType
   );
 
   // Db Object formatting
@@ -98,7 +123,8 @@ function Budget() {
               <AddComponentPopup
                 componentObjectAdded={categoryGroupObj}
                 addLocationForDb={categoryGroupDbLocation}
-                rerender={() => loadGroups(groupsQuery)}
+                componentType={componentType}
+                rerender={() => loadCategoryGroups(groupsQuery)}
                 popupStatus={addComponentPopupStatus}
                 setPopupStatus={setAddComponentPopupStatus}
               />
@@ -130,7 +156,7 @@ function Budget() {
                     <CategoryGroup
                       key={categoryGroup.id}
                       group={categoryGroup}
-                      rerender={() => loadGroups(groupsQuery)}
+                      rerender={() => loadCategoryGroups(groupsQuery)}
                     />
                   );
                 })}
