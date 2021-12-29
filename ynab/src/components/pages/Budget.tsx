@@ -150,12 +150,6 @@ function Budget(props: Props) {
             </div>
             <div className="category-assign-activity-available-bar-right">
               <p className="category-assign-activity-available-bar-item">
-                ASSIGNED
-              </p>
-              <p className="category-assign-activity-available-bar-item">
-                ACTIVITY
-              </p>
-              <p className="category-assign-activity-available-bar-item">
                 AVAILABLE
               </p>
             </div>
