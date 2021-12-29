@@ -14,8 +14,11 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   category: QueryDocumentSnapshot;
   rerender: any;
+  totalAmount: number;
   totalCategoryGroupAmount: number;
   setTotalCategoryGroupAmount: any;
+  readyToAssignTotal: number;
+  setReadyToAssignTotal: any;
 }
 
 function Category(props: Props) {
@@ -28,9 +31,18 @@ function Category(props: Props) {
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
+    // Set the total amount for the categories in a category group
     props.setTotalCategoryGroupAmount(
       (previousAmount: number) => previousAmount + category.available
     );
+
+    console.log(props.totalAmount, props.totalCategoryGroupAmount);
+
+    // Set the readyToAssignTotal amount used to display in the Navbar
+    props.setReadyToAssignTotal(
+      props.totalAmount - props.totalCategoryGroupAmount
+    );
+
     return () => {
       //cleanup
     };

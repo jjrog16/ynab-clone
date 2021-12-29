@@ -24,6 +24,9 @@ function App() {
   // Keep track of the total amount of money from a Category Group
   const [totalCategoryGroupAmount, setTotalCategoryGroupAmount] = useState(0);
 
+  // Keep track of the ready to assign amount and recalculate when sections are deleted
+  const [readyToAssignTotal, setReadyToAssignTotal] = useState<number>(0);
+
   useEffect(() => {
     async function loadAccounts() {
       // Query to get all accounts in Firebase
@@ -65,6 +68,8 @@ function App() {
                 setTotalAmount={setTotalAmount}
                 totalCategoryGroupAmount={totalCategoryGroupAmount}
                 setTotalCategoryGroupAmount={setTotalCategoryGroupAmount}
+                readyToAssignTotal={readyToAssignTotal}
+                setReadyToAssignTotal={setReadyToAssignTotal}
               />
             }
           />

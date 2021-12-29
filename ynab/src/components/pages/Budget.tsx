@@ -7,7 +7,6 @@ import {
   CollectionReference,
   getDocs,
   getFirestore,
-  orderBy,
   query,
   Query,
   QueryDocumentSnapshot,
@@ -21,6 +20,8 @@ interface Props {
   setTotalAmount: any;
   totalCategoryGroupAmount: number;
   setTotalCategoryGroupAmount: any;
+  readyToAssignTotal: number;
+  setReadyToAssignTotal: any;
 }
 
 function Budget(props: Props) {
@@ -117,6 +118,8 @@ function Budget(props: Props) {
         totalAmount={props.totalAmount}
         setTotalAmount={props.setTotalAmount}
         totalCategoryGroupAmount={props.totalCategoryGroupAmount}
+        readyToAssignTotal={props.readyToAssignTotal}
+        setReadyToAssignTotal={props.setReadyToAssignTotal}
       />
       <div className="budget-container">
         <div className="budget-wrapper">
@@ -167,10 +170,13 @@ function Budget(props: Props) {
                       key={categoryGroup.id}
                       group={categoryGroup}
                       rerender={() => loadCategoryGroups(groupsQuery)}
-                      totalCategoryGroupAmount={props.totalCategoryGroupAmount}
                       setTotalCategoryGroupAmount={
                         props.setTotalCategoryGroupAmount
                       }
+                      setReadyToAssignTotal={props.setReadyToAssignTotal}
+                      totalAmount={props.totalAmount}
+                      totalCategoryGroupAmount={props.totalCategoryGroupAmount}
+                      readyToAssignTotal={props.readyToAssignTotal}
                     />
                   );
                 })}
