@@ -167,6 +167,7 @@ function CategoryGroup(props: Props) {
             rerender={props.rerender}
             popupStatus={editComponentPopupStatus}
             setPopupStatus={setEditComponentPopupStatus}
+            setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
           />
         ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>

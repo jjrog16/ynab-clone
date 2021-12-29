@@ -21,6 +21,7 @@ interface Props {
   rerender: any;
   popupStatus: boolean;
   setPopupStatus: any;
+  setTotalCategoryGroupAmount: any;
 }
 
 function EditComponentPopup(props: Props) {
@@ -94,7 +95,11 @@ function EditComponentPopup(props: Props) {
           // only update if we are still mounted
           if (isMounted.current) setIsSending(false);
 
-          // Update state of totalCategoryGroup
+          // Remove money in category from total Category Group amount to update RTA
+          props.setTotalCategoryGroupAmount(
+            (prevAmount: number) =>
+              prevAmount - props.component.data().available
+          );
 
           // Load from Firebase to cause a rerender since there is a change
           props.rerender();
@@ -104,8 +109,10 @@ function EditComponentPopup(props: Props) {
         if (props.componentType === "categoryGroups") {
           // Get all children that have a groupId of parent
           props.children?.map((child) => {
-            console.log(child.id, child.data());
-            console.log(`Parent: ${props.component.id}`);
+            // Remove money in group for each child from total Category Group amount to update RTA
+            props.setTotalCategoryGroupAmount(
+              (prevAmount: number) => prevAmount - child.data().available
+            );
             // Delete each child one by one
             deleteDoc(doc(collection(getFirestore(), "categories"), child.id));
           });
