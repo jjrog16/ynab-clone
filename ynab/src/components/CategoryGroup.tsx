@@ -45,8 +45,6 @@ function CategoryGroup(props: Props) {
   const loadCategories = useCallback(
     async (query: Query) => {
       try {
-        console.log("loadCategories called");
-        console.log(`isSending state in loadCategories: ${isSending}`);
         // don't send again while we are sending
         if (isSending) return;
 
@@ -157,8 +155,9 @@ function CategoryGroup(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.group}
-            componentObjectAdded={editedCategoryGroupObj}
+            componentObjectTemplate={editedCategoryGroupObj}
             componentType={componentType}
+            children={allCategories}
             editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerender}
             popupStatus={editComponentPopupStatus}

@@ -66,7 +66,7 @@ function Category(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.category}
-            componentObjectAdded={editedCategoryObj}
+            componentObjectTemplate={editedCategoryObj}
             componentType={componentType}
             editLocationForDb={categoryDbLocation}
             rerender={props.rerender}

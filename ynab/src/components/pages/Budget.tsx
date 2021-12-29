@@ -41,8 +41,6 @@ function Budget() {
   const loadCategoryGroups = useCallback(
     async (query: Query) => {
       try {
-        console.log("loadCategoryGroups called");
-        console.log(`isSending state in loadCategoryGroups: ${isSending}`);
         // don't send again while we are sending
         if (isSending) return;
 
