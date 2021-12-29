@@ -1,5 +1,4 @@
 import { DocumentData, QueryDocumentSnapshot } from "@firebase/firestore";
-import { totalmem } from "os";
 import React, { useEffect, useState } from "react";
 import "../styles/css/Accounts.css";
 import AccountItem from "./AccountItem";

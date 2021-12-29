@@ -10,13 +10,14 @@ interface Props {
 }
 
 function NavBar(props: Props) {
-  // Watch for Total Category Group Amount changes and update accordingly
+  // Watch for Total Amount to make sure RTA is set even when the Total Category is 0
+  // Watch Total Category Group Amount changes and update accordingly for RTA
   useEffect(() => {
     props.setReadyToAssignTotal(
       props.totalAmount - props.totalCategoryGroupAmount
     );
     return () => {};
-  }, [props.totalCategoryGroupAmount]);
+  }, [props.totalAmount, props.totalCategoryGroupAmount]);
 
   return (
     <nav className="navbar">

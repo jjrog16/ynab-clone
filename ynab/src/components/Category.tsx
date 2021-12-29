@@ -193,9 +193,13 @@ function Category(props: Props) {
       e.preventDefault();
       if (isPlusActive) {
         addToAvailable();
+        // Clear the input field after enter is pressed
+        setInputState("");
       }
       if (isMinusActive) {
         subtractFromAvailable();
+        // Clear the input field after enter is pressed
+        setInputState("");
       }
     }
   }
