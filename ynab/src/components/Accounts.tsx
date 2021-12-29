@@ -3,20 +3,27 @@ import { totalmem } from "os";
 import React, { useEffect, useState } from "react";
 import "../styles/css/Accounts.css";
 import AccountItem from "./AccountItem";
-function Accounts(props: { accounts: QueryDocumentSnapshot[] | undefined }) {
-  const [totalAmount, setTotalAmount] = useState(0);
+
+interface Props {
+  accounts: QueryDocumentSnapshot[] | undefined;
+  totalAmount: number;
+  setTotalAmount: any;
+}
+
+function Accounts(props: Props) {
+  //const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     // Collect each account balance amount and calculate the total amount for all accounts
     props.accounts?.map((account) => {
       const balance: DocumentData = account.data();
-      setTotalAmount((prevAmount) => prevAmount + balance.amount);
+      props.setTotalAmount((prevAmount: number) => prevAmount + balance.amount);
     });
     return () => {};
   }, [props.accounts]);
 
   // Amount of money with dollar sign and decimal
-  const totalAmountFixed = `$${Number(totalAmount).toFixed(2)}`;
+  const totalAmountFixed = `$${Number(props.totalAmount).toFixed(2)}`;
   return (
     <>
       <div className="all-accounts">

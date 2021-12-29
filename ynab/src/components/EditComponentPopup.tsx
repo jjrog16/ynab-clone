@@ -85,7 +85,7 @@ function EditComponentPopup(props: Props) {
       setIsSending(true);
 
       // eslint-disable-next-line no-restricted-globals
-      if (confirm("Bruh like are you sure?")) {
+      if (confirm("Are you sure you want to delete?")) {
         // Children can be deleted since they have no dependencies
         if (props.componentType === "categories") {
           deleteDoc(props.editLocationForDb);
@@ -93,6 +93,8 @@ function EditComponentPopup(props: Props) {
           // once the request is sent, update state again
           // only update if we are still mounted
           if (isMounted.current) setIsSending(false);
+
+          // Update state of totalCategoryGroup
 
           // Load from Firebase to cause a rerender since there is a change
           props.rerender();

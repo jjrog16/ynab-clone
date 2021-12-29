@@ -7,19 +7,46 @@ import {
   QueryDocumentSnapshot,
 } from "@firebase/firestore";
 import { Query } from "@testing-library/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   category: QueryDocumentSnapshot;
   rerender: any;
+  totalAmount: number;
+  totalCategoryGroupAmount: number;
+  setTotalCategoryGroupAmount: any;
+  readyToAssignTotal: number;
+  setReadyToAssignTotal: any;
 }
 
 function Category(props: Props) {
   // The data related to a Category as specified in Db
   const category: DocumentData = props.category.data();
   const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
+
+  // Each category will take its amount and total it up. Total amount is kept up to date in App
+
+  // Using useEffect on setTotalCategoryGroupAmount prevents warning with
+  // being unable to update a component while rendering a different componenet
+  useEffect(() => {
+    // Set the total amount for the categories in a category group
+    props.setTotalCategoryGroupAmount(
+      (previousAmount: number) => previousAmount + category.available
+    );
+
+    console.log(props.totalAmount, props.totalCategoryGroupAmount);
+
+    // Set the readyToAssignTotal amount used to display in the Navbar
+    props.setReadyToAssignTotal(
+      props.totalAmount - props.totalCategoryGroupAmount
+    );
+
+    return () => {
+      //cleanup
+    };
+  }, []);
 
   // Implement context menu //
 
