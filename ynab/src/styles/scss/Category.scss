@@ -6,8 +6,24 @@
   justify-content: space-between;
   padding: dimens.$medium;
   border: 1px solid colors.$medium-gray;
+  &:hover {
+    #et-edit-available {
+      display: flex;
+      margin-right: dimens.$medium;
+      width: 100px;
+      padding: 0px;
+    }
+  }
 }
 
 .category-name {
   color: colors.$main-app-text;
+}
+
+.category-right-side {
+  display: flex;
+}
+
+#et-edit-available {
+  display: none;
 }
