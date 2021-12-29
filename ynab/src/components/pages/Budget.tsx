@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "../../styles/css/Budget.css";
 import NavBar from "../NavBar";
-import AutoAssignSideBar from "../AutoAssignSideBar";
 import {
   collection,
   CollectionReference,
@@ -184,7 +183,6 @@ function Budget(props: Props) {
             </div>
           </div>
         </div>
-        <AutoAssignSideBar />
       </div>
     </div>
   );
