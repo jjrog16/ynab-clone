@@ -26,44 +26,16 @@ function Category(props: Props) {
   const category: DocumentData = props.category.data();
   const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
 
-  // Each category will take its amount and total it up. Total amount is kept up to date in App
-
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
-    console.log(
-      `Before setTotalCat, cat: ${category.title} cat amount: ${category.available}`
-    );
-
     // Set the total amount for the categories in a category group
-    props.setTotalCategoryGroupAmount((previousAmount: number) => {
-      console.log(
-        `In setTotalCategory, previousAmount: ${previousAmount} || cat: ${category.title} cat amount: ${category.available}`
-      );
-      return previousAmount + category.available;
-    });
-
-    console.log(
-      `After setTotalCat, totalCategoryAmount: ${props.totalCategoryGroupAmount}`
+    props.setTotalCategoryGroupAmount(
+      (previousAmount: number) => previousAmount + category.available
     );
 
     return () => {
       //cleanup
-    };
-  }, []);
-
-  useEffect(() => {
-    // Set the readyToAssignTotal amount used to display in the Navbar
-    props.setReadyToAssignTotal(
-      props.totalAmount - props.totalCategoryGroupAmount
-    );
-
-    console.log(
-      "Category",
-      `After: setReady: ${props.totalCategoryGroupAmount}`
-    );
-    return () => {
-      // cleanup
     };
   }, []);
 

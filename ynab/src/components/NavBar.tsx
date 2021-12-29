@@ -10,13 +10,13 @@ interface Props {
 }
 
 function NavBar(props: Props) {
-  // Watch for Ready to Assign changes and update accordingly
+  // Watch for Total Category Group Amount changes and update accordingly
   useEffect(() => {
     props.setReadyToAssignTotal(
       props.totalAmount - props.totalCategoryGroupAmount
     );
     return () => {};
-  }, [props.readyToAssignTotal]);
+  }, [props.totalCategoryGroupAmount]);
 
   return (
     <nav className="navbar">

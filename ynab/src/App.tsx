@@ -19,10 +19,11 @@ function App() {
   const [allAccounts, setAllAccounts] = useState<QueryDocumentSnapshot[]>();
 
   // Keep track of the total amount of money available from all bank accounts
-  const [totalAmount, setTotalAmount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   // Keep track of the total amount of money from a Category Group
-  const [totalCategoryGroupAmount, setTotalCategoryGroupAmount] = useState(0);
+  const [totalCategoryGroupAmount, setTotalCategoryGroupAmount] =
+    useState<number>(0);
 
   // Keep track of the ready to assign amount and recalculate when sections are deleted
   const [readyToAssignTotal, setReadyToAssignTotal] = useState<number>(0);
