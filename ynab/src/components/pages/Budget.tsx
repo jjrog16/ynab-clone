@@ -87,9 +87,10 @@ function Budget() {
   const componentType = "categoryGroups";
 
   // The latest position is the last position number of the array, or return -1
-  const latestPosition = allCategoryGroups
-    ? allCategoryGroups[allCategoryGroups.length - 1].data().position
-    : -1;
+  const latestPosition =
+    allCategoryGroups && allCategoryGroups.length > 0
+      ? allCategoryGroups[allCategoryGroups.length - 1].data().position
+      : -1;
 
   // The location for where the AddComponentPopup will send data
   const categoryGroupDbLocation: CollectionReference = collection(
