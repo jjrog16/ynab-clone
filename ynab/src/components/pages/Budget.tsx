@@ -16,7 +16,14 @@ import {
 import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
 
-function Budget() {
+interface Props {
+  totalAmount: number;
+  setTotalAmount: any;
+  totalCategoryGroupAmount: number;
+  setTotalCategoryGroupAmount: any;
+}
+
+function Budget(props: Props) {
   // Read what is in the database as an array of QueryDocumentSnapshot, and display
   // groups to UI
   const [allCategoryGroups, setAllCategoryGroups] =
@@ -106,7 +113,11 @@ function Budget() {
 
   return (
     <div className="budget-page">
-      <NavBar />
+      <NavBar
+        totalAmount={props.totalAmount}
+        setTotalAmount={props.setTotalAmount}
+        totalCategoryGroupAmount={props.totalCategoryGroupAmount}
+      />
       <div className="budget-container">
         <div className="budget-wrapper">
           <div className="category-group-bar">
@@ -156,6 +167,10 @@ function Budget() {
                       key={categoryGroup.id}
                       group={categoryGroup}
                       rerender={() => loadCategoryGroups(groupsQuery)}
+                      totalCategoryGroupAmount={props.totalCategoryGroupAmount}
+                      setTotalCategoryGroupAmount={
+                        props.setTotalCategoryGroupAmount
+                      }
                     />
                   );
                 })}

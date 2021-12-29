@@ -4,7 +4,13 @@ import { useState } from "react";
 import Accounts from "./Accounts";
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
-function SideBar(props: { accounts: QueryDocumentSnapshot[] | undefined }) {
+interface Props {
+  accounts: QueryDocumentSnapshot[] | undefined;
+  totalAmount: number;
+  setTotalAmount: any;
+}
+
+function SideBar(props: Props) {
   return (
     <div className="sidebar-container">
       <div className="account-header">
@@ -14,7 +20,11 @@ function SideBar(props: { accounts: QueryDocumentSnapshot[] | undefined }) {
       <div className="overview-sections">
         <h3 className="page-overview">Budget</h3>
       </div>
-      <Accounts accounts={props.accounts} />
+      <Accounts
+        accounts={props.accounts}
+        totalAmount={props.totalAmount}
+        setTotalAmount={props.setTotalAmount}
+      />
     </div>
   );
 }

@@ -18,6 +18,12 @@ import {
 function App() {
   const [allAccounts, setAllAccounts] = useState<QueryDocumentSnapshot[]>();
 
+  // Keep track of the total amount of money available from all bank accounts
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  // Keep track of the total amount of money from a Category Group
+  const [totalCategoryGroupAmount, setTotalCategoryGroupAmount] = useState(0);
+
   useEffect(() => {
     async function loadAccounts() {
       // Query to get all accounts in Firebase
@@ -45,9 +51,23 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <SideBar accounts={allAccounts} />
+        <SideBar
+          accounts={allAccounts}
+          totalAmount={totalAmount}
+          setTotalAmount={setTotalAmount}
+        />
         <Routes>
-          <Route path="/" element={<Budget />} />
+          <Route
+            path="/"
+            element={
+              <Budget
+                totalAmount={totalAmount}
+                setTotalAmount={setTotalAmount}
+                totalCategoryGroupAmount={totalCategoryGroupAmount}
+                setTotalCategoryGroupAmount={setTotalCategoryGroupAmount}
+              />
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

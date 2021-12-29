@@ -19,6 +19,8 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   group: QueryDocumentSnapshot;
   rerender: any;
+  totalCategoryGroupAmount: number;
+  setTotalCategoryGroupAmount: any;
 }
 
 function CategoryGroup(props: Props) {
@@ -189,6 +191,8 @@ function CategoryGroup(props: Props) {
               key={category.id}
               category={category}
               rerender={() => loadCategories(categoriesQuery)}
+              totalCategoryGroupAmount={props.totalCategoryGroupAmount}
+              setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
             />
           );
         })}
