@@ -1,18 +1,16 @@
 import {
   collection,
-  CollectionReference,
   doc,
   DocumentReference,
   getDocs,
   getFirestore,
-  orderBy,
   Query,
   query,
   QueryDocumentSnapshot,
   QuerySnapshot,
   where,
 } from "@firebase/firestore";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "../styles/css/CategoryGroup.css";
 import AddComponentPopup from "./AddComponentPopup";
 import Category from "./Category";
@@ -27,12 +25,11 @@ function CategoryGroup(props: Props) {
   // Array of Categories that relate to each category group
   const [allCategories, setAllCategories] = useState<QueryDocumentSnapshot[]>();
 
-  useEffect(() => {
-    loadCategories(categoriesQuery);
-    return () => {
-      //cleanup
-    };
-  }, []);
+  // Status for loading API call
+  const [isSending, setIsSending] = useState(false);
+
+  // Keep track of when the component is unmounted
+  const isMounted = useRef(true);
 
   // Query to get all categories in Firebase based on corresponding to its
   // correct Category Group parent id
@@ -45,19 +42,43 @@ function CategoryGroup(props: Props) {
    * Load Categories from Firebase
    * @param query Type of Firebase query used to load data. Used to get all Categories
    */
-  async function loadCategories(query: Query) {
-    try {
-      // Asynchronous load of all accounts based off query
-      const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-      // Array of QueryDocumentSnapshots that allows for mapping
-      const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-        categoriesAsQuerySnapshot.docs;
-      setAllCategories(arrayOfQueryDocumentSnapshots);
-    } catch (e) {
-      console.log("An error occurred when trying to load your accounts");
-      console.log(`Error: ${e}`);
-    }
-  }
+  const loadCategories = useCallback(
+    async (query: Query) => {
+      try {
+        // don't send again while we are sending
+        if (isSending) return;
+
+        // update state
+        setIsSending(true);
+
+        // Asynchronous load of all accounts based off query
+        const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+
+        // Array of QueryDocumentSnapshots that allows for mapping
+        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+          categoriesAsQuerySnapshot.docs;
+
+        // once the request is sent, update state again
+        // only update if we are still mounted
+        if (isMounted.current) setIsSending(false);
+
+        setAllCategories(arrayOfQueryDocumentSnapshots);
+      } catch (e) {
+        console.log("An error occurred when trying to load your accounts");
+        console.log(`Error: ${e}`);
+      }
+    },
+    [isSending]
+  );
+
+  // set isMounted to false when we unmount the component
+  // Dependencies need to be empty to allow for rerendering
+  useEffect(() => {
+    loadCategories(categoriesQuery);
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Category Group title derived from props
   const categoryGroupTitle: string = props.group.data().title;
@@ -94,11 +115,14 @@ function CategoryGroup(props: Props) {
 
   // Implement context menu //
 
+  // Type of component being passed for Edit
+  const componentType = "categoryGroups";
+
   // The location for where EditComponentPopup will send data
   // Needs the collection with db, the name of the collection,
   // and the ID of the item being changed
   const categoryGroupDbLocation: DocumentReference = doc(
-    collection(getFirestore(), "categoryGroups"),
+    collection(getFirestore(), componentType),
     props.group.id
   );
 
@@ -131,7 +155,9 @@ function CategoryGroup(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.group}
-            componentObjectAdded={editedCategoryGroupObj}
+            componentObjectTemplate={editedCategoryGroupObj}
+            componentType={componentType}
+            children={allCategories}
             editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerender}
             popupStatus={editComponentPopupStatus}
@@ -149,6 +175,7 @@ function CategoryGroup(props: Props) {
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
             addLocationForDb={categoryDbLocation}
+            componentType={componentType}
             rerender={() => loadCategories(categoriesQuery)}
             popupStatus={addComponentPopupStatus}
             setPopupStatus={setAddComponentPopupStatus}
@@ -160,7 +187,7 @@ function CategoryGroup(props: Props) {
           return (
             <Category
               key={category.id}
-              info={category}
+              category={category}
               rerender={() => loadCategories(categoriesQuery)}
             />
           );

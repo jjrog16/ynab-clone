@@ -1,10 +1,11 @@
 import { addDoc, CollectionReference } from "@firebase/firestore";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
   componentObjectAdded: any;
   addLocationForDb: CollectionReference;
+  componentType: string;
   rerender: any;
   popupStatus: boolean;
   setPopupStatus: any;
@@ -13,19 +14,48 @@ interface Props {
 function AddComponentPopup(props: Props) {
   const [inputState, setInputState] = useState<string>("");
 
-  async function addComponentToDb(location: CollectionReference) {
-    // Change the title of the component based on the input
-    props.componentObjectAdded["title"] = inputState;
+  // Status for loading API call
+  const [isSending, setIsSending] = useState(false);
 
-    // Add the doc based on location passed and the object type passed in props
-    await addDoc(location, props.componentObjectAdded);
+  // Keep track of when the component is unmounted
+  const isMounted = useRef(true);
 
-    // Load from Firebase to cause a rerender since a new addition has been added
-    props.rerender();
+  // set isMounted to false when we unmount the component
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-    // Dismiss the popup
-    removePopup();
-  }
+  const addComponentToDb = useCallback(
+    async (location: CollectionReference) => {
+      console.log(props.componentType);
+      console.log(`isSending: ${isSending}`);
+
+      // don't send again while we are sending
+      if (isSending) return;
+
+      // update state
+      setIsSending(true);
+
+      // Change the title of the component based on the input
+      props.componentObjectAdded["title"] = inputState;
+
+      // Add the doc based on location passed and the object type passed in props
+      await addDoc(location, props.componentObjectAdded);
+
+      // once the request is sent, update state again
+      // only update if we are still mounted
+      if (isMounted.current) setIsSending(false);
+
+      // Load from Firebase to cause a rerender since a new addition has been added
+      props.rerender();
+
+      // Dismiss the popup
+      removePopup();
+    },
+    [isSending, inputState]
+  );
 
   // Sets popup status to false to remove popup from view.
   function removePopup() {
