@@ -36,8 +36,6 @@ function Category(props: Props) {
       (previousAmount: number) => previousAmount + category.available
     );
 
-    console.log(props.totalAmount, props.totalCategoryGroupAmount);
-
     // Set the readyToAssignTotal amount used to display in the Navbar
     props.setReadyToAssignTotal(
       props.totalAmount - props.totalCategoryGroupAmount
