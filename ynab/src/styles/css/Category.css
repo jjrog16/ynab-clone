@@ -10,6 +10,12 @@
   width: 100px;
   padding: 0px;
 }
+.category:hover .calc-category-available {
+  display: flex;
+  margin-right: 16px;
+  user-select: none;
+  color: #656568;
+}
 
 .category-name {
   color: #383e42;
@@ -21,6 +27,18 @@
 
 #et-edit-available {
   display: none;
+}
+
+.calc-category-available {
+  display: none;
+}
+
+.plus:hover {
+  font-weight: bold;
+}
+
+.minus:hover {
+  font-weight: bold;
 }
 
 /*# sourceMappingURL=Category.css.map */
