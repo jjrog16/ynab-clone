@@ -13,6 +13,13 @@
       width: 100px;
       padding: 0px;
     }
+
+    .calc-category-available {
+      display: flex;
+      margin-right: dimens.$medium;
+      user-select: none;
+      color: colors.$dark-gray;
+    }
   }
 }
 
@@ -26,4 +33,20 @@
 
 #et-edit-available {
   display: none;
+}
+
+.calc-category-available {
+  display: none;
+}
+
+.plus {
+  &:hover {
+    font-weight: bold;
+  }
+}
+
+.minus {
+  &:hover {
+    font-weight: bold;
+  }
 }
