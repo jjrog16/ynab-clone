@@ -4,9 +4,23 @@
   padding: 16px;
   border: 1px solid #d1d1d6;
 }
+.category:hover #et-edit-available {
+  display: flex;
+  margin-right: 16px;
+  width: 100px;
+  padding: 0px;
+}
 
 .category-name {
   color: #383e42;
+}
+
+.category-right-side {
+  display: flex;
+}
+
+#et-edit-available {
+  display: none;
 }
 
 /*# sourceMappingURL=Category.css.map */

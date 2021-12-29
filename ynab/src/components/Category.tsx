@@ -26,19 +26,12 @@ function Category(props: Props) {
   const category: DocumentData = props.category.data();
   const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
 
-  // Each category will take its amount and total it up. Total amount is kept up to date in App
-
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
     props.setTotalCategoryGroupAmount(
       (previousAmount: number) => previousAmount + category.available
-    );
-
-    // Set the readyToAssignTotal amount used to display in the Navbar
-    props.setReadyToAssignTotal(
-      props.totalAmount - props.totalCategoryGroupAmount
     );
 
     return () => {
@@ -80,6 +73,9 @@ function Category(props: Props) {
     setEditComponentPopupStatus(true);
   }
 
+  // Available money associated with a category
+  const [available, setAvailable] = useState("");
+
   return (
     <>
       <li
@@ -99,8 +95,20 @@ function Category(props: Props) {
             setPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
-        <div className="category-name">{category.title}</div>
-        <div className="category-amount">{categoryAvailableFixed}</div>
+        <div className="category-left-side">
+          <div className="category-name">{category.title}</div>
+        </div>
+        <div className="category-right-side">
+          <form>
+            <input
+              type="text"
+              id="et-edit-available"
+              value={available}
+              onChange={(e) => setAvailable(e.target.value)}
+            ></input>
+          </form>
+          <div className="category-amount">{categoryAvailableFixed}</div>
+        </div>
       </li>
     </>
   );
