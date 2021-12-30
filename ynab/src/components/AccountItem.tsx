@@ -14,9 +14,23 @@ interface Props {
   setEditAccountWorkingBalanceInput: any;
   accountIdPassed: string;
   setAccountIdPassed: any;
+  setTotalAmount: any;
 }
 
 function AccountItem(props: Props) {
+  // Using useEffect on setTotalCategoryGroupAmount prevents warning with
+  // being unable to update a component while rendering a different componenet
+  useEffect(() => {
+    // Set the total amount for the categories in a category group
+    props.setTotalAmount(
+      (previousAmount: number) => previousAmount + props.info.amount
+    );
+
+    return () => {
+      //cleanup
+    };
+  }, []);
+
   /**
    * Handles the result of entering the context menu for a bank account
    * @param event Right click mouse event

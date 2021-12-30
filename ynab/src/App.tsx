@@ -126,6 +126,7 @@ function App() {
                 }
                 accountIdPassed={accountIdPassed}
                 setAccountIdPassed={setAccountIdPassed}
+                rerenderAccounts={() => loadAccounts(accountQuery)}
               />
             }
           />

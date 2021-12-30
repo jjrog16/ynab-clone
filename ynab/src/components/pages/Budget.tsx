@@ -30,6 +30,7 @@ interface Props {
   setEditAccountWorkingBalanceInput: any;
   accountIdPassed: string;
   setAccountIdPassed: any;
+  rerenderAccounts: any;
 }
 
 function Budget(props: Props) {
@@ -170,6 +171,7 @@ function Budget(props: Props) {
                 }
                 accountIdPassed={props.accountIdPassed}
                 setAccountIdPassed={props.setAccountIdPassed}
+                rerender={props.rerenderAccounts}
               />
             ) : null}
             <div className="category-assign-activity-available-bar-left">

@@ -19,6 +19,7 @@ interface Props {
   setEditAccountWorkingBalanceInput: any;
   accountIdPassed: string;
   setAccountIdPassed: any;
+  rerender: any;
 }
 function EditAccountPopup(props: Props) {
   // Status for loading API call
@@ -62,7 +63,7 @@ function EditAccountPopup(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         // Load from Firebase to cause a rerender since there is a change
-        //props.rerender();
+        props.rerender();
       }
     },
     [

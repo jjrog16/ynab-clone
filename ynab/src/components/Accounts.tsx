@@ -19,18 +19,14 @@ interface Props {
 }
 
 function Accounts(props: Props) {
-  // Controls if popup should be visible
-  const [addAccountPopupStatus, setAddAccountPopupStatus] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    // Collect each account balance amount and calculate the total amount for all accounts
-    props.accounts?.map((account) => {
-      const balance: DocumentData = account.data();
-      props.setTotalAmount((prevAmount: number) => prevAmount + balance.amount);
-    });
-    return () => {};
-  }, [props.accounts]);
+  // useEffect(() => {
+  //   // Collect each account balance amount and calculate the total amount for all accounts
+  //   props.accounts?.map((account) => {
+  //     const balance: DocumentData = account.data();
+  //     props.setTotalAmount((prevAmount: number) => prevAmount + balance.amount);
+  //   });
+  //   return () => {};
+  // }, [props.accounts]);
 
   // Amount of money with dollar sign and decimal
   const totalAmountFixed = `$${Number(props.totalAmount).toFixed(2)}`;
@@ -78,6 +74,7 @@ function Accounts(props: Props) {
                   }
                   accountIdPassed={props.accountIdPassed}
                   setAccountIdPassed={props.setAccountIdPassed}
+                  setTotalAmount={props.setTotalAmount}
                 />
               );
             })}
