@@ -74,6 +74,11 @@ function App() {
     };
   }, []);
 
+  // Handle the popups for Editing Accounts and Adding Accounts
+  // Controls if popup should be visible
+  const [editAccountPopupStatus, setEditAccountPopupStatus] =
+    useState<boolean>(false);
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -81,6 +86,8 @@ function App() {
           accounts={allAccounts}
           totalAmount={totalAmount}
           setTotalAmount={setTotalAmount}
+          editAccountPopupStatus={editAccountPopupStatus}
+          setEditAccountPopupStatus={setEditAccountPopupStatus}
         />
         <Routes>
           <Route
@@ -93,6 +100,8 @@ function App() {
                 setTotalCategoryGroupAmount={setTotalCategoryGroupAmount}
                 readyToAssignTotal={readyToAssignTotal}
                 setReadyToAssignTotal={setReadyToAssignTotal}
+                editAccountPopupStatus={editAccountPopupStatus}
+                setEditAccountPopupStatus={setEditAccountPopupStatus}
               />
             }
           />

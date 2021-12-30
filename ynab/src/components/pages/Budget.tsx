@@ -13,6 +13,7 @@ import {
 } from "@firebase/firestore";
 import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
+import EditAccountPopup from "../EditAccountPopup";
 
 interface Props {
   totalAmount: number;
@@ -21,6 +22,8 @@ interface Props {
   setTotalCategoryGroupAmount: any;
   readyToAssignTotal: number;
   setReadyToAssignTotal: any;
+  editAccountPopupStatus: boolean;
+  setEditAccountPopupStatus: any;
 }
 
 function Budget(props: Props) {
@@ -143,6 +146,15 @@ function Budget(props: Props) {
             ) : null}
           </div>
           <div className="category-assign-activity-available-bar">
+            {props.editAccountPopupStatus ? (
+              <EditAccountPopup
+                coodinates={{
+                  x: 250,
+                  y: 250,
+                }}
+                componentObjectTemplate={undefined}
+              />
+            ) : null}
             <div className="category-assign-activity-available-bar-left">
               <p className="category-assign-activity-available-bar-item">
                 CATEGORY

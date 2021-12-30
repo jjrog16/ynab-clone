@@ -2,14 +2,21 @@ import { DocumentData, QueryDocumentSnapshot } from "@firebase/firestore";
 import React, { useEffect, useState } from "react";
 import "../styles/css/Accounts.css";
 import AccountItem from "./AccountItem";
+import EditAccountPopup from "./EditAccountPopup";
 
 interface Props {
   accounts: QueryDocumentSnapshot[] | undefined;
   totalAmount: number;
   setTotalAmount: any;
+  editAccountPopupStatus: boolean;
+  setEditAccountPopupStatus: any;
 }
 
 function Accounts(props: Props) {
+  // Controls if popup should be visible
+  const [addAccountPopupStatus, setAddAccountPopupStatus] =
+    useState<boolean>(false);
+
   useEffect(() => {
     // Collect each account balance amount and calculate the total amount for all accounts
     props.accounts?.map((account) => {
@@ -36,13 +43,31 @@ function Accounts(props: Props) {
                   key={account.id}
                   id={account.id}
                   info={account.data()}
+                  editAccountPopupStatus={props.editAccountPopupStatus}
+                  setEditAccountPopupStatus={props.setEditAccountPopupStatus}
                 />
               );
             })}
           </ul>
         </div>
       </div>
-      <button className="btn-add-account">Add account</button>
+      <div className="button-add-account-container">
+        <button
+          className="btn-add-account"
+          onClick={() => setAddAccountPopupStatus(!addAccountPopupStatus)}
+        >
+          Add account
+        </button>
+        {addAccountPopupStatus ? (
+          <EditAccountPopup
+            coodinates={{
+              x: 0,
+              y: 0,
+            }}
+            componentObjectTemplate={undefined}
+          />
+        ) : null}
+      </div>
     </>
   );
 }
