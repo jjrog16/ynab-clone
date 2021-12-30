@@ -10,6 +10,12 @@ interface Props {
   setTotalAmount: any;
   editAccountPopupStatus: boolean;
   setEditAccountPopupStatus: any;
+  editAccountNameInput: string;
+  setEditAccountNameInput: any;
+  editAccountWorkingBalanceInput: string;
+  setEditAccountWorkingBalanceInput: any;
+  accountIdPassed: string;
+  setAccountIdPassed: any;
 }
 
 function SideBar(props: Props) {
@@ -28,6 +34,14 @@ function SideBar(props: Props) {
         setTotalAmount={props.setTotalAmount}
         editAccountPopupStatus={props.editAccountPopupStatus}
         setEditAccountPopupStatus={props.setEditAccountPopupStatus}
+        editAccountNameInput={props.editAccountNameInput}
+        setEditAccountNameInput={props.setEditAccountNameInput}
+        editAccountWorkingBalanceInput={props.editAccountWorkingBalanceInput}
+        setEditAccountWorkingBalanceInput={
+          props.setEditAccountWorkingBalanceInput
+        }
+        accountIdPassed={props.accountIdPassed}
+        setAccountIdPassed={props.setAccountIdPassed}
       />
     </div>
   );

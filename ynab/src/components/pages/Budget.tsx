@@ -24,6 +24,12 @@ interface Props {
   setReadyToAssignTotal: any;
   editAccountPopupStatus: boolean;
   setEditAccountPopupStatus: any;
+  editAccountNameInput: string;
+  setEditAccountNameInput: any;
+  editAccountWorkingBalanceInput: string;
+  setEditAccountWorkingBalanceInput: any;
+  accountIdPassed: string;
+  setAccountIdPassed: any;
 }
 
 function Budget(props: Props) {
@@ -149,10 +155,21 @@ function Budget(props: Props) {
             {props.editAccountPopupStatus ? (
               <EditAccountPopup
                 coodinates={{
-                  x: 250,
-                  y: 250,
+                  x: 300,
+                  y: 200,
                 }}
-                componentObjectTemplate={undefined}
+                editAccountPopupStatus={props.editAccountPopupStatus}
+                setEditAccountPopupStatus={props.setEditAccountPopupStatus}
+                editAccountNameInput={props.editAccountNameInput}
+                setEditAccountNameInput={props.setEditAccountNameInput}
+                editAccountWorkingBalanceInput={
+                  props.editAccountWorkingBalanceInput
+                }
+                setEditAccountWorkingBalanceInput={
+                  props.setEditAccountWorkingBalanceInput
+                }
+                accountIdPassed={props.accountIdPassed}
+                setAccountIdPassed={props.setAccountIdPassed}
               />
             ) : null}
             <div className="category-assign-activity-available-bar-left">

@@ -8,41 +8,26 @@ interface Props {
   info: DocumentData;
   editAccountPopupStatus: boolean;
   setEditAccountPopupStatus: any;
+  editAccountNameInput: string;
+  setEditAccountNameInput: any;
+  editAccountWorkingBalanceInput: string;
+  setEditAccountWorkingBalanceInput: any;
+  accountIdPassed: string;
+  setAccountIdPassed: any;
 }
 
 function AccountItem(props: Props) {
-  // Set up the input state to be the passed in title
-  const [inputState, setInputState] = useState<string>();
-
-  // Status for loading API call
-  const [isSending, setIsSending] = useState<boolean>(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
-
-  // The location for where the EditAccountPopup will send data
-  const accountDbLocation = collection(getFirestore(), "accounts");
-
-  // Use for knowing where the right click occurred
-  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
-
   /**
-   * Handles where the contextual menu appears
-   * @param event The right click event
+   * Handles the result of entering the context menu for a bank account
+   * @param event Right click mouse event
    */
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
-    // setAnchorPoint({ x: event.pageX, y: event.pageY });
-    setAnchorPoint({ x: 250, y: 250 });
     props.setEditAccountPopupStatus(true);
+    props.setEditAccountNameInput(props.info.title);
+    props.setEditAccountWorkingBalanceInput(props.info.amount);
+    props.setAccountIdPassed(props.id);
   }
-
-  // set isMounted to false when we unmount the component
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   const fixedAmount = `$${Number(props.info.amount).toFixed(2)}`;
   return (

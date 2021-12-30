@@ -79,6 +79,16 @@ function App() {
   const [editAccountPopupStatus, setEditAccountPopupStatus] =
     useState<boolean>(false);
 
+  // The default state for the account name input field inside the EditAccountPopup component
+  const [editAccountNameInput, setEditAccountNameInput] = useState("");
+
+  // The default state for the working balance input field inside the EditAccountPopup component
+  const [editAccountWorkingBalanceInput, setEditAccountWorkingBalanceInput] =
+    useState("");
+
+  // The account id for the account being edited or deleted
+  const [accountIdPassed, setAccountIdPassed] = useState("");
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -88,6 +98,12 @@ function App() {
           setTotalAmount={setTotalAmount}
           editAccountPopupStatus={editAccountPopupStatus}
           setEditAccountPopupStatus={setEditAccountPopupStatus}
+          editAccountNameInput={editAccountNameInput}
+          setEditAccountNameInput={setEditAccountNameInput}
+          editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
+          setEditAccountWorkingBalanceInput={setEditAccountWorkingBalanceInput}
+          accountIdPassed={accountIdPassed}
+          setAccountIdPassed={setAccountIdPassed}
         />
         <Routes>
           <Route
@@ -102,6 +118,14 @@ function App() {
                 setReadyToAssignTotal={setReadyToAssignTotal}
                 editAccountPopupStatus={editAccountPopupStatus}
                 setEditAccountPopupStatus={setEditAccountPopupStatus}
+                editAccountNameInput={editAccountNameInput}
+                setEditAccountNameInput={setEditAccountNameInput}
+                editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
+                setEditAccountWorkingBalanceInput={
+                  setEditAccountWorkingBalanceInput
+                }
+                accountIdPassed={accountIdPassed}
+                setAccountIdPassed={setAccountIdPassed}
               />
             }
           />
