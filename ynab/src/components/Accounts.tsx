@@ -10,8 +10,6 @@ interface Props {
 }
 
 function Accounts(props: Props) {
-  //const [totalAmount, setTotalAmount] = useState(0);
-
   useEffect(() => {
     // Collect each account balance amount and calculate the total amount for all accounts
     props.accounts?.map((account) => {
@@ -27,8 +25,8 @@ function Accounts(props: Props) {
     <>
       <div className="all-accounts">
         <div className="budget-header">
-          <div className="budget-title">BUDGET</div>
-          <div className="budget-total-amount">{totalAmountFixed}</div>
+          <h5 className="budget-title">BUDGET</h5>
+          <h5 className="budget-total-amount">{totalAmountFixed}</h5>
         </div>
         <div className="account-wrapper">
           <ul className="account-items">
