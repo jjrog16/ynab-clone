@@ -3,7 +3,15 @@
 
 .account {
   display: flex;
-  margin: dimens.$medium;
+  align-items: center;
+  margin: dimens.$small;
+  height: 50px;
+  width: 260px;
+  padding-left: dimens.$small;
+  padding-right: dimens.$small;
+  &:hover {
+    background-color: colors.$hover-dark-blue;
+  }
 }
 
 .account-name {
