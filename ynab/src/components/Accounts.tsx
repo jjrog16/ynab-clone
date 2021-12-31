@@ -14,22 +14,13 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountIdPassed: string;
-  setAccountIdPassed: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
 }
 
 function Accounts(props: Props) {
-  // useEffect(() => {
-  //   // Collect each account balance amount and calculate the total amount for all accounts
-  //   props.accounts?.map((account) => {
-  //     const balance: DocumentData = account.data();
-  //     props.setTotalAmount((prevAmount: number) => prevAmount + balance.amount);
-  //   });
-  //   return () => {};
-  // }, [props.accounts]);
-
   // Amount of money with dollar sign and decimal
-  const totalAmountFixed = `$${Number(props.totalAmount).toFixed(2)}`;
+  let totalAmountFixed = `$${Number(props.totalAmount).toFixed(2)}`;
 
   /**
    * Set of operations to perform once add account button is clicked
@@ -43,9 +34,6 @@ function Accounts(props: Props) {
 
     // Set working balance input to empty
     props.setEditAccountWorkingBalanceInput("");
-
-    // Set the id passed as an empty string since the new account will not have one
-    props.setAccountIdPassed("");
   }
   return (
     <>
@@ -60,8 +48,7 @@ function Accounts(props: Props) {
               return (
                 <AccountItem
                   key={account.id}
-                  id={account.id}
-                  info={account.data()}
+                  account={account}
                   editAccountPopupStatus={props.editAccountPopupStatus}
                   setEditAccountPopupStatus={props.setEditAccountPopupStatus}
                   editAccountNameInput={props.editAccountNameInput}
@@ -72,8 +59,9 @@ function Accounts(props: Props) {
                   setEditAccountWorkingBalanceInput={
                     props.setEditAccountWorkingBalanceInput
                   }
-                  accountIdPassed={props.accountIdPassed}
-                  setAccountIdPassed={props.setAccountIdPassed}
+                  accountPassed={props.accountPassed}
+                  setAccountPassed={props.setAccountPassed}
+                  totalAmount={props.totalAmount}
                   setTotalAmount={props.setTotalAmount}
                 />
               );

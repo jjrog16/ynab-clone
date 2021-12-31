@@ -87,7 +87,9 @@ function App() {
     useState("");
 
   // The account id for the account being edited or deleted
-  const [accountIdPassed, setAccountIdPassed] = useState("");
+  const [accountPassed, setAccountPassed] = useState<
+    QueryDocumentSnapshot | undefined
+  >();
 
   return (
     <div className="App">
@@ -102,8 +104,8 @@ function App() {
           setEditAccountNameInput={setEditAccountNameInput}
           editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
           setEditAccountWorkingBalanceInput={setEditAccountWorkingBalanceInput}
-          accountIdPassed={accountIdPassed}
-          setAccountIdPassed={setAccountIdPassed}
+          accountPassed={accountPassed}
+          setAccountPassed={setAccountPassed}
         />
         <Routes>
           <Route
@@ -124,9 +126,9 @@ function App() {
                 setEditAccountWorkingBalanceInput={
                   setEditAccountWorkingBalanceInput
                 }
-                accountIdPassed={accountIdPassed}
-                setAccountIdPassed={setAccountIdPassed}
-                rerenderAccounts={() => loadAccounts(accountQuery)}
+                accountPassed={accountPassed}
+                setAccountPassed={setAccountPassed}
+                rerenderLoadAccounts={() => loadAccounts(accountQuery)}
               />
             }
           />

@@ -18,7 +18,7 @@ import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   group: QueryDocumentSnapshot;
-  rerender: any;
+  rerenderLoadCategoryGroups: any;
   totalAmount: number;
   totalCategoryGroupAmount: number;
   setTotalCategoryGroupAmount: any;
@@ -164,7 +164,7 @@ function CategoryGroup(props: Props) {
             componentType={componentType}
             children={allCategories}
             editLocationForDb={categoryGroupDbLocation}
-            rerender={props.rerender}
+            rerender={props.rerenderLoadCategoryGroups}
             popupStatus={editComponentPopupStatus}
             setPopupStatus={setEditComponentPopupStatus}
             setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}

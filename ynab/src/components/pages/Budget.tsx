@@ -28,9 +28,9 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountIdPassed: string;
-  setAccountIdPassed: any;
-  rerenderAccounts: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
+  rerenderLoadAccounts: any;
 }
 
 function Budget(props: Props) {
@@ -169,9 +169,11 @@ function Budget(props: Props) {
                 setEditAccountWorkingBalanceInput={
                   props.setEditAccountWorkingBalanceInput
                 }
-                accountIdPassed={props.accountIdPassed}
-                setAccountIdPassed={props.setAccountIdPassed}
-                rerender={props.rerenderAccounts}
+                accountPassed={props.accountPassed}
+                setAccountPassed={props.setAccountPassed}
+                rerenderLoadAccounts={props.rerenderLoadAccounts}
+                totalAmount={props.totalAmount}
+                setTotalAmount={props.setTotalAmount}
               />
             ) : null}
             <div className="category-assign-activity-available-bar-left">
@@ -193,7 +195,9 @@ function Budget(props: Props) {
                     <CategoryGroup
                       key={categoryGroup.id}
                       group={categoryGroup}
-                      rerender={() => loadCategoryGroups(groupsQuery)}
+                      rerenderLoadCategoryGroups={() =>
+                        loadCategoryGroups(groupsQuery)
+                      }
                       setTotalCategoryGroupAmount={
                         props.setTotalCategoryGroupAmount
                       }

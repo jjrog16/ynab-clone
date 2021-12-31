@@ -5,6 +5,7 @@ import {
   doc,
   DocumentReference,
   getFirestore,
+  QueryDocumentSnapshot,
   setDoc,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -17,9 +18,11 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountIdPassed: string;
-  setAccountIdPassed: any;
-  rerender: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
+  rerenderLoadAccounts: any;
+  totalAmount: number;
+  setTotalAmount: any;
 }
 function EditAccountPopup(props: Props) {
   // Status for loading API call
@@ -62,8 +65,31 @@ function EditAccountPopup(props: Props) {
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
 
+        // If the input the user entered for the change is higher than account amount in Db,
+        // subtract the account amount from the input amount and add that to totalAmount
+        if (
+          props.accountPassed?.data().amount <
+          props.editAccountWorkingBalanceInput
+        ) {
+          props.setTotalAmount(
+            (prevAmount: number) =>
+              prevAmount +
+              (Number(props.editAccountWorkingBalanceInput) -
+                props.accountPassed?.data().amount)
+          );
+        } else {
+          // Otherwise, the input is less than what we have in the db,
+          // so we are going to subtract that from the totalAmount
+          props.setTotalAmount(
+            (prevAmount: number) =>
+              prevAmount -
+              (props.accountPassed?.data().amount -
+                Number(props.editAccountWorkingBalanceInput))
+          );
+        }
+
         // Load from Firebase to cause a rerender since there is a change
-        props.rerender();
+        props.rerenderLoadAccounts();
       }
     },
     [
@@ -98,7 +124,7 @@ function EditAccountPopup(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         // Load from Firebase to cause a rerender since there is a change
-        //props.rerender();
+        props.rerenderLoadAccounts();
       }
     },
     [
@@ -112,12 +138,12 @@ function EditAccountPopup(props: Props) {
    * Controls whether we are editing an existing account or adding a new account
    */
   function handleSave() {
-    if (props.accountIdPassed === "") {
+    if (typeof props.accountPassed === undefined) {
       // Add as a new doc
       saveNewAccountToDb(accountDbLocation);
     } else {
       // Location is wrapped in a doc that specifies the exact entry to be updated
-      saveEditedAccountToDb(doc(accountDbLocation, props.accountIdPassed));
+      saveEditedAccountToDb(doc(accountDbLocation, props.accountPassed?.id));
     }
   }
 

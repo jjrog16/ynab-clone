@@ -1,19 +1,24 @@
-import { collection, DocumentData, getFirestore } from "@firebase/firestore";
+import {
+  collection,
+  DocumentData,
+  getFirestore,
+  QueryDocumentSnapshot,
+} from "@firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/css/AccountItem.css";
 import EditAccountPopup from "./EditAccountPopup";
 
 interface Props {
-  id: string;
-  info: DocumentData;
+  account: QueryDocumentSnapshot;
   editAccountPopupStatus: boolean;
   setEditAccountPopupStatus: any;
   editAccountNameInput: string;
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountIdPassed: string;
-  setAccountIdPassed: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
+  totalAmount: number;
   setTotalAmount: any;
 }
 
@@ -23,7 +28,7 @@ function AccountItem(props: Props) {
   useEffect(() => {
     // Set the total amount for the categories in a category group
     props.setTotalAmount(
-      (previousAmount: number) => previousAmount + props.info.amount
+      (previousAmount: number) => previousAmount + props.account.data().amount
     );
 
     return () => {
@@ -38,20 +43,20 @@ function AccountItem(props: Props) {
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     props.setEditAccountPopupStatus(true);
-    props.setEditAccountNameInput(props.info.title);
-    props.setEditAccountWorkingBalanceInput(props.info.amount);
-    props.setAccountIdPassed(props.id);
+    props.setEditAccountNameInput(props.account.data().title);
+    props.setEditAccountWorkingBalanceInput(props.account.data().amount);
+    props.setAccountPassed(props.account);
   }
 
-  const fixedAmount = `$${Number(props.info.amount).toFixed(2)}`;
+  const fixedAmount = `$${Number(props.account.data().amount).toFixed(2)}`;
   return (
     <>
       <li
-        key={props.id}
+        key={props.account.id}
         className="account"
         onContextMenu={(event) => handleContextMenu(event)}
       >
-        <div className="account-name">{props.info.title}</div>
+        <div className="account-name">{props.account.data().title}</div>
         <div className="account-amount">{fixedAmount}</div>
       </li>
     </>

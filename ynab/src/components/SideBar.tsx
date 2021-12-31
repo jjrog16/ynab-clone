@@ -14,8 +14,8 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountIdPassed: string;
-  setAccountIdPassed: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
 }
 
 function SideBar(props: Props) {
@@ -40,8 +40,8 @@ function SideBar(props: Props) {
         setEditAccountWorkingBalanceInput={
           props.setEditAccountWorkingBalanceInput
         }
-        accountIdPassed={props.accountIdPassed}
-        setAccountIdPassed={props.setAccountIdPassed}
+        accountPassed={props.accountPassed}
+        setAccountPassed={props.setAccountPassed}
       />
     </div>
   );
