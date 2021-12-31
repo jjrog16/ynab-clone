@@ -13,6 +13,11 @@
 
 .account-name {
   padding-right: 16px;
+  color: #fff;
+}
+
+.account-amount {
+  color: #fff;
 }
 
 /*# sourceMappingURL=AccountItem.css.map */

@@ -14,6 +14,7 @@ import {
   QueryDocumentSnapshot,
   Query,
 } from "@firebase/firestore";
+import Transactions from "./components/pages/Transactions";
 
 function App() {
   const [allAccounts, setAllAccounts] = useState<QueryDocumentSnapshot[]>();
@@ -132,6 +133,7 @@ function App() {
               />
             }
           />
+          <Route path="/AccountTransactions" element={<Transactions />} />
         </Routes>
       </BrowserRouter>
     </div>

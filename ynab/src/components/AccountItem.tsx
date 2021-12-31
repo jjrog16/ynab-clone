@@ -5,6 +5,7 @@ import {
   QueryDocumentSnapshot,
 } from "@firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles/css/AccountItem.css";
 import EditAccountPopup from "./EditAccountPopup";
 
@@ -51,14 +52,16 @@ function AccountItem(props: Props) {
   const fixedAmount = `$${Number(props.account.data().amount).toFixed(2)}`;
   return (
     <>
-      <li
-        key={props.account.id}
-        className="account"
-        onContextMenu={(event) => handleContextMenu(event)}
-      >
-        <div className="account-name">{props.account.data().title}</div>
-        <div className="account-amount">{fixedAmount}</div>
-      </li>
+      <Link to="/AccountTransactions">
+        <li
+          key={props.account.id}
+          className="account"
+          onContextMenu={(event) => handleContextMenu(event)}
+        >
+          <div className="account-name">{props.account.data().title}</div>
+          <div className="account-amount">{fixedAmount}</div>
+        </li>
+      </Link>
     </>
   );
 }
