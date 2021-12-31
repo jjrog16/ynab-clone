@@ -15,11 +15,21 @@
 .budget-title {
   font-weight: bold;
   color: colors.$white;
+  // Cancel out default h5 props
+  margin-block-start: 0%;
+  margin-block-end: 0%;
+  margin-inline-start: 0%;
+  margin-inline-end: 0%;
 }
 
 .budget-total-amount {
   font-weight: bold;
   color: colors.$white;
+  // Cancel out default h5 props
+  margin-block-start: 0%;
+  margin-block-end: 0%;
+  margin-inline-start: 0%;
+  margin-inline-end: 0%;
 }
 
 .account-wrapper {

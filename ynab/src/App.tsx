@@ -74,6 +74,23 @@ function App() {
     };
   }, []);
 
+  // Handle the popups for Editing Accounts and Adding Accounts
+  // Controls if popup should be visible
+  const [editAccountPopupStatus, setEditAccountPopupStatus] =
+    useState<boolean>(false);
+
+  // The default state for the account name input field inside the EditAccountPopup component
+  const [editAccountNameInput, setEditAccountNameInput] = useState("");
+
+  // The default state for the working balance input field inside the EditAccountPopup component
+  const [editAccountWorkingBalanceInput, setEditAccountWorkingBalanceInput] =
+    useState("");
+
+  // The account id for the account being edited or deleted
+  const [accountPassed, setAccountPassed] = useState<
+    QueryDocumentSnapshot | undefined
+  >();
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -81,6 +98,14 @@ function App() {
           accounts={allAccounts}
           totalAmount={totalAmount}
           setTotalAmount={setTotalAmount}
+          editAccountPopupStatus={editAccountPopupStatus}
+          setEditAccountPopupStatus={setEditAccountPopupStatus}
+          editAccountNameInput={editAccountNameInput}
+          setEditAccountNameInput={setEditAccountNameInput}
+          editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
+          setEditAccountWorkingBalanceInput={setEditAccountWorkingBalanceInput}
+          accountPassed={accountPassed}
+          setAccountPassed={setAccountPassed}
         />
         <Routes>
           <Route
@@ -93,6 +118,17 @@ function App() {
                 setTotalCategoryGroupAmount={setTotalCategoryGroupAmount}
                 readyToAssignTotal={readyToAssignTotal}
                 setReadyToAssignTotal={setReadyToAssignTotal}
+                editAccountPopupStatus={editAccountPopupStatus}
+                setEditAccountPopupStatus={setEditAccountPopupStatus}
+                editAccountNameInput={editAccountNameInput}
+                setEditAccountNameInput={setEditAccountNameInput}
+                editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
+                setEditAccountWorkingBalanceInput={
+                  setEditAccountWorkingBalanceInput
+                }
+                accountPassed={accountPassed}
+                setAccountPassed={setAccountPassed}
+                rerenderLoadAccounts={() => loadAccounts(accountQuery)}
               />
             }
           />

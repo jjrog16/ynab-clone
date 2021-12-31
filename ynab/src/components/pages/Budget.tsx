@@ -13,6 +13,7 @@ import {
 } from "@firebase/firestore";
 import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
+import EditAccountPopup from "../EditAccountPopup";
 
 interface Props {
   totalAmount: number;
@@ -21,6 +22,15 @@ interface Props {
   setTotalCategoryGroupAmount: any;
   readyToAssignTotal: number;
   setReadyToAssignTotal: any;
+  editAccountPopupStatus: boolean;
+  setEditAccountPopupStatus: any;
+  editAccountNameInput: string;
+  setEditAccountNameInput: any;
+  editAccountWorkingBalanceInput: string;
+  setEditAccountWorkingBalanceInput: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
+  rerenderLoadAccounts: any;
 }
 
 function Budget(props: Props) {
@@ -143,6 +153,29 @@ function Budget(props: Props) {
             ) : null}
           </div>
           <div className="category-assign-activity-available-bar">
+            {props.editAccountPopupStatus ? (
+              <EditAccountPopup
+                coodinates={{
+                  x: 300,
+                  y: 200,
+                }}
+                editAccountPopupStatus={props.editAccountPopupStatus}
+                setEditAccountPopupStatus={props.setEditAccountPopupStatus}
+                editAccountNameInput={props.editAccountNameInput}
+                setEditAccountNameInput={props.setEditAccountNameInput}
+                editAccountWorkingBalanceInput={
+                  props.editAccountWorkingBalanceInput
+                }
+                setEditAccountWorkingBalanceInput={
+                  props.setEditAccountWorkingBalanceInput
+                }
+                accountPassed={props.accountPassed}
+                setAccountPassed={props.setAccountPassed}
+                rerenderLoadAccounts={props.rerenderLoadAccounts}
+                totalAmount={props.totalAmount}
+                setTotalAmount={props.setTotalAmount}
+              />
+            ) : null}
             <div className="category-assign-activity-available-bar-left">
               <p className="category-assign-activity-available-bar-item">
                 CATEGORY
@@ -162,7 +195,9 @@ function Budget(props: Props) {
                     <CategoryGroup
                       key={categoryGroup.id}
                       group={categoryGroup}
-                      rerender={() => loadCategoryGroups(groupsQuery)}
+                      rerenderLoadCategoryGroups={() =>
+                        loadCategoryGroups(groupsQuery)
+                      }
                       setTotalCategoryGroupAmount={
                         props.setTotalCategoryGroupAmount
                       }

@@ -9,11 +9,19 @@
 .budget-title {
   font-weight: bold;
   color: #fff;
+  margin-block-start: 0%;
+  margin-block-end: 0%;
+  margin-inline-start: 0%;
+  margin-inline-end: 0%;
 }
 
 .budget-total-amount {
   font-weight: bold;
   color: #fff;
+  margin-block-start: 0%;
+  margin-block-end: 0%;
+  margin-inline-start: 0%;
+  margin-inline-end: 0%;
 }
 
 .account-wrapper {

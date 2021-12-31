@@ -8,6 +8,14 @@ interface Props {
   accounts: QueryDocumentSnapshot[] | undefined;
   totalAmount: number;
   setTotalAmount: any;
+  editAccountPopupStatus: boolean;
+  setEditAccountPopupStatus: any;
+  editAccountNameInput: string;
+  setEditAccountNameInput: any;
+  editAccountWorkingBalanceInput: string;
+  setEditAccountWorkingBalanceInput: any;
+  accountPassed: QueryDocumentSnapshot | undefined;
+  setAccountPassed: any;
 }
 
 function SideBar(props: Props) {
@@ -24,6 +32,16 @@ function SideBar(props: Props) {
         accounts={props.accounts}
         totalAmount={props.totalAmount}
         setTotalAmount={props.setTotalAmount}
+        editAccountPopupStatus={props.editAccountPopupStatus}
+        setEditAccountPopupStatus={props.setEditAccountPopupStatus}
+        editAccountNameInput={props.editAccountNameInput}
+        setEditAccountNameInput={props.setEditAccountNameInput}
+        editAccountWorkingBalanceInput={props.editAccountWorkingBalanceInput}
+        setEditAccountWorkingBalanceInput={
+          props.setEditAccountWorkingBalanceInput
+        }
+        accountPassed={props.accountPassed}
+        setAccountPassed={props.setAccountPassed}
       />
     </div>
   );
