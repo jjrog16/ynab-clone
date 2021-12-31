@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   DocumentReference,
   getFirestore,
@@ -90,6 +91,9 @@ function EditAccountPopup(props: Props) {
 
         // Load from Firebase to cause a rerender since there is a change
         props.rerenderLoadAccounts();
+
+        // Remove the popup window
+        props.setEditAccountPopupStatus(false);
       }
     },
     [
@@ -125,6 +129,9 @@ function EditAccountPopup(props: Props) {
 
         // Load from Firebase to cause a rerender since there is a change
         props.rerenderLoadAccounts();
+
+        // Remove the popup window
+        props.setEditAccountPopupStatus(false);
       }
     },
     [
@@ -133,6 +140,36 @@ function EditAccountPopup(props: Props) {
       props.editAccountWorkingBalanceInput,
     ]
   );
+
+  const deleteAccountInDb = useCallback(async () => {
+    // don't send again while we are sending
+    if (isSending) return;
+
+    // update state
+    setIsSending(true);
+
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm("Are you sure you want to delete?")) {
+      // Delete the doc for the passed account
+      deleteDoc(
+        doc(collection(getFirestore(), "accounts"), props.accountPassed?.id)
+      );
+      // once the request is sent, update state again
+      // only update if we are still mounted
+      if (isMounted.current) setIsSending(false);
+
+      // Remove money from the total balance
+      props.setTotalAmount(
+        (prevAmount: number) => prevAmount - props.accountPassed?.data().amount
+      );
+
+      // Load from Firebase to cause a rerender since there is a change
+      props.rerenderLoadAccounts();
+
+      // Remove the popup window
+      props.setEditAccountPopupStatus(false);
+    }
+  }, [isSending]);
 
   /**
    * Controls whether we are editing an existing account or adding a new account
@@ -183,7 +220,9 @@ function EditAccountPopup(props: Props) {
       <div className="edit-account-buttons-container">
         <div className="edit-account-buttons-left-side">
           <div className="edit-account-delete-button">
-            <button className="delete">Delete</button>
+            <button className="delete" onClick={deleteAccountInDb}>
+              Delete
+            </button>
           </div>
         </div>
         <div className="edit-account-buttons-right-side">
