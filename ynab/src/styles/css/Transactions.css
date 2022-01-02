@@ -1,0 +1,36 @@
+.top-bar {
+  background-color: #f5f5fa;
+  width: 1000px;
+  height: 50px;
+}
+
+.name-of-bank {
+  padding: 16px;
+}
+
+.add-transaction-bar {
+  border: 1px #d1d1d6 solid;
+}
+
+.add-transaction {
+  color: #4795d8;
+  font-weight: bold;
+  padding-left: 8px;
+}
+
+table {
+  width: 100%;
+  border: 1px #d1d1d6 solid;
+}
+
+th {
+  text-align: left;
+  padding: 8px;
+}
+
+td {
+  text-align: left;
+  padding: 8px;
+}
+
+/*# sourceMappingURL=Transactions.css.map */

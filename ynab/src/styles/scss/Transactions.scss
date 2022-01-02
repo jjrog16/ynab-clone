@@ -1,0 +1,36 @@
+@use "colors";
+@use "dimens";
+
+.top-bar {
+  background-color: colors.$light-gray;
+  width: 1000px;
+  height: 50px;
+}
+
+.name-of-bank {
+  padding: dimens.$medium;
+}
+
+.add-transaction-bar {
+  border: 1px colors.$medium-gray solid;
+}
+
+.add-transaction {
+  color: colors.$light-blue;
+  font-weight: bold;
+  padding-left: dimens.$small;
+}
+
+table {
+  width: 100%;
+  border: 1px colors.$medium-gray solid;
+}
+th {
+  text-align: left;
+  padding: dimens.$small;
+}
+
+td {
+  text-align: left;
+  padding: dimens.$small;
+}

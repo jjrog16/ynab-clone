@@ -27,7 +27,7 @@ function NavBar(props: Props) {
           <div className="ready-to-assign-amount">{`$${props.readyToAssignTotal}`}</div>
           <p className="ready-to-assign-title">Ready to Assign</p>
         </div>
-        <div className="read-to-assign-right">
+        <div className="ready-to-assign-right">
           <div className="btn-holder">
             <button className="btn-assign">Assign</button>
           </div>

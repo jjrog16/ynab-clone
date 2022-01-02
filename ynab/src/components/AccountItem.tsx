@@ -2,7 +2,10 @@ import {
   collection,
   DocumentData,
   getFirestore,
+  Query,
+  query,
   QueryDocumentSnapshot,
+  where,
 } from "@firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,10 +20,10 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountPassed: QueryDocumentSnapshot | undefined;
   setAccountPassed: any;
   totalAmount: number;
   setTotalAmount: any;
+  loadTransactions: any;
 }
 
 function AccountItem(props: Props) {
@@ -48,15 +51,25 @@ function AccountItem(props: Props) {
     props.setEditAccountWorkingBalanceInput(props.account.data().amount);
     props.setAccountPassed(props.account);
   }
+  // Query to get all transactions in Firebase based on the account
+  const transactionsQuery: Query = query(
+    collection(getFirestore(), "transactions"),
+    where("accountId", "==", `${props.account.id}`)
+  );
 
   const fixedAmount = `$${Number(props.account.data().amount).toFixed(2)}`;
   return (
     <>
-      <Link to="/AccountTransactions">
+      <Link
+        to={`AccountTransactions/${props.account.data().title}/${
+          props.account.id
+        }`}
+      >
         <li
           key={props.account.id}
           className="account"
           onContextMenu={(event) => handleContextMenu(event)}
+          onClick={() => props.loadTransactions(transactionsQuery)}
         >
           <div className="account-name">{props.account.data().title}</div>
           <div className="account-amount">{fixedAmount}</div>
