@@ -56,7 +56,10 @@ function CategoryGroup(props: Props) {
         // update state
         setIsSending(true);
 
-        // Asynchronous load of all accounts based off query
+        // Set the amount for total category group to 0 to start
+        props.setTotalCategoryGroupAmount(0);
+
+        // Asynchronous load of all categories based off query
         const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
 
         // Array of QueryDocumentSnapshots that allows for mapping

@@ -175,12 +175,13 @@ function EditAccountPopup(props: Props) {
    * Controls whether we are editing an existing account or adding a new account
    */
   function handleSave() {
-    if (typeof props.accountPassed === undefined) {
+    // If there is a valid id and the value being passed is not undefined, then
+    // we know we can edit the existing account
+    if (props.accountPassed?.id) {
+      saveEditedAccountToDb(doc(accountDbLocation, props.accountPassed?.id));
+    } else {
       // Add as a new doc
       saveNewAccountToDb(accountDbLocation);
-    } else {
-      // Location is wrapped in a doc that specifies the exact entry to be updated
-      saveEditedAccountToDb(doc(accountDbLocation, props.accountPassed?.id));
     }
   }
 

@@ -3,6 +3,7 @@ import "../styles/css/SideBar.css";
 import { useState } from "react";
 import Accounts from "./Accounts";
 import { QueryDocumentSnapshot } from "@firebase/firestore";
+import { Link } from "react-router-dom";
 
 interface Props {
   accounts: QueryDocumentSnapshot[] | undefined;
@@ -14,7 +15,7 @@ interface Props {
   setEditAccountNameInput: any;
   editAccountWorkingBalanceInput: string;
   setEditAccountWorkingBalanceInput: any;
-  accountPassed: QueryDocumentSnapshot | undefined;
+  loadTransactions: any;
   setAccountPassed: any;
 }
 
@@ -26,7 +27,9 @@ function SideBar(props: Props) {
         <div className="user-account">example@email.com</div>
       </div>
       <div className="overview-sections">
-        <h3 className="page-overview">Budget</h3>
+        <Link to="/">
+          <h3 className="page-overview">Budget</h3>
+        </Link>
       </div>
       <Accounts
         accounts={props.accounts}
@@ -40,8 +43,8 @@ function SideBar(props: Props) {
         setEditAccountWorkingBalanceInput={
           props.setEditAccountWorkingBalanceInput
         }
-        accountPassed={props.accountPassed}
         setAccountPassed={props.setAccountPassed}
+        loadTransactions={props.loadTransactions}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import "../src/styles/css/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Params } from "react-router-dom";
 import SideBar from "./components/SideBar";
 import Budget from "./components/pages/Budget";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -13,10 +13,16 @@ import {
   QuerySnapshot,
   QueryDocumentSnapshot,
   Query,
+  where,
 } from "@firebase/firestore";
+import Transactions from "./components/pages/Transactions";
 
 function App() {
   const [allAccounts, setAllAccounts] = useState<QueryDocumentSnapshot[]>();
+
+  // Array of all transactions based on the account
+  const [allTransactions, setAllTransactions] =
+    useState<QueryDocumentSnapshot[]>();
 
   // Keep track of the total amount of money available from all bank accounts
   const [totalAmount, setTotalAmount] = useState<number>(0);
@@ -46,6 +52,9 @@ function App() {
         // update state
         setIsSending(true);
 
+        // Set total amount to start at 0 on rerender
+        setTotalAmount(0);
+
         // Asynchronous load of all accounts based off query
         const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
           accountQuery
@@ -59,6 +68,36 @@ function App() {
         const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
           accountsAsQuerySnapshot.docs;
         setAllAccounts(arrayOfQueryDocumentSnapshots);
+      } catch (e) {
+        console.log("An error occurred when trying to load your accounts");
+        console.log(`Error: ${e}`);
+      }
+    },
+    [isSending]
+  );
+
+  const loadTransactions = useCallback(
+    async (query: Query) => {
+      try {
+        console.log(`Load Transaction called.`);
+        // don't send again while we are sending
+        if (isSending) return;
+
+        // update state
+        setIsSending(true);
+
+        // Asynchronous load of all transactions
+        const transactionsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+
+        // Array of QueryDocumentSnapshots that allows for mapping
+        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+          transactionsAsQuerySnapshot.docs;
+
+        // once the request is sent, update state again
+        // only update if we are still mounted
+        if (isMounted.current) setIsSending(false);
+
+        setAllTransactions(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -104,8 +143,8 @@ function App() {
           setEditAccountNameInput={setEditAccountNameInput}
           editAccountWorkingBalanceInput={editAccountWorkingBalanceInput}
           setEditAccountWorkingBalanceInput={setEditAccountWorkingBalanceInput}
-          accountPassed={accountPassed}
           setAccountPassed={setAccountPassed}
+          loadTransactions={loadTransactions}
         />
         <Routes>
           <Route
@@ -129,6 +168,16 @@ function App() {
                 accountPassed={accountPassed}
                 setAccountPassed={setAccountPassed}
                 rerenderLoadAccounts={() => loadAccounts(accountQuery)}
+              />
+            }
+          />
+          <Route
+            path="/AccountTransactions/:name/:id"
+            element={
+              <Transactions
+                allTransactions={allTransactions}
+                setAllTransactions={setAllTransactions}
+                loadTransactions={loadTransactions}
               />
             }
           />
