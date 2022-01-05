@@ -31,9 +31,7 @@ interface Props {
 function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
   // Array of Categories that relate to each category group
-  const categories: QueryDocumentSnapshot[] = useSelector(
-    (state: any) => state.categoriesReducer
-  );
+  const categories = useSelector((state: any) => state.categoriesReducer);
 
   // Status for if the edit component should be visible
   const editComponentPopupStatus = useSelector(
@@ -107,7 +105,9 @@ function CategoryGroup(props: Props) {
   const categoryGroupTitle: string = props.group.data().title;
 
   //Sort responses once they are in
-  categories?.sort((a: any, b: any) => a.data().position - b.data().position);
+  categories.value.arr.sort(
+    (a: any, b: any) => a.data().position - b.data().position
+  );
 
   // Implement adding Category //
 
@@ -201,7 +201,7 @@ function CategoryGroup(props: Props) {
         ) : null}
       </div>
       <ul key={props.group.id} className="group-items">
-        {categories?.map((category) => {
+        {categories.value.arr.map((category: QueryDocumentSnapshot) => {
           return (
             <Category
               key={category.id}

@@ -1,17 +1,17 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
 interface CategoryGroups {
-  value: QueryDocumentSnapshot[];
+  value: { arr: QueryDocumentSnapshot[] };
 }
 
 // Contains all Category Groups
 const categoryGroupsReducer = (
-  state: CategoryGroups = { value: [] },
+  state: CategoryGroups = { value: { arr: [] } },
   action: { type: string; payload: any }
 ) => {
   switch (action.type) {
     case "categoryGroups/addCategoryGroup":
-      return { ...state, value: [...state.value, action.payload] };
+      return { ...state, value: { ...state.value, arr: action.payload } };
     default:
       return state;
   }

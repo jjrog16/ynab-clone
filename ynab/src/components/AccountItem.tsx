@@ -28,7 +28,6 @@ interface Props {
 
 function AccountItem(props: Props) {
   const dispatch: Dispatch<any> = useDispatch();
-  console.log(JSON.stringify(props.account.data()));
 
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet

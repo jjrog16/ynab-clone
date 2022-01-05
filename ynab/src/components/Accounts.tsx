@@ -28,9 +28,7 @@ function Accounts(props: Props) {
   const dispatch = useDispatch();
 
   // Collection of all Bank accounts
-  const bankAccounts: { value: QueryDocumentSnapshot[] } = useSelector(
-    (state: any) => state.bankAccountsReducer
-  );
+  const bankAccounts = useSelector((state: any) => state.bankAccountsReducer);
 
   // Total amount of money of all bank accounts
   const moneyAmountTotal: number = useSelector(
@@ -125,7 +123,8 @@ function Accounts(props: Props) {
             />
           ) : null}
           <ul className="account-items">
-            {bankAccounts.value.map((account: any) => {
+            {bankAccounts.value.arr.map((account: any) => {
+              console.log(account.id, account.data().title);
               return <AccountItem key={account.id} account={account} />;
             })}
           </ul>

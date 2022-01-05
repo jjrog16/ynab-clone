@@ -94,7 +94,7 @@ function Budget(props: Props) {
   );
 
   // Sort responses based on position once they are in
-  categoryGroups?.value.sort(
+  categoryGroups?.value.arr.sort(
     (a: any, b: any) => a.data().position - b.data().position
   );
 
@@ -157,7 +157,7 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {categoryGroups?.value.map(
+                {categoryGroups?.value.arr.map(
                   (categoryGroup: QueryDocumentSnapshot) => {
                     return (
                       <CategoryGroup
