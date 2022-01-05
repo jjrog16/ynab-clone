@@ -1,13 +1,19 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
+interface Categories {
+  value: QueryDocumentSnapshot[];
+}
+
 // Contains all Categories
 const categoriesReducer = (
-  state: QueryDocumentSnapshot[] = [],
+  state: Categories = { value: [] },
   action: { type: string; payload: any }
 ) => {
   switch (action.type) {
-    case "ADD_CATEGORY":
-      return [...state, action.payload];
+    case "categories/addCategory":
+      return { ...state, value: [...state.value, action.payload] };
+    default:
+      return state;
   }
 };
 

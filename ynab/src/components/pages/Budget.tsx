@@ -14,30 +14,19 @@ import {
 import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
 import EditAccountPopup from "../EditAccountPopup";
+import { useDispatch, useSelector } from "react-redux";
+import { setCategoryGroups, toggleAddComponentPopup } from "../../actions";
 
-interface Props {
-  totalAmount: number;
-  setTotalAmount: any;
-  totalCategoryGroupAmount: number;
-  setTotalCategoryGroupAmount: any;
-  readyToAssignTotal: number;
-  setReadyToAssignTotal: any;
-  editAccountPopupStatus: boolean;
-  setEditAccountPopupStatus: any;
-  editAccountNameInput: string;
-  setEditAccountNameInput: any;
-  editAccountWorkingBalanceInput: string;
-  setEditAccountWorkingBalanceInput: any;
-  accountPassed: QueryDocumentSnapshot | undefined;
-  setAccountPassed: any;
-  rerenderLoadAccounts: any;
-}
+interface Props {}
 
 function Budget(props: Props) {
   // Read what is in the database as an array of QueryDocumentSnapshot, and display
   // groups to UI
-  const [allCategoryGroups, setAllCategoryGroups] =
-    useState<QueryDocumentSnapshot[]>();
+
+  // const [allCategoryGroups, setAllCategoryGroups] =
+  //   useState<QueryDocumentSnapshot[]>();
+
+  const dispatch = useDispatch();
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -75,7 +64,7 @@ function Budget(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         // Store the array of CategoryGroups
-        setAllCategoryGroups(arrayOfQueryDocumentSnapshots);
+        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -95,18 +84,27 @@ function Budget(props: Props) {
   }, []);
 
   // Controls if popup should be visible
-  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
+  const addComponentPopupStatus = useSelector(
+    (state: any) => state.addComponentPopupReducer
+  );
+
+  // State of all category groups
+  const categoryGroups = useSelector(
+    (state: any) => state.categoryGroupsReducer
+  );
 
   // Sort responses based on position once they are in
-  allCategoryGroups?.sort((a, b) => a.data().position - b.data().position);
+  categoryGroups?.value.sort(
+    (a: any, b: any) => a.data().position - b.data().position
+  );
 
   // Type of component being passed for Edit
   const componentType = "categoryGroups";
 
   // The latest position is the last position number of the array, or return -1
   const latestPosition =
-    allCategoryGroups && allCategoryGroups.length > 0
-      ? allCategoryGroups[allCategoryGroups.length - 1].data().position
+    categoryGroups && categoryGroups.length > 0
+      ? categoryGroups[categoryGroups.length - 1].data().position
       : -1;
 
   // The location for where the AddComponentPopup will send data
@@ -123,20 +121,14 @@ function Budget(props: Props) {
 
   return (
     <div className="budget-page">
-      <NavBar
-        totalAmount={props.totalAmount}
-        setTotalAmount={props.setTotalAmount}
-        totalCategoryGroupAmount={props.totalCategoryGroupAmount}
-        readyToAssignTotal={props.readyToAssignTotal}
-        setReadyToAssignTotal={props.setReadyToAssignTotal}
-      />
+      <NavBar />
       <div className="budget-container">
         <div className="budget-wrapper">
           <div className="category-group-bar">
             <p
               className="add-category-group"
               onClick={() => {
-                setAddComponentPopupStatus(!addComponentPopupStatus);
+                dispatch(toggleAddComponentPopup());
               }}
             >
               + Category Group
@@ -147,35 +139,10 @@ function Budget(props: Props) {
                 addLocationForDb={categoryGroupDbLocation}
                 componentType={componentType}
                 rerender={() => loadCategoryGroups(groupsQuery)}
-                popupStatus={addComponentPopupStatus}
-                setPopupStatus={setAddComponentPopupStatus}
               />
             ) : null}
           </div>
           <div className="category-assign-activity-available-bar">
-            {props.editAccountPopupStatus ? (
-              <EditAccountPopup
-                coodinates={{
-                  x: 300,
-                  y: 200,
-                }}
-                editAccountPopupStatus={props.editAccountPopupStatus}
-                setEditAccountPopupStatus={props.setEditAccountPopupStatus}
-                editAccountNameInput={props.editAccountNameInput}
-                setEditAccountNameInput={props.setEditAccountNameInput}
-                editAccountWorkingBalanceInput={
-                  props.editAccountWorkingBalanceInput
-                }
-                setEditAccountWorkingBalanceInput={
-                  props.setEditAccountWorkingBalanceInput
-                }
-                accountPassed={props.accountPassed}
-                setAccountPassed={props.setAccountPassed}
-                rerenderLoadAccounts={props.rerenderLoadAccounts}
-                totalAmount={props.totalAmount}
-                setTotalAmount={props.setTotalAmount}
-              />
-            ) : null}
             <div className="category-assign-activity-available-bar-left">
               <p className="category-assign-activity-available-bar-item">
                 CATEGORY
@@ -190,24 +157,19 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {allCategoryGroups?.map((categoryGroup) => {
-                  return (
-                    <CategoryGroup
-                      key={categoryGroup.id}
-                      group={categoryGroup}
-                      rerenderLoadCategoryGroups={() =>
-                        loadCategoryGroups(groupsQuery)
-                      }
-                      setTotalCategoryGroupAmount={
-                        props.setTotalCategoryGroupAmount
-                      }
-                      setReadyToAssignTotal={props.setReadyToAssignTotal}
-                      totalAmount={props.totalAmount}
-                      totalCategoryGroupAmount={props.totalCategoryGroupAmount}
-                      readyToAssignTotal={props.readyToAssignTotal}
-                    />
-                  );
-                })}
+                {categoryGroups?.value.map(
+                  (categoryGroup: QueryDocumentSnapshot) => {
+                    return (
+                      <CategoryGroup
+                        key={categoryGroup.id}
+                        group={categoryGroup}
+                        rerenderLoadCategoryGroups={() =>
+                          loadCategoryGroups(groupsQuery)
+                        }
+                      />
+                    );
+                  }
+                )}
               </div>
             </div>
           </div>

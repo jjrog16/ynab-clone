@@ -1,12 +1,18 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
+interface Transaction {
+  value: QueryDocumentSnapshot[];
+}
+
 const transactionsReducer = (
-  state: QueryDocumentSnapshot[] = [],
+  state: Transaction = { value: [] },
   action: { type: string; payload: string }
 ) => {
   switch (action.type) {
-    case "ADD_TRANSACTION":
-      return [...state, action.payload];
+    case "transactions/addTransaction":
+      return { ...state, value: [...state.value, action.payload] };
+    default:
+      return state;
   }
 };
 

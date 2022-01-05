@@ -10,22 +10,32 @@ import {
   setDoc,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import {
+  disableEditAccountPopup,
+  setEditAccountNameInput,
+  setEditAccountWorkingBalanceInput,
+  setTotalAmount,
+} from "../actions";
 import "../styles/css/EditAccountPopup.css";
 interface Props {
   coodinates: { x: number; y: number };
-  editAccountPopupStatus: boolean;
-  setEditAccountPopupStatus: any;
-  editAccountNameInput: string;
-  setEditAccountNameInput: any;
-  editAccountWorkingBalanceInput: string;
-  setEditAccountWorkingBalanceInput: any;
-  accountPassed: QueryDocumentSnapshot | undefined;
-  setAccountPassed: any;
   rerenderLoadAccounts: any;
-  totalAmount: number;
-  setTotalAmount: any;
 }
 function EditAccountPopup(props: Props) {
+  const dispatch = useDispatch();
+
+  const editAccountNameInput = useSelector(
+    (state: RootStateOrAny) => state.editAccountNameInputReducer
+  );
+  const editAccountWorkingBalanceInput = useSelector(
+    (state: RootStateOrAny) => state.editAccountWorkingBalanceInputReducer
+  );
+  const moneyTotalAmount = useSelector(
+    (state: RootStateOrAny) => state.moneyTotalAmountReducer
+  );
+  const account = useSelector((state: RootStateOrAny) => state.accountReducer);
+
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
 
@@ -51,15 +61,15 @@ function EditAccountPopup(props: Props) {
       setIsSending(true);
 
       // Only perform steps if the entered account field is no longer empty
-      if (props.editAccountNameInput !== "") {
+      if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(props.editAccountWorkingBalanceInput)
-          ? Number(props.editAccountWorkingBalanceInput)
+        const bankAmount = Number(editAccountWorkingBalanceInput)
+          ? Number(editAccountWorkingBalanceInput)
           : 0;
 
         await setDoc(location, {
           amount: bankAmount,
-          title: props.editAccountNameInput,
+          title: editAccountNameInput,
         });
 
         // once the request is sent, update state again
@@ -68,39 +78,45 @@ function EditAccountPopup(props: Props) {
 
         // If the input the user entered for the change is higher than account amount in Db,
         // subtract the account amount from the input amount and add that to totalAmount
-        if (
-          props.accountPassed?.data().amount <
-          props.editAccountWorkingBalanceInput
-        ) {
-          props.setTotalAmount(
-            (prevAmount: number) =>
-              prevAmount +
-              (Number(props.editAccountWorkingBalanceInput) -
-                props.accountPassed?.data().amount)
+        if (account.data().amount < editAccountWorkingBalanceInput) {
+          dispatch(
+            setTotalAmount(
+              moneyTotalAmount +
+                Number(editAccountWorkingBalanceInput) -
+                account.data().amount
+            )
           );
+          // props.setTotalAmount(
+          //   (prevAmount: number) =>
+          //     prevAmount +
+          //     (Number(props.editAccountWorkingBalanceInput) -
+          //       props.accountPassed?.data().amount)
+          // );
         } else {
           // Otherwise, the input is less than what we have in the db,
           // so we are going to subtract that from the totalAmount
-          props.setTotalAmount(
-            (prevAmount: number) =>
-              prevAmount -
-              (props.accountPassed?.data().amount -
-                Number(props.editAccountWorkingBalanceInput))
+          dispatch(
+            setTotalAmount(
+              moneyTotalAmount -
+                (account.data().amount - Number(editAccountWorkingBalanceInput))
+            )
           );
+          // props.setTotalAmount(
+          //   (prevAmount: number) =>
+          //     prevAmount -
+          //     (props.accountPassed?.data().amount -
+          //       Number(props.editAccountWorkingBalanceInput))
+          // );
         }
 
         // Load from Firebase to cause a rerender since there is a change
         props.rerenderLoadAccounts();
 
         // Remove the popup window
-        props.setEditAccountPopupStatus(false);
+        dispatch(disableEditAccountPopup());
       }
     },
-    [
-      isSending,
-      props.editAccountNameInput,
-      props.editAccountWorkingBalanceInput,
-    ]
+    [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
   );
 
   const saveNewAccountToDb = useCallback(
@@ -112,15 +128,15 @@ function EditAccountPopup(props: Props) {
       setIsSending(true);
 
       // Only perform steps if the entered account field is no longer empty
-      if (props.editAccountNameInput !== "") {
+      if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(props.editAccountWorkingBalanceInput)
-          ? Number(props.editAccountWorkingBalanceInput)
+        const bankAmount = Number(editAccountWorkingBalanceInput)
+          ? Number(editAccountWorkingBalanceInput)
           : 0;
 
         await addDoc(location, {
           amount: bankAmount,
-          title: props.editAccountNameInput,
+          title: editAccountNameInput,
         });
 
         // once the request is sent, update state again
@@ -131,14 +147,10 @@ function EditAccountPopup(props: Props) {
         props.rerenderLoadAccounts();
 
         // Remove the popup window
-        props.setEditAccountPopupStatus(false);
+        dispatch(disableEditAccountPopup());
       }
     },
-    [
-      isSending,
-      props.editAccountNameInput,
-      props.editAccountWorkingBalanceInput,
-    ]
+    [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
   );
 
   const deleteAccountInDb = useCallback(async () => {
@@ -151,23 +163,19 @@ function EditAccountPopup(props: Props) {
     // eslint-disable-next-line no-restricted-globals
     if (confirm("Are you sure you want to delete?")) {
       // Delete the doc for the passed account
-      deleteDoc(
-        doc(collection(getFirestore(), "accounts"), props.accountPassed?.id)
-      );
+      deleteDoc(doc(collection(getFirestore(), "accounts"), account.id));
       // once the request is sent, update state again
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
       // Remove money from the total balance
-      props.setTotalAmount(
-        (prevAmount: number) => prevAmount - props.accountPassed?.data().amount
-      );
+      dispatch(setTotalAmount(moneyTotalAmount - account.data().amount));
 
       // Load from Firebase to cause a rerender since there is a change
       props.rerenderLoadAccounts();
 
       // Remove the popup window
-      props.setEditAccountPopupStatus(false);
+      dispatch(disableEditAccountPopup());
     }
   }, [isSending]);
 
@@ -177,8 +185,8 @@ function EditAccountPopup(props: Props) {
   function handleSave() {
     // If there is a valid id and the value being passed is not undefined, then
     // we know we can edit the existing account
-    if (props.accountPassed?.id) {
-      saveEditedAccountToDb(doc(accountDbLocation, props.accountPassed?.id));
+    if (account.id) {
+      saveEditedAccountToDb(doc(accountDbLocation, account.id));
     } else {
       // Add as a new doc
       saveNewAccountToDb(accountDbLocation);
@@ -197,8 +205,10 @@ function EditAccountPopup(props: Props) {
             <input
               type="text"
               id="et-account-name"
-              value={props.editAccountNameInput}
-              onChange={(e) => props.setEditAccountNameInput(e.target.value)}
+              value={editAccountNameInput}
+              onChange={(e) =>
+                dispatch(setEditAccountNameInput(e.target.value))
+              }
             ></input>
           </form>
         </div>
@@ -210,9 +220,9 @@ function EditAccountPopup(props: Props) {
             <input
               type="text"
               id="et-working-balance"
-              value={props.editAccountWorkingBalanceInput}
+              value={editAccountWorkingBalanceInput}
               onChange={(e) =>
-                props.setEditAccountWorkingBalanceInput(e.target.value)
+                dispatch(setEditAccountWorkingBalanceInput(e.target.value))
               }
             ></input>
           </form>
@@ -230,7 +240,7 @@ function EditAccountPopup(props: Props) {
           <div className="edit-account-buttons-cancel-button">
             <button
               className="cancel"
-              onClick={() => props.setEditAccountPopupStatus(false)}
+              onClick={() => dispatch(disableEditAccountPopup())}
             >
               Cancel
             </button>

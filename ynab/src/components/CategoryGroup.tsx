@@ -11,6 +11,13 @@ import {
   where,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  enableAddComponentPopup,
+  enableEditComponentPopup,
+  setCategories,
+  setTotalCategoryGroupAmount,
+} from "../actions";
 import "../styles/css/CategoryGroup.css";
 import AddComponentPopup from "./AddComponentPopup";
 import Category from "./Category";
@@ -19,16 +26,24 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   group: QueryDocumentSnapshot;
   rerenderLoadCategoryGroups: any;
-  totalAmount: number;
-  totalCategoryGroupAmount: number;
-  setTotalCategoryGroupAmount: any;
-  readyToAssignTotal: number;
-  setReadyToAssignTotal: any;
 }
 
 function CategoryGroup(props: Props) {
+  const dispatch = useDispatch();
   // Array of Categories that relate to each category group
-  const [allCategories, setAllCategories] = useState<QueryDocumentSnapshot[]>();
+  const categories: QueryDocumentSnapshot[] = useSelector(
+    (state: any) => state.categoriesReducer
+  );
+
+  // Status for if the edit component should be visible
+  const editComponentPopupStatus = useSelector(
+    (state: any) => state.editComponentPopupStatusReducer
+  );
+
+  // Status for if the edit component should be visible
+  const addComponentPopupStatus = useSelector(
+    (state: any) => state.addComponentPopupStatusReducer
+  );
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -57,7 +72,7 @@ function CategoryGroup(props: Props) {
         setIsSending(true);
 
         // Set the amount for total category group to 0 to start
-        props.setTotalCategoryGroupAmount(0);
+        dispatch(setTotalCategoryGroupAmount(0));
 
         // Asynchronous load of all categories based off query
         const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
@@ -70,7 +85,7 @@ function CategoryGroup(props: Props) {
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
 
-        setAllCategories(arrayOfQueryDocumentSnapshots);
+        dispatch(setCategories(arrayOfQueryDocumentSnapshots));
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -92,21 +107,21 @@ function CategoryGroup(props: Props) {
   const categoryGroupTitle: string = props.group.data().title;
 
   //Sort responses once they are in
-  allCategories?.sort((a, b) => a.data().position - b.data().position);
+  categories?.sort((a: any, b: any) => a.data().position - b.data().position);
 
   // Implement adding Category //
 
   // Controls if popup should be visible
-  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
+  // const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // The latest position is the last position number of the array, or return -1
   let latestPosition: number = 0;
 
   // Only reassign once we know there is a value
-  if (allCategories) {
-    if (allCategories.length > 0) {
+  if (categories) {
+    if (categories.length > 0) {
       // The latest position number in a list of Categories as part of a Category Group
-      latestPosition = allCategories[allCategories.length - 1].data().position;
+      latestPosition = categories[categories.length - 1].data().position;
     }
   }
 
@@ -144,13 +159,13 @@ function CategoryGroup(props: Props) {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
   // Use to know whether or not to show the component for editing a
-  const [editComponentPopupStatus, setEditComponentPopupStatus] =
-    useState<boolean>(false);
+  // const [editComponentPopupStatus, setEditComponentPopupStatus] =
+  //   useState<boolean>(false);
 
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     setAnchorPoint({ x: event.pageX, y: event.pageY });
-    setEditComponentPopupStatus(true);
+    dispatch(enableEditComponentPopup());
   }
 
   return (
@@ -165,18 +180,14 @@ function CategoryGroup(props: Props) {
             component={props.group}
             componentObjectTemplate={editedCategoryGroupObj}
             componentType={componentType}
-            children={allCategories}
             editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerenderLoadCategoryGroups}
-            popupStatus={editComponentPopupStatus}
-            setPopupStatus={setEditComponentPopupStatus}
-            setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
           />
         ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div
           className="plus-add-category"
-          onClick={() => setAddComponentPopupStatus(true)}
+          onClick={() => dispatch(enableAddComponentPopup())}
         >
           +
         </div>
@@ -186,23 +197,16 @@ function CategoryGroup(props: Props) {
             addLocationForDb={categoryDbLocation}
             componentType={componentType}
             rerender={() => loadCategories(categoriesQuery)}
-            popupStatus={addComponentPopupStatus}
-            setPopupStatus={setAddComponentPopupStatus}
           />
         ) : null}
       </div>
       <ul key={props.group.id} className="group-items">
-        {allCategories?.map((category) => {
+        {categories?.map((category) => {
           return (
             <Category
               key={category.id}
               category={category}
               rerender={() => loadCategories(categoriesQuery)}
-              setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
-              setReadyToAssignTotal={props.setReadyToAssignTotal}
-              totalAmount={props.totalAmount}
-              totalCategoryGroupAmount={props.totalCategoryGroupAmount}
-              readyToAssignTotal={props.readyToAssignTotal}
             />
           );
         })}

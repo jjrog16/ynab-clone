@@ -1,12 +1,16 @@
 // Keep track of the total amount of money available from all bank accounts
-
+interface MoneyTotalAmount {
+  value: number;
+}
 const moneyAmountTotalReducer = (
-  state = 0,
+  state: MoneyTotalAmount = { value: 0 },
   action: { type: string; payload: any }
 ) => {
   switch (action.type) {
-    case "ADD_TO_TOTAL":
-      return state + action.payload;
+    case "moneyAccountTotal/addToTotal":
+      return { ...state, value: state + action.payload };
+    default:
+      return state;
   }
 };
 

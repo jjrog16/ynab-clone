@@ -1,18 +1,20 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import "../../styles/css/Transactions.css";
 
-interface Props {
-  allTransactions: QueryDocumentSnapshot[] | undefined;
-  setAllTransactions: any;
-  loadTransactions: any;
-}
+interface Props {}
 
 function Transactions(props: Props) {
   // Passed in params are the account id passed from accounts.
   // use params.name to get the name of bank. params.id to get the id from the url
   const params = useParams();
+
+  // Collection of all transactions
+  const transactions: QueryDocumentSnapshot[] = useSelector(
+    (state: any) => state.transactionReducer
+  );
 
   return (
     <div>
@@ -32,7 +34,7 @@ function Transactions(props: Props) {
             <th>INFLOW</th>
           </tr>
 
-          {props.allTransactions?.map((transaction) => {
+          {transactions?.map((transaction) => {
             return (
               <tr key={transaction.id}>
                 <td className="date">{transaction.data().date}</td>

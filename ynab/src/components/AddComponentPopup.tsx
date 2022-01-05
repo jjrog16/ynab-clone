@@ -1,5 +1,7 @@
 import { addDoc, CollectionReference } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { disableAddComponentPopup } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -7,11 +9,10 @@ interface Props {
   addLocationForDb: CollectionReference;
   componentType: string;
   rerender: any;
-  popupStatus: boolean;
-  setPopupStatus: any;
 }
 
 function AddComponentPopup(props: Props) {
+  const dispatch = useDispatch();
   const [inputState, setInputState] = useState<string>("");
 
   // Status for loading API call
@@ -52,15 +53,10 @@ function AddComponentPopup(props: Props) {
       props.rerender();
 
       // Dismiss the popup
-      removePopup();
+      dispatch(disableAddComponentPopup());
     },
     [isSending, inputState]
   );
-
-  // Sets popup status to false to remove popup from view.
-  function removePopup() {
-    props.setPopupStatus(false);
-  }
 
   return (
     <div className="add-component-popup-container">
@@ -75,7 +71,9 @@ function AddComponentPopup(props: Props) {
         </form>
       </div>
       <div className="btn-container">
-        <button onClick={() => props.setPopupStatus(false)}>Cancel</button>
+        <button onClick={() => dispatch(disableAddComponentPopup())}>
+          Cancel
+        </button>
         <button onClick={() => addComponentToDb(props.addLocationForDb)}>
           OK
         </button>

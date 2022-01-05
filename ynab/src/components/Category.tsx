@@ -8,30 +8,37 @@ import {
   setDoc,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  enableEditComponentPopup,
+  setTotalCategoryGroupAmount,
+} from "../actions";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   category: QueryDocumentSnapshot;
   rerender: any;
-  totalAmount: number;
-  totalCategoryGroupAmount: number;
-  setTotalCategoryGroupAmount: any;
-  readyToAssignTotal: number;
-  setReadyToAssignTotal: any;
 }
 
 function Category(props: Props) {
-  // The data related to a Category as specified in Db
-  const category: DocumentData = props.category.data();
-  const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
+  const dispatch = useDispatch();
+
+  const moneyAmountTotal = useSelector(
+    (state: any) => state.moneyAmountTotalReducer
+  );
+  const editComponentPopupStatus = useSelector(
+    (state: any) => state.editComponentPopupStatusReducer
+  );
 
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    props.setTotalCategoryGroupAmount(
-      (previousAmount: number) => previousAmount + category.available
+    dispatch(
+      setTotalCategoryGroupAmount(
+        moneyAmountTotal - props.category.data().available
+      )
     );
 
     return () => {
@@ -63,14 +70,10 @@ function Category(props: Props) {
   // Use for knowing where the right click occurred
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
-  // Use to know whether or not to show the component for editing a
-  const [editComponentPopupStatus, setEditComponentPopupStatus] =
-    useState<boolean>(false);
-
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     setAnchorPoint({ x: event.pageX, y: event.pageY });
-    setEditComponentPopupStatus(true);
+    dispatch(enableEditComponentPopup());
   }
 
   // Money user is attempting to add
@@ -129,9 +132,7 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      props.setTotalCategoryGroupAmount(
-        (prevAmount: number) => prevAmount + strToNum
-      );
+      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal + strToNum));
 
       // Turn off checking for if Plus was clicked
       setIsPlusActive(false);
@@ -172,9 +173,7 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      props.setTotalCategoryGroupAmount(
-        (prevAmount: number) => prevAmount - strToNum
-      );
+      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal - strToNum));
 
       // Turn off checking for if Minus was clicked
       setIsMinusActive(false);
@@ -223,13 +222,10 @@ function Category(props: Props) {
             componentType={componentType}
             editLocationForDb={categoryDbLocation}
             rerender={props.rerender}
-            popupStatus={editComponentPopupStatus}
-            setPopupStatus={setEditComponentPopupStatus}
-            setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
           />
         ) : null}
         <div className="category-left-side">
-          <div className="category-name">{category.title}</div>
+          <div className="category-name">{props.category.data().title}</div>
         </div>
         <div className="category-right-side">
           <div
@@ -263,7 +259,9 @@ function Category(props: Props) {
               onKeyDown={(e) => handleKeyDown(e)}
             ></input>
           </form>
-          <div className="category-amount">{categoryAvailableFixed}</div>
+          <div className="category-amount">{`$${Number(
+            props.category.data().available
+          ).toFixed(2)}`}</div>
         </div>
       </li>
     </>

@@ -2,13 +2,19 @@
 
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
+interface Account {
+  value: QueryDocumentSnapshot | null;
+}
+
 const accountReducer = (
-  state: QueryDocumentSnapshot,
+  state: Account = { value: null },
   action: { type: string; payload: any }
 ) => {
   switch (action.type) {
-    case "SET_ACCOUNT":
-      return (state = action.payload);
+    case "account/setAccount":
+      return { ...state, value: action.payload };
+    default:
+      return state;
   }
 };
 
