@@ -30,18 +30,16 @@ interface Props {
 
 function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
+
   // Array of Categories that relate to each category group
-  const categories = useSelector((state: any) => state.categoriesReducer);
+  const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
 
-  // Status for if the edit component should be visible
-  const editComponentPopupStatus = useSelector(
-    (state: any) => state.editComponentPopupStatusReducer
-  );
+  // Controls if popup should be visible
+  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
-  // Status for if the edit component should be visible
-  const addComponentPopupStatus = useSelector(
-    (state: any) => state.addComponentPopupStatusReducer
-  );
+  // Use to know whether or not to show the component for editing a
+  const [editComponentPopupStatus, setEditComponentPopupStatus] =
+    useState<boolean>(false);
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -84,6 +82,7 @@ function CategoryGroup(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         dispatch(setCategories(arrayOfQueryDocumentSnapshots));
+        setCategories(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -105,9 +104,7 @@ function CategoryGroup(props: Props) {
   const categoryGroupTitle: string = props.group.data().title;
 
   //Sort responses once they are in
-  categories.value.arr.sort(
-    (a: any, b: any) => a.data().position - b.data().position
-  );
+  categories?.sort((a: any, b: any) => a.data().position - b.data().position);
 
   // Implement adding Category //
 
@@ -165,7 +162,7 @@ function CategoryGroup(props: Props) {
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     setAnchorPoint({ x: event.pageX, y: event.pageY });
-    dispatch(enableEditComponentPopup());
+    setEditComponentPopupStatus(true);
   }
 
   return (
@@ -179,15 +176,16 @@ function CategoryGroup(props: Props) {
             coordinates={anchorPoint}
             component={props.group}
             componentObjectTemplate={editedCategoryGroupObj}
-            componentType={componentType}
+            componentType={"categoryGroups"}
             editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerenderLoadCategoryGroups}
+            setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div
           className="plus-add-category"
-          onClick={() => dispatch(enableAddComponentPopup())}
+          onClick={() => setAddComponentPopupStatus(true)}
         >
           +
         </div>
@@ -197,16 +195,18 @@ function CategoryGroup(props: Props) {
             addLocationForDb={categoryDbLocation}
             componentType={componentType}
             rerender={() => loadCategories(categoriesQuery)}
+            setAddComponentPopupStatus={setAddComponentPopupStatus}
           />
         ) : null}
       </div>
       <ul key={props.group.id} className="group-items">
-        {categories.value.arr.map((category: QueryDocumentSnapshot) => {
+        {categories?.map((category: QueryDocumentSnapshot) => {
           return (
             <Category
               key={category.id}
               category={category}
               rerender={() => loadCategories(categoriesQuery)}
+              setEditComponentPopupStatus={setEditComponentPopupStatus}
             />
           );
         })}

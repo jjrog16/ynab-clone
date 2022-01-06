@@ -63,13 +63,13 @@ function EditAccountPopup(props: Props) {
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(editAccountWorkingBalanceInput)
-          ? Number(editAccountWorkingBalanceInput)
+        const bankAmount = Number(editAccountWorkingBalanceInput.value)
+          ? Number(editAccountWorkingBalanceInput.value)
           : 0;
 
         await setDoc(location, {
           amount: bankAmount,
-          title: editAccountNameInput,
+          title: editAccountNameInput.value,
         });
 
         // once the request is sent, update state again
@@ -78,11 +78,11 @@ function EditAccountPopup(props: Props) {
 
         // If the input the user entered for the change is higher than account amount in Db,
         // subtract the account amount from the input amount and add that to totalAmount
-        if (account.data().amount < editAccountWorkingBalanceInput) {
+        if (account.data().amount < editAccountWorkingBalanceInput.value) {
           dispatch(
             setTotalAmount(
-              moneyTotalAmount +
-                Number(editAccountWorkingBalanceInput) -
+              moneyTotalAmount.value +
+                Number(editAccountWorkingBalanceInput.value) -
                 account.data().amount
             )
           );
@@ -97,8 +97,9 @@ function EditAccountPopup(props: Props) {
           // so we are going to subtract that from the totalAmount
           dispatch(
             setTotalAmount(
-              moneyTotalAmount -
-                (account.data().amount - Number(editAccountWorkingBalanceInput))
+              moneyTotalAmount.value -
+                (account.data().amount -
+                  Number(editAccountWorkingBalanceInput.value))
             )
           );
           // props.setTotalAmount(
@@ -130,13 +131,13 @@ function EditAccountPopup(props: Props) {
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(editAccountWorkingBalanceInput)
-          ? Number(editAccountWorkingBalanceInput)
+        const bankAmount = Number(editAccountWorkingBalanceInput.value)
+          ? Number(editAccountWorkingBalanceInput.value)
           : 0;
 
         await addDoc(location, {
           amount: bankAmount,
-          title: editAccountNameInput,
+          title: editAccountNameInput.value,
         });
 
         // once the request is sent, update state again
@@ -169,7 +170,7 @@ function EditAccountPopup(props: Props) {
       if (isMounted.current) setIsSending(false);
 
       // Remove money from the total balance
-      dispatch(setTotalAmount(moneyTotalAmount - account.data().amount));
+      dispatch(setTotalAmount(moneyTotalAmount.value - account.data().amount));
 
       // Load from Firebase to cause a rerender since there is a change
       props.rerenderLoadAccounts();

@@ -31,7 +31,7 @@ function Accounts(props: Props) {
   const bankAccounts = useSelector((state: any) => state.bankAccountsReducer);
 
   // Total amount of money of all bank accounts
-  const moneyAmountTotal: number = useSelector(
+  const moneyAmountTotal = useSelector(
     (state: any) => state.moneyAmountTotalReducer
   );
 
@@ -90,7 +90,7 @@ function Accounts(props: Props) {
   }, []);
 
   // Amount of money with dollar sign and decimal
-  let totalAmountFixed = `$${Number(moneyAmountTotal).toFixed(2)}`;
+  let totalAmountFixed = `$${Number(moneyAmountTotal.value).toFixed(2)}`;
 
   /**
    * Set of operations to perform once add account button is clicked
@@ -113,7 +113,7 @@ function Accounts(props: Props) {
           <h5 className="budget-total-amount">{totalAmountFixed}</h5>
         </div>
         <div className="account-wrapper">
-          {editAccountPopupStatus ? (
+          {editAccountPopupStatus.value ? (
             <EditAccountPopup
               coodinates={{
                 x: 300,
@@ -124,7 +124,6 @@ function Accounts(props: Props) {
           ) : null}
           <ul className="account-items">
             {bankAccounts.value.arr.map((account: any) => {
-              console.log(account.id, account.data().title);
               return <AccountItem key={account.id} account={account} />;
             })}
           </ul>

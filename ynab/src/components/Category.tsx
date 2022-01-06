@@ -19,6 +19,7 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   category: QueryDocumentSnapshot;
   rerender: any;
+  setEditComponentPopupStatus: any;
 }
 
 function Category(props: Props) {
@@ -27,9 +28,25 @@ function Category(props: Props) {
   const moneyAmountTotal = useSelector(
     (state: any) => state.moneyAmountTotalReducer
   );
-  const editComponentPopupStatus = useSelector(
-    (state: any) => state.editComponentPopupStatusReducer
-  );
+
+  // Use to know whether or not to show the component for editing a
+  const [editComponentPopupStatus, setEditComponentPopupStatus] =
+    useState<boolean>(false);
+
+  // Money user is attempting to add
+  const [inputState, setInputState] = useState<string>("");
+
+  // State for performing addition
+  const [isPlusActive, setIsPlusActive] = useState(false);
+
+  // State for performing subtraction
+  const [isMinusActive, setIsMinusActive] = useState(false);
+
+  // Status for loading API call
+  const [isSending, setIsSending] = useState(false);
+
+  // Keep track of when the component is unmounted
+  const isMounted = useRef(true);
 
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
@@ -37,7 +54,7 @@ function Category(props: Props) {
     // Set the total amount for the categories in a category group
     dispatch(
       setTotalCategoryGroupAmount(
-        moneyAmountTotal - props.category.data().available
+        moneyAmountTotal.value - props.category.data().available
       )
     );
 
@@ -73,23 +90,9 @@ function Category(props: Props) {
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     setAnchorPoint({ x: event.pageX, y: event.pageY });
-    dispatch(enableEditComponentPopup());
+    // Set the popup status for the category
+    setEditComponentPopupStatus(true);
   }
-
-  // Money user is attempting to add
-  const [inputState, setInputState] = useState<string>("");
-
-  // State for performing addition
-  const [isPlusActive, setIsPlusActive] = useState(false);
-
-  // State for performing subtraction
-  const [isMinusActive, setIsMinusActive] = useState(false);
-
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
 
   // set isMounted to false when we unmount the component
   useEffect(() => {
@@ -132,7 +135,7 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal + strToNum));
+      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal.value + strToNum));
 
       // Turn off checking for if Plus was clicked
       setIsPlusActive(false);
@@ -173,7 +176,7 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal - strToNum));
+      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal.value - strToNum));
 
       // Turn off checking for if Minus was clicked
       setIsMinusActive(false);
@@ -222,6 +225,7 @@ function Category(props: Props) {
             componentType={componentType}
             editLocationForDb={categoryDbLocation}
             rerender={props.rerender}
+            setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
         <div className="category-left-side">

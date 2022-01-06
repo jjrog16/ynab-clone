@@ -1,17 +1,17 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
 interface Categories {
-  value: { arr: QueryDocumentSnapshot[] };
+  value: QueryDocumentSnapshot[];
 }
 
 // Contains all Categories
 const categoriesReducer = (
-  state: Categories = { value: { arr: [] } },
+  state: Categories = { value: [] },
   action: { type: string; payload: any }
 ) => {
   switch (action.type) {
     case "categories/addCategory":
-      return { ...state, value: { ...state.value, arr: action.payload } };
+      return { value: action.payload };
     default:
       return state;
   }

@@ -11,6 +11,7 @@ import editComponentPopupStatusReducer from "./editComponentPopupStatus";
 import moneyAmountTotalReducer from "./moneyAmountTotal";
 import readyToAssignTotalReducer from "./readyToAssignTotal";
 import transactionsReducer from "./transactions";
+import editAccountPopupStatusReducer from "./editAccountPopupStatus";
 
 // Root of all reducers
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   categoryGroupAmountTotalReducer,
   editAccountNameInputReducer,
   editAccountWorkingBalanceInputReducer,
+  editAccountPopupStatusReducer,
   editComponentPopupStatusReducer,
   moneyAmountTotalReducer,
   readyToAssignTotalReducer,

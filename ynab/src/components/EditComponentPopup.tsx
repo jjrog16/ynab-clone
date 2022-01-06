@@ -24,6 +24,7 @@ interface Props {
   componentType: string;
   editLocationForDb: DocumentReference;
   rerender: any;
+  setEditComponentPopupStatus: any;
 }
 
 function EditComponentPopup(props: Props) {
@@ -81,7 +82,7 @@ function EditComponentPopup(props: Props) {
       }
 
       // Dismiss the popup
-      dispatch(disableEditComponentPopup());
+      props.setEditComponentPopupStatus(false);
     },
     [isSending, inputState]
   );
@@ -106,7 +107,7 @@ function EditComponentPopup(props: Props) {
         // Remove money in category from total Category Group amount to update RTA
         dispatch(
           setTotalCategoryGroupAmount(
-            moneyAmountTotal - props.component.data().available
+            moneyAmountTotal.value - props.component.data().available
           )
         );
 
@@ -117,11 +118,11 @@ function EditComponentPopup(props: Props) {
       // Parent groups need to have all of their children deleted
       if (props.componentType === "categoryGroups") {
         // Get all children that have a groupId of parent
-        categories.map((child: DocumentData) => {
+        categories.value.arr.map((child: DocumentData) => {
           // Remove money in group for each child from total Category Group amount to update RTA
           dispatch(
             setTotalCategoryGroupAmount(
-              moneyAmountTotal - child.data().available
+              moneyAmountTotal.value - child.data().available
             )
           );
 
@@ -140,7 +141,7 @@ function EditComponentPopup(props: Props) {
       props.rerender();
 
       // Dismiss the popup
-      dispatch(disableEditComponentPopup());
+      props.setEditComponentPopupStatus(false);
     } else {
       console.log("Cancelled");
     }
@@ -166,7 +167,7 @@ function EditComponentPopup(props: Props) {
           <button onClick={() => deletePassedComponentInDb()}>Delete</button>
         </div>
         <div className="right-side-buttons">
-          <button onClick={() => dispatch(disableEditComponentPopup())}>
+          <button onClick={() => props.setEditComponentPopupStatus(false)}>
             Cancel
           </button>
           <button

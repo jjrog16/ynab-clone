@@ -9,10 +9,12 @@ interface Props {
   addLocationForDb: CollectionReference;
   componentType: string;
   rerender: any;
+  setAddComponentPopupStatus: any;
 }
 
 function AddComponentPopup(props: Props) {
   const dispatch = useDispatch();
+
   const [inputState, setInputState] = useState<string>("");
 
   // Status for loading API call
@@ -53,7 +55,7 @@ function AddComponentPopup(props: Props) {
       props.rerender();
 
       // Dismiss the popup
-      dispatch(disableAddComponentPopup());
+      props.setAddComponentPopupStatus(false);
     },
     [isSending, inputState]
   );
@@ -71,7 +73,7 @@ function AddComponentPopup(props: Props) {
         </form>
       </div>
       <div className="btn-container">
-        <button onClick={() => dispatch(disableAddComponentPopup())}>
+        <button onClick={() => props.setAddComponentPopupStatus(false)}>
           Cancel
         </button>
         <button onClick={() => addComponentToDb(props.addLocationForDb)}>

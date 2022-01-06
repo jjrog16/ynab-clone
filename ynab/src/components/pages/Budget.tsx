@@ -4,28 +4,29 @@ import NavBar from "../NavBar";
 import {
   collection,
   CollectionReference,
+  DocumentData,
   getDocs,
   getFirestore,
   query,
   Query,
   QueryDocumentSnapshot,
   QuerySnapshot,
+  where,
 } from "@firebase/firestore";
 import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
 import EditAccountPopup from "../EditAccountPopup";
 import { useDispatch, useSelector } from "react-redux";
-import { setCategoryGroups, toggleAddComponentPopup } from "../../actions";
+import {
+  setCategories,
+  setCategoryGroups,
+  setTotalCategoryGroupAmount,
+  toggleAddComponentPopup,
+} from "../../actions";
 
 interface Props {}
 
 function Budget(props: Props) {
-  // Read what is in the database as an array of QueryDocumentSnapshot, and display
-  // groups to UI
-
-  // const [allCategoryGroups, setAllCategoryGroups] =
-  //   useState<QueryDocumentSnapshot[]>();
-
   const dispatch = useDispatch();
 
   // Status for loading API call
@@ -38,6 +39,12 @@ function Budget(props: Props) {
   const groupsQuery: Query = query(
     collection(getFirestore(), "categoryGroups")
   );
+
+  const [categoryGroups, setCategoryGroups] =
+    useState<QueryDocumentSnapshot[]>();
+
+  // Controls if popup should be visible
+  const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   /**
    * Load Category Groups from Firebase
@@ -64,7 +71,7 @@ function Budget(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         // Store the array of CategoryGroups
-        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+        setCategoryGroups(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -77,24 +84,13 @@ function Budget(props: Props) {
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
     loadCategoryGroups(groupsQuery);
-
     return () => {
       isMounted.current = false;
     };
   }, []);
 
-  // Controls if popup should be visible
-  const addComponentPopupStatus = useSelector(
-    (state: any) => state.addComponentPopupReducer
-  );
-
-  // State of all category groups
-  const categoryGroups = useSelector(
-    (state: any) => state.categoryGroupsReducer
-  );
-
   // Sort responses based on position once they are in
-  categoryGroups?.value.arr.sort(
+  categoryGroups?.sort(
     (a: any, b: any) => a.data().position - b.data().position
   );
 
@@ -128,7 +124,7 @@ function Budget(props: Props) {
             <p
               className="add-category-group"
               onClick={() => {
-                dispatch(toggleAddComponentPopup());
+                setAddComponentPopupStatus(!addComponentPopupStatus);
               }}
             >
               + Category Group
@@ -139,6 +135,7 @@ function Budget(props: Props) {
                 addLocationForDb={categoryGroupDbLocation}
                 componentType={componentType}
                 rerender={() => loadCategoryGroups(groupsQuery)}
+                setAddComponentPopupStatus={setAddComponentPopupStatus}
               />
             ) : null}
           </div>
@@ -157,19 +154,18 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {categoryGroups?.value.arr.map(
-                  (categoryGroup: QueryDocumentSnapshot) => {
-                    return (
-                      <CategoryGroup
-                        key={categoryGroup.id}
-                        group={categoryGroup}
-                        rerenderLoadCategoryGroups={() =>
-                          loadCategoryGroups(groupsQuery)
-                        }
-                      />
-                    );
-                  }
-                )}
+                {categoryGroups?.map((categoryGroup: QueryDocumentSnapshot) => {
+                  console.log(categoryGroup);
+                  return (
+                    <CategoryGroup
+                      key={categoryGroup.id}
+                      group={categoryGroup}
+                      rerenderLoadCategoryGroups={() =>
+                        loadCategoryGroups(groupsQuery)
+                      }
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>

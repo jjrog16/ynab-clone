@@ -5,11 +5,11 @@ const addComponentPopupStatusReducer = (
 ) => {
   switch (action.type) {
     case "addComponentPopupStatus/disable":
-      return { ...state, value: false };
+      return { value: false };
     case "addComponentPopupStatus/enable":
-      return { ...state, value: true };
+      return { value: true };
     case "addComponentPopupStatus/toggle":
-      return { ...state, value: !state };
+      return { value: !state };
     default:
       return state;
   }
