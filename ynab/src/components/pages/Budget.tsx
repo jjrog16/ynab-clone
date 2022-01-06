@@ -155,7 +155,6 @@ function Budget(props: Props) {
             <div className="groups-wrapper">
               <div className="groups">
                 {categoryGroups?.map((categoryGroup: QueryDocumentSnapshot) => {
-                  console.log(categoryGroup);
                   return (
                     <CategoryGroup
                       key={categoryGroup.id}

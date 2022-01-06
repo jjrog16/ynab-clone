@@ -25,9 +25,16 @@ interface Props {
 function Category(props: Props) {
   const dispatch = useDispatch();
 
+  // System colors in SCSS
+  const LIGHT_BLUE = "#4795d8";
+  const DARK_GRAY = "#656568";
+
+  // Total amount of money in bank accounts
   const moneyAmountTotal = useSelector(
     (state: any) => state.moneyAmountTotalReducer
   );
+
+  console.log("Money total", moneyAmountTotal.value);
 
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
@@ -65,14 +72,11 @@ function Category(props: Props) {
 
   // Implement context menu //
 
-  // Type of component being passed for Edit
-  const componentType = "categories";
-
   // The location for where EditComponentPopup will send data
   // Needs the collection with db, the name of the collection,
   // and the ID of the item being changed
   const categoryDbLocation: DocumentReference = doc(
-    collection(getFirestore(), componentType),
+    collection(getFirestore(), "categories"),
     props.category.id
   );
 
@@ -135,6 +139,7 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
+      console.log("Total Money", moneyAmountTotal.value);
       dispatch(setTotalCategoryGroupAmount(moneyAmountTotal.value + strToNum));
 
       // Turn off checking for if Plus was clicked
@@ -206,10 +211,6 @@ function Category(props: Props) {
     }
   }
 
-  // System colors in SCSS
-  const LIGHT_BLUE = "#4795d8";
-  const DARK_GRAY = "#656568";
-
   return (
     <>
       <li
@@ -222,7 +223,7 @@ function Category(props: Props) {
             coordinates={anchorPoint}
             component={props.category}
             componentObjectTemplate={editedCategoryObj}
-            componentType={componentType}
+            componentType={"categories"}
             editLocationForDb={categoryDbLocation}
             rerender={props.rerender}
             setEditComponentPopupStatus={setEditComponentPopupStatus}

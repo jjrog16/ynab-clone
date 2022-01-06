@@ -81,7 +81,7 @@ function CategoryGroup(props: Props) {
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
 
-        dispatch(setCategories(arrayOfQueryDocumentSnapshots));
+        //dispatch(setCategories(arrayOfQueryDocumentSnapshots));
         setCategories(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");

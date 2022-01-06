@@ -6,7 +6,7 @@ const readyToAssignTotalReducer = (
 ) => {
   switch (action.type) {
     case "readyToAssignTotal/addToTotal":
-      return { ...state, value: state + action.payload };
+      return { value: state.value + action.payload };
     default:
       return state;
   }

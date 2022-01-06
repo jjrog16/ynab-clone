@@ -8,7 +8,7 @@ const moneyAmountTotalReducer = (
 ) => {
   switch (action.type) {
     case "moneyAccountTotal/addToTotal":
-      return { ...state, value: state + action.payload };
+      return { value: state.value + action.payload };
     default:
       return state;
   }
