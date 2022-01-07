@@ -10,7 +10,7 @@ import {
   where,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import {
@@ -18,6 +18,7 @@ import {
   setAllTransactions,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
+  setTotalAmount,
 } from "../actions";
 import "../styles/css/AccountItem.css";
 import EditAccountPopup from "./EditAccountPopup";
@@ -29,18 +30,25 @@ interface Props {
 function AccountItem(props: Props) {
   const dispatch: Dispatch<any> = useDispatch();
 
+  const moneyAmountTotal = useSelector(
+    (state: any) => state.moneyAmountTotalReducer
+  );
+
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
-  // useEffect(() => {
-  //   // Set the total amount for the categories in a category group
-  //   props.setTotalAmount(
-  //     (previousAmount: number) => previousAmount + props.account.data().amount
-  //   );
+  useEffect(() => {
+    // Set the total amount for the categories in a category group
+    // props.setTotalAmount(
+    //   (previousAmount: number) => previousAmount + props.account.data().amount
+    // );
+    dispatch(
+      setTotalAmount(moneyAmountTotal.value + props.account.data().amount)
+    );
 
-  //   return () => {
-  //     //cleanup
-  //   };
-  // }, []);
+    return () => {
+      //cleanup
+    };
+  }, []);
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);

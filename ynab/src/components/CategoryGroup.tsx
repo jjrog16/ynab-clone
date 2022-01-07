@@ -68,7 +68,7 @@ function CategoryGroup(props: Props) {
         setIsSending(true);
 
         // Set the amount for total category group to 0 to start
-        dispatch(setTotalCategoryGroupAmount(0));
+        //dispatch(setTotalCategoryGroupAmount(0));
 
         // Asynchronous load of all categories based off query
         const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);

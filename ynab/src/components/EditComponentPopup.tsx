@@ -15,6 +15,7 @@ import {
   disableEditComponentPopup,
   setTotalCategoryGroupAmount,
 } from "../actions";
+import categoryGroupAmountTotalReducer from "../reducers/categoryGroupAmountTotal";
 import "../styles/css/EditComponentPopup.css";
 
 interface Props {
@@ -30,8 +31,8 @@ interface Props {
 function EditComponentPopup(props: Props) {
   const dispatch = useDispatch();
 
-  const moneyAmountTotal = useSelector(
-    (state: any) => state.moneyAmountTotalReducer
+  const categoryGroupAmountTotal = useSelector(
+    (state: any) => state.categoryGroupAmountTotalReducer
   );
   const categories = useSelector((state: any) => state.categoriesReducer);
 
@@ -107,7 +108,7 @@ function EditComponentPopup(props: Props) {
         // Remove money in category from total Category Group amount to update RTA
         dispatch(
           setTotalCategoryGroupAmount(
-            moneyAmountTotal.value - props.component.data().available
+            categoryGroupAmountTotal.value - props.component.data().available
           )
         );
 
@@ -122,7 +123,7 @@ function EditComponentPopup(props: Props) {
           // Remove money in group for each child from total Category Group amount to update RTA
           dispatch(
             setTotalCategoryGroupAmount(
-              moneyAmountTotal.value - child.data().available
+              categoryGroupAmountTotal.value - child.data().available
             )
           );
 

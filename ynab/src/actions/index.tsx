@@ -86,13 +86,6 @@ export const toggleAddComponentPopup = () => {
   };
 };
 
-export const setReadyToAssignTotal = (amount: number) => {
-  return {
-    type: "readyToAssignTotal/addToTotal",
-    payload: amount,
-  };
-};
-
 export const enableEditComponentPopup = () => {
   return {
     type: "editComponentPopupStatus/enable",

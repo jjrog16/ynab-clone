@@ -34,7 +34,9 @@ function Category(props: Props) {
     (state: any) => state.moneyAmountTotalReducer
   );
 
-  console.log("Money total", moneyAmountTotal.value);
+  const categoryGroupAmountTotal = useSelector(
+    (state: any) => state.categoryGroupAmountTotalReducer
+  );
 
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
@@ -61,10 +63,9 @@ function Category(props: Props) {
     // Set the total amount for the categories in a category group
     dispatch(
       setTotalCategoryGroupAmount(
-        moneyAmountTotal.value - props.category.data().available
+        categoryGroupAmountTotal.value + props.category.data().available
       )
     );
-
     return () => {
       //cleanup
     };
@@ -139,8 +140,9 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      console.log("Total Money", moneyAmountTotal.value);
-      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal.value + strToNum));
+      dispatch(
+        setTotalCategoryGroupAmount(categoryGroupAmountTotal.value + strToNum)
+      );
 
       // Turn off checking for if Plus was clicked
       setIsPlusActive(false);
@@ -181,7 +183,9 @@ function Category(props: Props) {
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
-      dispatch(setTotalCategoryGroupAmount(moneyAmountTotal.value - strToNum));
+      dispatch(
+        setTotalCategoryGroupAmount(categoryGroupAmountTotal.value - strToNum)
+      );
 
       // Turn off checking for if Minus was clicked
       setIsMinusActive(false);
