@@ -29,11 +29,6 @@ function Category(props: Props) {
   const LIGHT_BLUE = "#4795d8";
   const DARK_GRAY = "#656568";
 
-  // Total amount of money in bank accounts
-  const moneyAmountTotal = useSelector(
-    (state: any) => state.moneyAmountTotalReducer
-  );
-
   const categoryGroupAmountTotal = useSelector(
     (state: any) => state.categoryGroupAmountTotalReducer
   );

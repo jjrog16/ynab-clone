@@ -70,6 +70,10 @@ function Budget(props: Props) {
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
 
+        // Set the total amount to 0 since each load of the page causes a rerender and calculation
+        // for Ready to Assign
+        dispatch(setTotalCategoryGroupAmount(0));
+
         // Store the array of CategoryGroups
         setCategoryGroups(arrayOfQueryDocumentSnapshots);
       } catch (e) {
