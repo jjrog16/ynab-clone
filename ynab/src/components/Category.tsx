@@ -9,10 +9,7 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  enableEditComponentPopup,
-  setTotalCategoryGroupAmount,
-} from "../actions";
+import { setTotalCategoryGroupAmount } from "../actions";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 

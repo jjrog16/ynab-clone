@@ -12,7 +12,6 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import {
-  disableEditAccountPopup,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
   setTotalAmount,
@@ -21,6 +20,8 @@ import "../styles/css/EditAccountPopup.css";
 interface Props {
   coodinates: { x: number; y: number };
   rerenderLoadAccounts: any;
+  editAccountPopupStatus: boolean;
+  setEditAccountPopupStatus: any;
 }
 function EditAccountPopup(props: Props) {
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ function EditAccountPopup(props: Props) {
         props.rerenderLoadAccounts();
 
         // Remove the popup window
-        dispatch(disableEditAccountPopup());
+        //dispatch(disableEditAccountPopup());
       }
     },
     [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
@@ -148,7 +149,7 @@ function EditAccountPopup(props: Props) {
         props.rerenderLoadAccounts();
 
         // Remove the popup window
-        dispatch(disableEditAccountPopup());
+        //dispatch(disableEditAccountPopup());
       }
     },
     [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
@@ -176,7 +177,7 @@ function EditAccountPopup(props: Props) {
       props.rerenderLoadAccounts();
 
       // Remove the popup window
-      dispatch(disableEditAccountPopup());
+      //dispatch(disableEditAccountPopup());
     }
   }, [isSending]);
 
@@ -206,7 +207,7 @@ function EditAccountPopup(props: Props) {
             <input
               type="text"
               id="et-account-name"
-              value={editAccountNameInput}
+              value={editAccountNameInput.value}
               onChange={(e) =>
                 dispatch(setEditAccountNameInput(e.target.value))
               }
@@ -221,7 +222,7 @@ function EditAccountPopup(props: Props) {
             <input
               type="text"
               id="et-working-balance"
-              value={editAccountWorkingBalanceInput}
+              value={editAccountWorkingBalanceInput.value}
               onChange={(e) =>
                 dispatch(setEditAccountWorkingBalanceInput(e.target.value))
               }
@@ -241,7 +242,7 @@ function EditAccountPopup(props: Props) {
           <div className="edit-account-buttons-cancel-button">
             <button
               className="cancel"
-              onClick={() => dispatch(disableEditAccountPopup())}
+              onClick={() => props.setEditAccountPopupStatus(false)}
             >
               Cancel
             </button>

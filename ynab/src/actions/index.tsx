@@ -14,30 +14,6 @@ export const setTotalAmount = (number: number) => {
   };
 };
 
-export const enableEditAccountPopup = () => {
-  return {
-    type: "editAccountPopupStatus/enable",
-  };
-};
-
-export const disableEditAccountPopup = () => {
-  return {
-    type: "editAccountPopupStatus/disable",
-  };
-};
-
-export const enableAddComponentPopup = () => {
-  return {
-    type: "addComponentPopupStatus/enable",
-  };
-};
-
-export const disableAddComponentPopup = () => {
-  return {
-    type: "addComponentPopupStatus/disable",
-  };
-};
-
 export const setEditAccountNameInput = (input: string) => {
   return {
     type: "editAccountNumberInput/updateInputValue",
@@ -77,27 +53,5 @@ export const setTotalCategoryGroupAmount = (amount: number) => {
   return {
     type: "categoryGroupAmountTotal/addToTotal",
     payload: amount,
-  };
-};
-
-export const toggleAddComponentPopup = () => {
-  return {
-    type: "addComponentPopupStatus/toggle",
-  };
-};
-
-export const enableEditComponentPopup = () => {
-  return {
-    type: "editComponentPopupStatus/enable",
-  };
-};
-export const disableEditComponentPopup = () => {
-  return {
-    type: "editComponentPopupStatus/disable",
-  };
-};
-export const toggleEditComponentPopup = () => {
-  return {
-    type: "editComponentPopupStatus/toggle",
   };
 };

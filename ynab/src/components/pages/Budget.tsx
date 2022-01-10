@@ -21,7 +21,6 @@ import {
   setCategories,
   setCategoryGroups,
   setTotalCategoryGroupAmount,
-  toggleAddComponentPopup,
 } from "../../actions";
 
 interface Props {}

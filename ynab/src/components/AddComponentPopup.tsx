@@ -1,7 +1,6 @@
 import { addDoc, CollectionReference } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { disableAddComponentPopup } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {

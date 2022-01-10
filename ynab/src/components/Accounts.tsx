@@ -13,7 +13,6 @@ import "../styles/css/Accounts.css";
 import AccountItem from "./AccountItem";
 import EditAccountPopup from "./EditAccountPopup";
 import {
-  enableEditAccountPopup,
   setBankAccounts,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
@@ -35,9 +34,7 @@ function Accounts(props: Props) {
     (state: any) => state.moneyAmountTotalReducer
   );
 
-  const editAccountPopupStatus = useSelector(
-    (state: any) => state.editAccountPopupStatusReducer
-  );
+  const [editAccountPopupStatus, setEditAccountPopupStatus] = useState(false);
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -97,7 +94,7 @@ function Accounts(props: Props) {
    */
   function handleAddAccount() {
     // Set popup to true
-    dispatch(enableEditAccountPopup());
+    //dispatch(enableEditAccountPopup());
 
     // Set account name input to be empty
     dispatch(setEditAccountNameInput(""));
@@ -113,18 +110,26 @@ function Accounts(props: Props) {
           <h5 className="budget-total-amount">{totalAmountFixed}</h5>
         </div>
         <div className="account-wrapper">
-          {editAccountPopupStatus.value ? (
+          {editAccountPopupStatus ? (
             <EditAccountPopup
               coodinates={{
                 x: 300,
                 y: 200,
               }}
               rerenderLoadAccounts={() => loadAccounts(accountQuery)}
+              editAccountPopupStatus={editAccountPopupStatus}
+              setEditAccountPopupStatus={setEditAccountPopupStatus}
             />
           ) : null}
           <ul className="account-items">
             {bankAccounts.value.arr.map((account: any) => {
-              return <AccountItem key={account.id} account={account} />;
+              return (
+                <AccountItem
+                  key={account.id}
+                  account={account}
+                  setEditAccountPopupStatus={setEditAccountPopupStatus}
+                />
+              );
             })}
           </ul>
         </div>

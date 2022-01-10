@@ -11,10 +11,7 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  disableEditComponentPopup,
-  setTotalCategoryGroupAmount,
-} from "../actions";
+import { setTotalCategoryGroupAmount } from "../actions";
 import categoryGroupAmountTotalReducer from "../reducers/categoryGroupAmountTotal";
 import "../styles/css/EditComponentPopup.css";
 

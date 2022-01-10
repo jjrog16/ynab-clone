@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import {
-  enableEditAccountPopup,
   setAllTransactions,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
@@ -25,6 +24,7 @@ import EditAccountPopup from "./EditAccountPopup";
 
 interface Props {
   account: QueryDocumentSnapshot;
+  setEditAccountPopupStatus: any;
 }
 
 function AccountItem(props: Props) {
@@ -98,7 +98,7 @@ function AccountItem(props: Props) {
    */
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
-    dispatch(enableEditAccountPopup());
+    props.setEditAccountPopupStatus(true);
     dispatch(setEditAccountNameInput(props.account.data().title));
     dispatch(setEditAccountWorkingBalanceInput(props.account.data().amount));
   }
