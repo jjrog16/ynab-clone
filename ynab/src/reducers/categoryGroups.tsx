@@ -11,7 +11,7 @@ const categoryGroupsReducer = (
 ) => {
   switch (action.type) {
     case "categoryGroups/addCategoryGroup":
-      return { value: action.payload };
+      return { ...state, value: action.payload };
     default:
       return state;
   }

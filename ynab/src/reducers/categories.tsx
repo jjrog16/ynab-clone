@@ -11,7 +11,7 @@ const categoriesReducer = (
 ) => {
   switch (action.type) {
     case "categories/addCategory":
-      return { value: action.payload };
+      return { ...state, value: action.payload };
     default:
       return state;
   }
