@@ -6,7 +6,7 @@ const categoryGroupAmountTotalReducer = (
 ) => {
   switch (action.type) {
     case "categoryGroupAmountTotal/addToTotal":
-      return { value: action.payload };
+      return { ...state, value: state.value + action.payload };
     default:
       return state;
   }

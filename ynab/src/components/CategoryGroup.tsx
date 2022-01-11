@@ -27,7 +27,9 @@ function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
 
   // Array of Categories that relate to each category group
-  const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
+  // const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
+
+  const categories = useSelector((state: any) => state.categoriesReducer.value);
 
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
@@ -76,8 +78,8 @@ function CategoryGroup(props: Props) {
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
 
-        //dispatch(setCategories(arrayOfQueryDocumentSnapshots));
-        setCategories(arrayOfQueryDocumentSnapshots);
+        dispatch(setCategories(arrayOfQueryDocumentSnapshots));
+        //setCategories(arrayOfQueryDocumentSnapshots);
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -170,9 +172,9 @@ function CategoryGroup(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.group}
-            componentObjectTemplate={editedCategoryGroupObj}
+            // componentObjectTemplate={editedCategoryGroupObj}
             componentType={"categoryGroups"}
-            editLocationForDb={categoryGroupDbLocation}
+            // editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerenderLoadCategoryGroups}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
@@ -195,10 +197,10 @@ function CategoryGroup(props: Props) {
         ) : null}
       </div>
       <ul key={props.group.id} className="group-items">
-        {categories?.map((category: QueryDocumentSnapshot) => {
+        {props.group.data().categories.map((category: any, idx: number) => {
           return (
             <Category
-              key={category.id}
+              key={idx}
               category={category}
               rerender={() => loadCategories(categoriesQuery)}
               setEditComponentPopupStatus={setEditComponentPopupStatus}

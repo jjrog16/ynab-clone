@@ -36,6 +36,7 @@ export const setAllTransactions = (transactions: QueryDocumentSnapshot[]) => {
 };
 
 export const setCategoryGroups = (categoryGroups: QueryDocumentSnapshot[]) => {
+  console.log("Category Group added");
   return {
     type: "categoryGroups/addCategoryGroup",
     payload: categoryGroups,

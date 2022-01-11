@@ -18,9 +18,9 @@ import "../styles/css/EditComponentPopup.css";
 interface Props {
   coordinates: { x: number; y: number };
   component: QueryDocumentSnapshot;
-  componentObjectTemplate: any;
+  // componentObjectTemplate: any;
   componentType: string;
-  editLocationForDb: DocumentReference;
+  // editLocationForDb: DocumentReference | string;
   rerender: any;
   setEditComponentPopupStatus: any;
 }
@@ -33,10 +33,10 @@ function EditComponentPopup(props: Props) {
   );
   const categories = useSelector((state: any) => state.categoriesReducer);
 
-  // Set up the input state to be the passed in title
-  const [inputState, setInputState] = useState<string>(
-    props.componentObjectTemplate.title
-  );
+  // // Set up the input state to be the passed in title
+  // const [inputState, setInputState] = useState<string>(
+  //   props.componentObjectTemplate.title
+  // );
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -51,99 +51,99 @@ function EditComponentPopup(props: Props) {
     };
   }, []);
 
-  /**
-   * Use the ID for the category group passed in as a prop in order to know which
-   * Firebase document to edit
-   * @param location
-   */
-  const editPassedComponentInDb = useCallback(
-    async (location: DocumentReference) => {
-      // don't send again while we are sending
-      if (isSending) return;
+  // /**
+  //  * Use the ID for the category group passed in as a prop in order to know which
+  //  * Firebase document to edit
+  //  * @param location
+  //  */
+  // const editPassedComponentInDb = useCallback(
+  //   async (location: DocumentReference) => {
+  //     // don't send again while we are sending
+  //     if (isSending) return;
 
-      // update state
-      setIsSending(true);
+  //     // update state
+  //     setIsSending(true);
 
-      // Change the title of the component based on input if the input has changed
-      if (props.componentObjectTemplate["title"] !== inputState) {
-        props.componentObjectTemplate["title"] = inputState;
+  //     // Change the title of the component based on input if the input has changed
+  //     if (props.componentObjectTemplate["title"] !== inputState) {
+  //       props.componentObjectTemplate["title"] = inputState;
 
-        // Set the Docu based on the location passed and the object type passed in props
-        await setDoc(location, props.componentObjectTemplate);
+  //       // Set the Docu based on the location passed and the object type passed in props
+  //       await setDoc(location, props.componentObjectTemplate);
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
+  //       // once the request is sent, update state again
+  //       // only update if we are still mounted
+  //       if (isMounted.current) setIsSending(false);
 
-        // Load from Firebase to cause a rerender since there is a change
-        props.rerender();
-      }
+  //       // Load from Firebase to cause a rerender since there is a change
+  //       props.rerender();
+  //     }
 
-      // Dismiss the popup
-      props.setEditComponentPopupStatus(false);
-    },
-    [isSending, inputState]
-  );
+  //     // Dismiss the popup
+  //     props.setEditComponentPopupStatus(false);
+  //   },
+  //   [isSending, inputState]
+  // );
 
-  const deletePassedComponentInDb = useCallback(async () => {
-    // don't send again while we are sending
-    if (isSending) return;
+  // const deletePassedComponentInDb = useCallback(async () => {
+  //   // don't send again while we are sending
+  //   if (isSending) return;
 
-    // update state
-    setIsSending(true);
+  //   // update state
+  //   setIsSending(true);
 
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm("Are you sure you want to delete?")) {
-      // Children can be deleted since they have no dependencies
-      if (props.componentType === "categories") {
-        deleteDoc(props.editLocationForDb);
+  //   // eslint-disable-next-line no-restricted-globals
+  //   if (confirm("Are you sure you want to delete?")) {
+  //     // Children can be deleted since they have no dependencies
+  //     if (props.componentType === "categories") {
+  //       // deleteDoc(props.editLocationForDb);
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
+  //       // once the request is sent, update state again
+  //       // only update if we are still mounted
+  //       if (isMounted.current) setIsSending(false);
 
-        // Remove money in category from total Category Group amount to update RTA
-        dispatch(
-          setTotalCategoryGroupAmount(
-            categoryGroupAmountTotal.value - props.component.data().available
-          )
-        );
+  //       // Remove money in category from total Category Group amount to update RTA
+  //       dispatch(
+  //         setTotalCategoryGroupAmount(
+  //           categoryGroupAmountTotal.value - props.component.data().available
+  //         )
+  //       );
 
-        // Load from Firebase to cause a rerender since there is a change
-        props.rerender();
-      }
+  //       // Load from Firebase to cause a rerender since there is a change
+  //       props.rerender();
+  //     }
 
-      // Parent groups need to have all of their children deleted
-      if (props.componentType === "categoryGroups") {
-        // Get all children that have a groupId of parent
-        categories.value.arr.map((child: DocumentData) => {
-          // Remove money in group for each child from total Category Group amount to update RTA
-          dispatch(
-            setTotalCategoryGroupAmount(
-              categoryGroupAmountTotal.value - child.data().available
-            )
-          );
+  //     // Parent groups need to have all of their children deleted
+  //     if (props.componentType === "categoryGroups") {
+  //       // Get all children that have a groupId of parent
+  //       categories.value.arr.map((child: DocumentData) => {
+  //         // Remove money in group for each child from total Category Group amount to update RTA
+  //         dispatch(
+  //           setTotalCategoryGroupAmount(
+  //             categoryGroupAmountTotal.value - child.data().available
+  //           )
+  //         );
 
-          // Delete each child one by one
-          deleteDoc(doc(collection(getFirestore(), "categories"), child.id));
-        });
-        // Delete the parent
-        deleteDoc(
-          doc(
-            collection(getFirestore(), props.componentType),
-            props.component.id
-          )
-        );
-      }
-      // Load from Firebase to cause a rerender since there is a change
-      props.rerender();
+  //         // Delete each child one by one
+  //         deleteDoc(doc(collection(getFirestore(), "categories"), child.id));
+  //       });
+  //       // Delete the parent
+  //       deleteDoc(
+  //         doc(
+  //           collection(getFirestore(), props.componentType),
+  //           props.component.id
+  //         )
+  //       );
+  //     }
+  //     // Load from Firebase to cause a rerender since there is a change
+  //     props.rerender();
 
-      // Dismiss the popup
-      props.setEditComponentPopupStatus(false);
-    } else {
-      console.log("Cancelled");
-    }
-  }, [isSending]);
+  //     // Dismiss the popup
+  //     props.setEditComponentPopupStatus(false);
+  //   } else {
+  //     console.log("Cancelled");
+  //   }
+  // }, [isSending]);
 
   return (
     <div
@@ -155,21 +155,21 @@ function EditComponentPopup(props: Props) {
           <input
             type="text"
             id="et-edit-new-component"
-            value={inputState}
-            onChange={(e) => setInputState(e.target.value)}
+            // value={inputState}
+            // onChange={(e) => setInputState(e.target.value)}
           ></input>
         </form>
       </div>
       <div className="edit-components-btn-container">
         <div className="left-side-buttons">
-          <button onClick={() => deletePassedComponentInDb()}>Delete</button>
+          {/* <button onClick={() => deletePassedComponentInDb()}>Delete</button> */}
         </div>
         <div className="right-side-buttons">
           <button onClick={() => props.setEditComponentPopupStatus(false)}>
             Cancel
           </button>
           <button
-            onClick={() => editPassedComponentInDb(props.editLocationForDb)}
+          // onClick={() => editPassedComponentInDb(props.editLocationForDb)}
           >
             OK
           </button>

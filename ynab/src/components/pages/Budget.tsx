@@ -39,8 +39,12 @@ function Budget(props: Props) {
     collection(getFirestore(), "categoryGroups")
   );
 
-  const [categoryGroups, setCategoryGroups] =
-    useState<QueryDocumentSnapshot[]>();
+  // const [categoryGroups, setCategoryGroups] =
+  //   useState<QueryDocumentSnapshot[]>();
+
+  const categoryGroups = useSelector(
+    (state: any) => state.categoryGroupsReducer.value
+  );
 
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
@@ -74,7 +78,9 @@ function Budget(props: Props) {
         dispatch(setTotalCategoryGroupAmount(0));
 
         // Store the array of CategoryGroups
-        setCategoryGroups(arrayOfQueryDocumentSnapshots);
+        //setCategoryGroups(arrayOfQueryDocumentSnapshots);
+
+        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);

@@ -6,6 +6,7 @@ import {
   getFirestore,
   QueryDocumentSnapshot,
   setDoc,
+  updateDoc,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +15,7 @@ import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
-  category: QueryDocumentSnapshot;
+  category: any;
   rerender: any;
   setEditComponentPopupStatus: any;
 }
@@ -53,11 +54,10 @@ function Category(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    dispatch(
-      setTotalCategoryGroupAmount(
-        categoryGroupAmountTotal.value + props.category.data().available
-      )
-    );
+    const amount = categoryGroupAmountTotal.value + props.category.available;
+    dispatch(setTotalCategoryGroupAmount(amount));
+
+    console.log(categoryGroupAmountTotal.value, props.category.available);
     return () => {
       //cleanup
     };
@@ -65,21 +65,21 @@ function Category(props: Props) {
 
   // Implement context menu //
 
-  // The location for where EditComponentPopup will send data
-  // Needs the collection with db, the name of the collection,
-  // and the ID of the item being changed
-  const categoryDbLocation: DocumentReference = doc(
-    collection(getFirestore(), "categories"),
-    props.category.id
-  );
+  // // The location for where EditComponentPopup will send data
+  // // Needs the collection with db, the name of the collection,
+  // // and the ID of the item being changed
+  // const categoryDbLocation: DocumentReference = doc(
+  //   collection(getFirestore(), "categoryGroups"),
+  //   props.category.id
+  // );
 
   // Db Object formatting for when editing a Category Group
-  const editedCategoryObj = {
-    position: props.category.data().position,
-    title: props.category.data().title,
-    available: props.category.data().available,
-    groupId: props.category.data().groupId,
-  };
+  // const editedCategoryObj = {
+  //   position: props.category.data().position,
+  //   title: props.category.data().title,
+  //   available: props.category.data().available,
+  //   groupId: props.category.data().groupId,
+  // };
 
   // Use for knowing where the right click occurred
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -98,114 +98,114 @@ function Category(props: Props) {
     };
   }, []);
 
-  /**
-   * When isPlusActive is true, this function
-   * takes the input and updates the database
-   * asynchronously, rerenders the page, then
-   * updates the total Category Group amount
-   *
-   */
-  const addToAvailable = useCallback(async () => {
-    // Try to convert to number. If fails, exit
-    const strToNum: number = Number(inputState);
+  // /**
+  //  * When isPlusActive is true, this function
+  //  * takes the input and updates the database
+  //  * asynchronously, rerenders the page, then
+  //  * updates the total Category Group amount
+  //  *
+  //  */
+  // const addToAvailable = useCallback(async () => {
+  //   // Try to convert to number. If fails, exit
+  //   const strToNum: number = Number(inputState);
 
-    if (strToNum) {
-      // don't send again while we are sending
-      if (isSending) return;
+  //   if (strToNum) {
+  //     // don't send again while we are sending
+  //     if (isSending) return;
 
-      // update state
-      setIsSending(true);
+  //     // update state
+  //     setIsSending(true);
 
-      await setDoc(categoryDbLocation, {
-        available: props.category.data().available + strToNum,
-        groupId: props.category.data().groupId,
-        position: props.category.data().position,
-        title: props.category.data().title,
-      });
+  //     await updateDoc(categoryDbLocation, {
+  //       available: props.category.data().available + strToNum,
+  //       groupId: props.category.data().groupId,
+  //       position: props.category.data().position,
+  //       title: props.category.data().title,
+  //     });
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
+  //     // once the request is sent, update state again
+  //     // only update if we are still mounted
+  //     if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since there is a change
-      props.rerender();
+  //     // Load from Firebase to cause a rerender since there is a change
+  //     props.rerender();
 
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      dispatch(
-        setTotalCategoryGroupAmount(categoryGroupAmountTotal.value + strToNum)
-      );
+  //     // Update the total amount set for the categories so that Ready to Assign can
+  //     // update its state
+  //     dispatch(
+  //       setTotalCategoryGroupAmount(categoryGroupAmountTotal.value + strToNum)
+  //     );
 
-      // Turn off checking for if Plus was clicked
-      setIsPlusActive(false);
-    }
-  }, [isSending, inputState]);
+  //     // Turn off checking for if Plus was clicked
+  //     setIsPlusActive(false);
+  //   }
+  // }, [isSending, inputState]);
 
-  /**
-   * When isMinusActive is true, this function
-   * takes the input and updates the database
-   * asynchronously, rerenders the page, then
-   * updates the total Category Group amount
-   *
-   */
-  const subtractFromAvailable = useCallback(async () => {
-    // Try to convert to number. If fails, exit
-    const strToNum: number = Number(inputState);
+  // /**
+  //  * When isMinusActive is true, this function
+  //  * takes the input and updates the database
+  //  * asynchronously, rerenders the page, then
+  //  * updates the total Category Group amount
+  //  *
+  //  */
+  // const subtractFromAvailable = useCallback(async () => {
+  //   // Try to convert to number. If fails, exit
+  //   const strToNum: number = Number(inputState);
 
-    if (strToNum) {
-      // don't send again while we are sending
-      if (isSending) return;
+  //   if (strToNum) {
+  //     // don't send again while we are sending
+  //     if (isSending) return;
 
-      // update state
-      setIsSending(true);
+  //     // update state
+  //     setIsSending(true);
 
-      await setDoc(categoryDbLocation, {
-        available: props.category.data().available - strToNum,
-        groupId: props.category.data().groupId,
-        position: props.category.data().position,
-        title: props.category.data().title,
-      });
+  //     await setDoc(categoryDbLocation, {
+  //       available: props.category.data().available - strToNum,
+  //       groupId: props.category.data().groupId,
+  //       position: props.category.data().position,
+  //       title: props.category.data().title,
+  //     });
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
+  //     // once the request is sent, update state again
+  //     // only update if we are still mounted
+  //     if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since there is a change
-      props.rerender();
+  //     // Load from Firebase to cause a rerender since there is a change
+  //     props.rerender();
 
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      dispatch(
-        setTotalCategoryGroupAmount(categoryGroupAmountTotal.value - strToNum)
-      );
+  //     // Update the total amount set for the categories so that Ready to Assign can
+  //     // update its state
+  //     dispatch(
+  //       setTotalCategoryGroupAmount(categoryGroupAmountTotal.value - strToNum)
+  //     );
 
-      // Turn off checking for if Minus was clicked
-      setIsMinusActive(false);
-    }
-  }, [isSending, inputState]);
+  //     // Turn off checking for if Minus was clicked
+  //     setIsMinusActive(false);
+  //   }
+  // }, [isSending, inputState]);
 
-  /**
-   * Handles the user input selection and chooses the correct
-   * function to run based on if Plus or Minus was selected.
-   * @param e KeyBoardEvent the user enters in the input field
-   */
-  function handleKeyDown(e: React.KeyboardEvent) {
-    // Review event if key pressed is the enter key
-    if (e.key === "Enter") {
-      // Prevents keyDown from refreshing page
-      e.preventDefault();
-      if (isPlusActive) {
-        addToAvailable();
-        // Clear the input field after enter is pressed
-        setInputState("");
-      }
-      if (isMinusActive) {
-        subtractFromAvailable();
-        // Clear the input field after enter is pressed
-        setInputState("");
-      }
-    }
-  }
+  // /**
+  //  * Handles the user input selection and chooses the correct
+  //  * function to run based on if Plus or Minus was selected.
+  //  * @param e KeyBoardEvent the user enters in the input field
+  //  */
+  // function handleKeyDown(e: React.KeyboardEvent) {
+  //   // Review event if key pressed is the enter key
+  //   if (e.key === "Enter") {
+  //     // Prevents keyDown from refreshing page
+  //     e.preventDefault();
+  //     if (isPlusActive) {
+  //       addToAvailable();
+  //       // Clear the input field after enter is pressed
+  //       setInputState("");
+  //     }
+  //     if (isMinusActive) {
+  //       subtractFromAvailable();
+  //       // Clear the input field after enter is pressed
+  //       setInputState("");
+  //     }
+  //   }
+  // }
 
   return (
     <>
@@ -218,15 +218,15 @@ function Category(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.category}
-            componentObjectTemplate={editedCategoryObj}
+            // componentObjectTemplate={editedCategoryObj}
             componentType={"categories"}
-            editLocationForDb={categoryDbLocation}
+            // editLocationForDb={categoryDbLocation}
             rerender={props.rerender}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
         <div className="category-left-side">
-          <div className="category-name">{props.category.data().title}</div>
+          <div className="category-name">{props.category.categoryName}</div>
         </div>
         <div className="category-right-side">
           <div
@@ -257,11 +257,11 @@ function Category(props: Props) {
               id="et-edit-available"
               value={inputState}
               onChange={(e) => setInputState(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e)}
+              // onKeyDown={(e) => handleKeyDown(e)}
             ></input>
           </form>
           <div className="category-amount">{`$${Number(
-            props.category.data().available
+            props.category.available
           ).toFixed(2)}`}</div>
         </div>
       </li>
