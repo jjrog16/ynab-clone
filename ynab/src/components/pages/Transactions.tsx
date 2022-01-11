@@ -12,9 +12,9 @@ function Transactions(props: Props) {
   const params = useParams();
 
   // Collection of all transactions
-  const transactions: QueryDocumentSnapshot[] = useSelector(
-    (state: any) => state.transactionReducer
-  );
+  const transactions = useSelector((state: any) => state.transactionsReducer);
+
+  console.log(transactions.value);
 
   return (
     <div>
@@ -34,7 +34,7 @@ function Transactions(props: Props) {
             <th>INFLOW</th>
           </tr>
 
-          {transactions?.map((transaction) => {
+          {transactions?.value.map((transaction: any) => {
             return (
               <tr key={transaction.id}>
                 <td className="date">{transaction.data().date}</td>

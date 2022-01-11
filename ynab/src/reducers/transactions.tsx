@@ -10,7 +10,7 @@ const transactionsReducer = (
 ) => {
   switch (action.type) {
     case "transactions/addTransaction":
-      return { ...state, value: [...state.value, action.payload] };
+      return { ...state, value: action.payload };
     default:
       return state;
   }
