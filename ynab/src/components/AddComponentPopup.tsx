@@ -1,11 +1,19 @@
-import { addDoc, CollectionReference } from "@firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  CollectionReference,
+  DocumentReference,
+  updateDoc,
+} from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setIsValidToLoad } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
   componentObjectAdded: any;
-  addLocationForDb: CollectionReference;
+  addLocationForDbAsCollectionReference: CollectionReference | null;
+  addLocationForDbAsDocumentReference: DocumentReference | null;
   componentType: string;
   rerender: any;
   setAddComponentPopupStatus: any;
@@ -30,31 +38,65 @@ function AddComponentPopup(props: Props) {
   }, []);
 
   const addComponentToDb = useCallback(
-    async (location: CollectionReference) => {
-      console.log(props.componentType);
-      console.log(`isSending: ${isSending}`);
-
+    async (location: any) => {
       // don't send again while we are sending
       if (isSending) return;
 
       // update state
       setIsSending(true);
 
-      // Change the title of the component based on the input
-      props.componentObjectAdded["title"] = inputState;
+      switch (props.componentType) {
+        case "categoryGroups":
+          // Change the title of the component based on input if the input has changed
+          if (props.componentObjectAdded["title"] !== inputState) {
+            // Change the title of the component based on the input
+            props.componentObjectAdded["title"] = inputState;
 
-      // Add the doc based on location passed and the object type passed in props
-      await addDoc(location, props.componentObjectAdded);
+            // Add the doc based on location passed and the object type passed in props
+            await addDoc(location, props.componentObjectAdded);
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
+            // once the request is sent, update state again
+            // only update if we are still mounted
+            if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since a new addition has been added
-      props.rerender();
+            // Set reload to true
+            dispatch(setIsValidToLoad(true));
 
-      // Dismiss the popup
-      props.setAddComponentPopupStatus(false);
+            // Load from Firebase to cause a rerender since a new addition has been added
+            props.rerender();
+
+            // Dismiss the popup
+            props.setAddComponentPopupStatus(false);
+          }
+
+          break;
+        case "categories":
+          // Change the title of the component based on input if the input has changed
+          if (props.componentObjectAdded["title"] !== inputState) {
+            // Update the name to the new name
+            props.componentObjectAdded["title"] = inputState;
+
+            // Add to the array in the document
+            await updateDoc(location, {
+              categories: arrayUnion(props.componentObjectAdded),
+            });
+
+            // once the request is sent, update state again
+            // only update if we are still mounted
+            if (isMounted.current) setIsSending(false);
+
+            // Set reload to true
+            dispatch(setIsValidToLoad(true));
+
+            // Load from Firebase to cause a rerender since there is a change
+            //props.rerender();
+            window.location.reload();
+
+            // Dismiss the popup
+            //props.setAddComponentPopupStatus(false);
+          }
+          break;
+      }
     },
     [isSending, inputState]
   );
@@ -75,7 +117,17 @@ function AddComponentPopup(props: Props) {
         <button onClick={() => props.setAddComponentPopupStatus(false)}>
           Cancel
         </button>
-        <button onClick={() => addComponentToDb(props.addLocationForDb)}>
+        <button
+          onClick={() => {
+            // Location changes based on if we need a collection reference or document reference
+            const location =
+              props.componentType === "categoryGroups"
+                ? props.addLocationForDbAsCollectionReference
+                : props.addLocationForDbAsDocumentReference;
+            console.log(location);
+            addComponentToDb(location);
+          }}
+        >
           OK
         </button>
       </div>

@@ -1,4 +1,6 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   DocumentData,
@@ -15,7 +17,7 @@ import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
-  category: any;
+  category: { available: number; title: string; position: number };
   categoryGroup: QueryDocumentSnapshot;
   index: number;
   rerender: any;
@@ -30,7 +32,7 @@ function Category(props: Props) {
   const DARK_GRAY = "#656568";
 
   const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer
+    (state: any) => state.categoryGroupAmountTotalReducer.value
   );
 
   // Controls if we should be reloading categoryGroups and categories
@@ -61,14 +63,13 @@ function Category(props: Props) {
   useEffect(() => {
     // Set the total amount for the categories in a category group
     if (isValidToLoad) {
-      // Reset the amount previously set
-      dispatch(setTotalCategoryGroupAmount(0));
       // Update the count with this new render
       dispatch(
         setTotalCategoryGroupAmount(
-          categoryGroupAmountTotal.value + props.category.available
+          categoryGroupAmountTotal + props.category.available
         )
       );
+
       // Stop rerenders
       dispatch(setIsValidToLoad(false));
     }
@@ -112,119 +113,143 @@ function Category(props: Props) {
     };
   }, []);
 
-  // /**
-  //  * When isPlusActive is true, this function
-  //  * takes the input and updates the database
-  //  * asynchronously, rerenders the page, then
-  //  * updates the total Category Group amount
-  //  *
-  //  */
-  // const addToAvailable = useCallback(async () => {
-  //   // Try to convert to number. If fails, exit
-  //   const strToNum: number = Number(inputState);
+  /**
+   * When isPlusActive is true, this function
+   * takes the input and updates the database
+   * asynchronously, rerenders the page, then
+   * updates the total Category Group amount
+   *
+   */
+  const addToAvailable = useCallback(async () => {
+    // Try to convert to number. If fails, exit
+    const strToNum: number = Number(inputState);
 
-  //   if (strToNum) {
-  //     // don't send again while we are sending
-  //     if (isSending) return;
+    if (strToNum) {
+      // don't send again while we are sending
+      if (isSending) return;
 
-  //     // update state
-  //     setIsSending(true);
+      // update state
+      setIsSending(true);
 
-  //     await updateDoc(categoryDbLocation, {
-  //       available: props.category.data().available + strToNum,
-  //       groupId: props.category.data().groupId,
-  //       position: props.category.data().position,
-  //       title: props.category.data().title,
-  //     });
+      // Remove the old entry in array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: props.category.available,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
 
-  //     // once the request is sent, update state again
-  //     // only update if we are still mounted
-  //     if (isMounted.current) setIsSending(false);
+      // Add the new entry to array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: props.category.available + strToNum,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
 
-  //     // Load from Firebase to cause a rerender since there is a change
-  //     props.rerender();
+      // once the request is sent, update state again
+      // only update if we are still mounted
+      if (isMounted.current) setIsSending(false);
 
-  //     // Update the total amount set for the categories so that Ready to Assign can
-  //     // update its state
-  //     dispatch(
-  //       setTotalCategoryGroupAmount(categoryGroupAmountTotal.value + strToNum)
-  //     );
+      // Load from Firebase to cause a rerender since there is a change
+      //props.rerender();
+      window.location.reload();
 
-  //     // Turn off checking for if Plus was clicked
-  //     setIsPlusActive(false);
-  //   }
-  // }, [isSending, inputState]);
+      // Update the total amount set for the categories so that Ready to Assign can
+      // update its state
+      // dispatch(
+      //   setTotalCategoryGroupAmount(categoryGroupAmountTotal + strToNum)
+      // );
 
-  // /**
-  //  * When isMinusActive is true, this function
-  //  * takes the input and updates the database
-  //  * asynchronously, rerenders the page, then
-  //  * updates the total Category Group amount
-  //  *
-  //  */
-  // const subtractFromAvailable = useCallback(async () => {
-  //   // Try to convert to number. If fails, exit
-  //   const strToNum: number = Number(inputState);
+      // Turn off checking for if Plus was clicked
+      setIsPlusActive(false);
+    }
+  }, [isSending, inputState]);
 
-  //   if (strToNum) {
-  //     // don't send again while we are sending
-  //     if (isSending) return;
+  /**
+   * When isMinusActive is true, this function
+   * takes the input and updates the database
+   * asynchronously, rerenders the page, then
+   * updates the total Category Group amount
+   *
+   */
+  const subtractFromAvailable = useCallback(async () => {
+    // Try to convert to number. If fails, exit
+    const strToNum: number = Number(inputState);
 
-  //     // update state
-  //     setIsSending(true);
+    if (strToNum) {
+      // don't send again while we are sending
+      if (isSending) return;
 
-  //     await setDoc(categoryDbLocation, {
-  //       available: props.category.data().available - strToNum,
-  //       groupId: props.category.data().groupId,
-  //       position: props.category.data().position,
-  //       title: props.category.data().title,
-  //     });
+      // update state
+      setIsSending(true);
 
-  //     // once the request is sent, update state again
-  //     // only update if we are still mounted
-  //     if (isMounted.current) setIsSending(false);
+      // Remove the old entry in array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: props.category.available,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
 
-  //     // Load from Firebase to cause a rerender since there is a change
-  //     props.rerender();
+      // Add the new entry to array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: props.category.available - strToNum,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
 
-  //     // Update the total amount set for the categories so that Ready to Assign can
-  //     // update its state
-  //     dispatch(
-  //       setTotalCategoryGroupAmount(categoryGroupAmountTotal.value - strToNum)
-  //     );
+      // once the request is sent, update state again
+      // only update if we are still mounted
+      if (isMounted.current) setIsSending(false);
 
-  //     // Turn off checking for if Minus was clicked
-  //     setIsMinusActive(false);
-  //   }
-  // }, [isSending, inputState]);
+      // Load from Firebase to cause a rerender since there is a change
+      //props.rerender();
+      window.location.reload();
 
-  // /**
-  //  * Handles the user input selection and chooses the correct
-  //  * function to run based on if Plus or Minus was selected.
-  //  * @param e KeyBoardEvent the user enters in the input field
-  //  */
-  // function handleKeyDown(e: React.KeyboardEvent) {
-  //   // Review event if key pressed is the enter key
-  //   if (e.key === "Enter") {
-  //     // Prevents keyDown from refreshing page
-  //     e.preventDefault();
-  //     if (isPlusActive) {
-  //       addToAvailable();
-  //       // Clear the input field after enter is pressed
-  //       setInputState("");
-  //     }
-  //     if (isMinusActive) {
-  //       subtractFromAvailable();
-  //       // Clear the input field after enter is pressed
-  //       setInputState("");
-  //     }
-  //   }
-  // }
+      // Update the total amount set for the categories so that Ready to Assign can
+      // update its state
+      // dispatch(
+      //   setTotalCategoryGroupAmount(categoryGroupAmountTotal - strToNum)
+      // );
+
+      // Turn off checking for if Minus was clicked
+      setIsMinusActive(false);
+    }
+  }, [isSending, inputState]);
+
+  /**
+   * Handles the user input selection and chooses the correct
+   * function to run based on if Plus or Minus was selected.
+   * @param e KeyBoardEvent the user enters in the input field
+   */
+  function handleKeyDown(e: React.KeyboardEvent) {
+    // Review event if key pressed is the enter key
+    if (e.key === "Enter") {
+      // Prevents keyDown from refreshing page
+      e.preventDefault();
+      if (isPlusActive) {
+        addToAvailable();
+        // Clear the input field after enter is pressed
+        setInputState("");
+      }
+      if (isMinusActive) {
+        subtractFromAvailable();
+        // Clear the input field after enter is pressed
+        setInputState("");
+      }
+    }
+  }
 
   return (
     <>
       <li
-        key={props.category.id}
+        key={props.index}
         className="category"
         onContextMenu={(event) => handleContextMenu(event)}
       >
@@ -271,7 +296,7 @@ function Category(props: Props) {
               id="et-edit-available"
               value={inputState}
               onChange={(e) => setInputState(e.target.value)}
-              // onKeyDown={(e) => handleKeyDown(e)}
+              onKeyDown={(e) => handleKeyDown(e)}
             ></input>
           </form>
           <div className="category-amount">{`$${Number(

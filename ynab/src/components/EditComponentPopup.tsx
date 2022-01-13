@@ -20,7 +20,7 @@ import "../styles/css/EditComponentPopup.css";
 
 interface Props {
   coordinates: { x: number; y: number };
-  component: QueryDocumentSnapshot;
+  component: any;
   componentObjectTemplate: any;
   componentType: string;
   editLocationForDb: DocumentReference;
@@ -32,7 +32,7 @@ function EditComponentPopup(props: Props) {
   const dispatch = useDispatch();
 
   const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer
+    (state: any) => state.categoryGroupAmountTotalReducer.value
   );
 
   // Status for loading API call
@@ -113,72 +113,77 @@ function EditComponentPopup(props: Props) {
             dispatch(setIsValidToLoad(true));
 
             // Load from Firebase to cause a rerender since there is a change
-            props.rerender();
+            //props.rerender();
+            window.location.reload();
           }
       }
     },
-    [isSending, inputState]
+    [isSending, inputState, categoryGroupAmountTotal]
   );
 
-  // const deletePassedComponentInDb = useCallback(async () => {
-  //   // don't send again while we are sending
-  //   if (isSending) return;
+  const deletePassedComponentInDb = useCallback(
+    async (location: any) => {
+      // don't send again while we are sending
+      if (isSending) return;
 
-  //   // update state
-  //   setIsSending(true);
+      // update state
+      setIsSending(true);
 
-  //   // eslint-disable-next-line no-restricted-globals
-  //   if (confirm("Are you sure you want to delete?")) {
-  //     // Children can be deleted since they have no dependencies
-  //     if (props.componentType === "categories") {
-  //       // deleteDoc(props.editLocationForDb);
+      // eslint-disable-next-line no-restricted-globals
+      if (confirm("Are you sure you want to delete?")) {
+        // Children can be deleted since they have no dependencies
+        if (props.componentType === "categories") {
+          // Remove the old entry in array
+          await updateDoc(location, {
+            categories: arrayRemove(props.componentObjectTemplate),
+          });
 
-  //       // once the request is sent, update state again
-  //       // only update if we are still mounted
-  //       if (isMounted.current) setIsSending(false);
+          // once the request is sent, update state again
+          // only update if we are still mounted
+          if (isMounted.current) setIsSending(false);
 
-  //       // Remove money in category from total Category Group amount to update RTA
-  //       dispatch(
-  //         setTotalCategoryGroupAmount(
-  //           categoryGroupAmountTotal.value - props.component.data().available
-  //         )
-  //       );
+          // Remove money in category from total Category Group amount to update RTA
+          console.log(
+            props.component.available,
+            typeof props.component.available
+          );
+          dispatch(
+            setTotalCategoryGroupAmount(
+              categoryGroupAmountTotal - Number(props.component.available)
+            )
+          );
 
-  //       // Load from Firebase to cause a rerender since there is a change
-  //       props.rerender();
-  //     }
+          dispatch(setIsValidToLoad(true));
 
-  //     // Parent groups need to have all of their children deleted
-  //     if (props.componentType === "categoryGroups") {
-  //       // Get all children that have a groupId of parent
-  //       categories.value.arr.map((child: DocumentData) => {
-  //         // Remove money in group for each child from total Category Group amount to update RTA
-  //         dispatch(
-  //           setTotalCategoryGroupAmount(
-  //             categoryGroupAmountTotal.value - child.data().available
-  //           )
-  //         );
+          // Load from Firebase to cause a rerender since there is a change
+          //props.rerender();
+          window.location.reload();
+        }
 
-  //         // Delete each child one by one
-  //         deleteDoc(doc(collection(getFirestore(), "categories"), child.id));
-  //       });
-  //       // Delete the parent
-  //       deleteDoc(
-  //         doc(
-  //           collection(getFirestore(), props.componentType),
-  //           props.component.id
-  //         )
-  //       );
-  //     }
-  //     // Load from Firebase to cause a rerender since there is a change
-  //     props.rerender();
+        // Parent groups need to have all of their children deleted
+        if (props.componentType === "categoryGroups") {
+          // Delete the parent
+          deleteDoc(
+            doc(
+              collection(getFirestore(), props.componentType),
+              props.component.id
+            )
+          );
+        }
 
-  //     // Dismiss the popup
-  //     props.setEditComponentPopupStatus(false);
-  //   } else {
-  //     console.log("Cancelled");
-  //   }
-  // }, [isSending]);
+        dispatch(setIsValidToLoad(true));
+
+        // Load from Firebase to cause a rerender since there is a change
+        props.rerender();
+
+        // Dismiss the popup
+        props.setEditComponentPopupStatus(false);
+      } else {
+        console.log("Cancelled");
+      }
+    },
+    [isSending]
+  );
 
   return (
     <div
@@ -198,9 +203,7 @@ function EditComponentPopup(props: Props) {
       <div className="edit-components-btn-container">
         <div className="left-side-buttons">
           <button
-            onClick={
-              () => console.log("Delete") /*deletePassedComponentInDb()*/
-            }
+            onClick={() => deletePassedComponentInDb(props.editLocationForDb)}
           >
             Delete
           </button>

@@ -26,14 +26,6 @@ interface Props {
 function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
 
-  // Array of Categories that relate to each category group
-  // const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
-
-  // Keep track to see if the state of data has changed
-  const [isNewDataAdded, setIsNewDataAdded] = useState(true);
-
-  const categories = useSelector((state: any) => state.categoriesReducer.value);
-
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -41,18 +33,18 @@ function CategoryGroup(props: Props) {
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
 
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
+  // // Status for loading API call
+  // const [isSending, setIsSending] = useState(false);
 
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
+  // // Keep track of when the component is unmounted
+  // const isMounted = useRef(true);
 
-  // Query to get all categories in Firebase based on corresponding to its
-  // correct Category Group parent id
-  const categoriesQuery: Query = query(
-    collection(getFirestore(), "categories"),
-    where("groupId", "==", `${props.group.id}`)
-  );
+  // // Query to get all categories in Firebase based on corresponding to its
+  // // correct Category Group parent id
+  // const categoriesQuery: Query = query(
+  //   collection(getFirestore(), "categories"),
+  //   where("groupId", "==", `${props.group.id}`)
+  // );
 
   // /**
   //  * Load Categories from Firebase
@@ -104,21 +96,20 @@ function CategoryGroup(props: Props) {
   const categoryGroupTitle: string = props.group.data().title;
 
   //Sort responses once they are in
-  categories?.sort((a: any, b: any) => a.data().position - b.data().position);
+  const sortedCategories = props.group
+    .data()
+    .categories?.sort((a: any, b: any) => a["position"] - b["position"]);
 
   // Implement adding Category //
-
-  // Controls if popup should be visible
-  // const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // The latest position is the last position number of the array, or return -1
   let latestPosition: number = 0;
 
   // Only reassign once we know there is a value
-  if (categories) {
-    if (categories.length > 0) {
+  if (sortedCategories) {
+    if (sortedCategories.length > 0) {
       // The latest position number in a list of Categories as part of a Category Group
-      latestPosition = categories[categories.length - 1].data().position;
+      latestPosition = sortedCategories[sortedCategories.length - 1].position;
     }
   }
 
@@ -130,7 +121,6 @@ function CategoryGroup(props: Props) {
     position: latestPosition + 1,
     title: "",
     available: 0,
-    groupId: props.group.id,
   };
 
   // Implement context menu //
@@ -153,10 +143,7 @@ function CategoryGroup(props: Props) {
   // Use for knowing where the right click occurred
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
-  // Use to know whether or not to show the component for editing a
-  // const [editComponentPopupStatus, setEditComponentPopupStatus] =
-  //   useState<boolean>(false);
-
+  // Handle for when a user right clicks a Category Group
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     setAnchorPoint({ x: event.pageX, y: event.pageY });
@@ -190,31 +177,34 @@ function CategoryGroup(props: Props) {
         {addComponentPopupStatus ? (
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
-            addLocationForDb={categoryDbLocation}
-            componentType={"categoryGroups"}
-            rerender={
-              () =>
-                console.log(
-                  "Rerender click"
-                ) /*loadCategories(categoriesQuery)*/
-            }
+            componentType={"categories"}
+            rerender={props.rerenderLoadCategoryGroups}
             setAddComponentPopupStatus={setAddComponentPopupStatus}
+            addLocationForDbAsCollectionReference={null}
+            addLocationForDbAsDocumentReference={categoryGroupDbLocation}
           />
         ) : null}
       </div>
       <ul key={props.group.id} className="group-items">
-        {props.group.data().categories.map((category: any, idx: number) => {
-          return (
-            <Category
-              key={idx}
-              category={category}
-              categoryGroup={props.group}
-              index={idx}
-              rerender={props.rerenderLoadCategoryGroups}
-              setEditComponentPopupStatus={setEditComponentPopupStatus}
-            />
-          );
-        })}
+        {props.group
+          .data()
+          .categories.map(
+            (
+              category: { available: number; title: string; position: number },
+              idx: number
+            ) => {
+              return (
+                <Category
+                  key={idx}
+                  category={category}
+                  categoryGroup={props.group}
+                  index={idx}
+                  rerender={props.rerenderLoadCategoryGroups}
+                  setEditComponentPopupStatus={setEditComponentPopupStatus}
+                />
+              );
+            }
+          )}
       </ul>
     </>
   );

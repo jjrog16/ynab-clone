@@ -44,6 +44,13 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
+  categoryGroups.forEach((group: QueryDocumentSnapshot) => {
+    console.log(group.data());
+    group.data().categories.forEach((category: any) => {
+      console.log(category.title, category.available);
+    });
+  });
+
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );
@@ -60,15 +67,14 @@ function Budget(props: Props) {
     async (query: Query) => {
       try {
         if (isValidToLoad) {
-          // Setting to true allows for the categoryGroupTotalAmount
-          // to be calculated
-          //dispatch(setIsValidToLoad(true));
-
           // don't send again while we are sending
           if (isSending) return;
 
           // update state
           setIsSending(true);
+
+          // Reset the amount previously set
+          dispatch(setTotalCategoryGroupAmount(0));
 
           // Asynchronous load of all accounts based off query
           const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
@@ -141,10 +147,11 @@ function Budget(props: Props) {
             {addComponentPopupStatus ? (
               <AddComponentPopup
                 componentObjectAdded={categoryGroupObj}
-                addLocationForDb={categoryGroupDbLocation}
+                addLocationForDbAsCollectionReference={categoryGroupDbLocation}
                 componentType={"categoryGroups"}
                 rerender={() => loadCategoryGroups(groupsQuery)}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
+                addLocationForDbAsDocumentReference={null}
               />
             ) : null}
           </div>
