@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setCategories,
   setCategoryGroups,
+  setIsValidToLoad,
   setTotalCategoryGroupAmount,
 } from "../../actions";
 
@@ -39,9 +40,6 @@ function Budget(props: Props) {
     collection(getFirestore(), "categoryGroups")
   );
 
-  // const [categoryGroups, setCategoryGroups] =
-  //   useState<QueryDocumentSnapshot[]>();
-
   const categoryGroups = useSelector(
     (state: any) => state.categoryGroupsReducer.value
   );
@@ -57,30 +55,28 @@ function Budget(props: Props) {
   const loadCategoryGroups = useCallback(
     async (query: Query) => {
       try {
-        // don't send again while we are sending
-        if (isSending) return;
+        if (categoryGroups?.length === 0) {
+          dispatch(setIsValidToLoad(true));
 
-        // update state
-        setIsSending(true);
+          // don't send again while we are sending
+          if (isSending) return;
 
-        // Asynchronous load of all accounts based off query
-        const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          groupsAsQuerySnapshot.docs;
+          // update state
+          setIsSending(true);
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
+          // Asynchronous load of all accounts based off query
+          const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+          // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+          const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+            groupsAsQuerySnapshot.docs;
 
-        // Set the total amount to 0 since each load of the page causes a rerender and calculation
-        // for Ready to Assign
-        dispatch(setTotalCategoryGroupAmount(0));
+          // once the request is sent, update state again
+          // only update if we are still mounted
+          if (isMounted.current) setIsSending(false);
 
-        // Store the array of CategoryGroups
-        //setCategoryGroups(arrayOfQueryDocumentSnapshots);
-
-        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+          dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+          dispatch(setIsValidToLoad(false));
+        }
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");
         console.log(`Error: ${e}`);
@@ -103,9 +99,6 @@ function Budget(props: Props) {
     (a: any, b: any) => a.data().position - b.data().position
   );
 
-  // Type of component being passed for Edit
-  const componentType = "categoryGroups";
-
   // The latest position is the last position number of the array, or return -1
   const latestPosition =
     categoryGroups && categoryGroups.length > 0
@@ -115,7 +108,7 @@ function Budget(props: Props) {
   // The location for where the AddComponentPopup will send data
   const categoryGroupDbLocation: CollectionReference = collection(
     getFirestore(),
-    componentType
+    "categoryGroups"
   );
 
   // Db Object formatting
@@ -123,6 +116,8 @@ function Budget(props: Props) {
     position: latestPosition + 1,
     title: "",
   };
+
+  const [debugCount, setDebugCount] = useState(0);
 
   return (
     <div className="budget-page">
@@ -142,7 +137,7 @@ function Budget(props: Props) {
               <AddComponentPopup
                 componentObjectAdded={categoryGroupObj}
                 addLocationForDb={categoryGroupDbLocation}
-                componentType={componentType}
+                componentType={"categoryGroups"}
                 rerender={() => loadCategoryGroups(groupsQuery)}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
               />

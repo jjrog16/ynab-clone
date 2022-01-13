@@ -26,8 +26,15 @@ interface Props {
 function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
 
+  console.log("Category Group:", props.group.data());
+
+  props.group.data().categories.forEach((item: any) => console.log(item));
+
   // Array of Categories that relate to each category group
   // const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
+
+  // Keep track to see if the state of data has changed
+  const [isNewDataAdded, setIsNewDataAdded] = useState(true);
 
   const categories = useSelector((state: any) => state.categoriesReducer.value);
 
@@ -51,51 +58,51 @@ function CategoryGroup(props: Props) {
     where("groupId", "==", `${props.group.id}`)
   );
 
-  /**
-   * Load Categories from Firebase
-   * @param query Type of Firebase query used to load data. Used to get all Categories
-   */
-  const loadCategories = useCallback(
-    async (query: Query) => {
-      try {
-        // don't send again while we are sending
-        if (isSending) return;
+  // /**
+  //  * Load Categories from Firebase
+  //  * @param query Type of Firebase query used to load data. Used to get all Categories
+  //  */
+  // const loadCategories = useCallback(
+  //   async (query: Query) => {
+  //     try {
+  //       // don't send again while we are sending
+  //       if (isSending) return;
 
-        // update state
-        setIsSending(true);
+  //       // update state
+  //       setIsSending(true);
 
-        // Set the amount for total category group to 0 to start
-        //dispatch(setTotalCategoryGroupAmount(0));
+  //       // Set the amount for total category group to 0 to start
+  //       //dispatch(setTotalCategoryGroupAmount(0));
 
-        // Asynchronous load of all categories based off query
-        const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+  //       // Asynchronous load of all categories based off query
+  //       const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
 
-        // Array of QueryDocumentSnapshots that allows for mapping
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          categoriesAsQuerySnapshot.docs;
+  //       // Array of QueryDocumentSnapshots that allows for mapping
+  //       const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+  //         categoriesAsQuerySnapshot.docs;
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
+  //       // once the request is sent, update state again
+  //       // only update if we are still mounted
+  //       if (isMounted.current) setIsSending(false);
 
-        dispatch(setCategories(arrayOfQueryDocumentSnapshots));
-        //setCategories(arrayOfQueryDocumentSnapshots);
-      } catch (e) {
-        console.log("An error occurred when trying to load your accounts");
-        console.log(`Error: ${e}`);
-      }
-    },
-    [isSending]
-  );
+  //       dispatch(setCategories(arrayOfQueryDocumentSnapshots));
+  //       //setCategories(arrayOfQueryDocumentSnapshots);
+  //     } catch (e) {
+  //       console.log("An error occurred when trying to load your accounts");
+  //       console.log(`Error: ${e}`);
+  //     }
+  //   },
+  //   [isSending]
+  // );
 
-  // set isMounted to false when we unmount the component
-  // Dependencies need to be empty to allow for rerendering
-  useEffect(() => {
-    loadCategories(categoriesQuery);
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
+  // // set isMounted to false when we unmount the component
+  // // Dependencies need to be empty to allow for rerendering
+  // useEffect(() => {
+  //   //loadCategories(categoriesQuery);
+  //   return () => {
+  //     isMounted.current = false;
+  //   };
+  // }, []);
 
   // Category Group title derived from props
   const categoryGroupTitle: string = props.group.data().title;
@@ -132,14 +139,11 @@ function CategoryGroup(props: Props) {
 
   // Implement context menu //
 
-  // Type of component being passed for Edit
-  const componentType = "categoryGroups";
-
   // The location for where EditComponentPopup will send data
   // Needs the collection with db, the name of the collection,
   // and the ID of the item being changed
   const categoryGroupDbLocation: DocumentReference = doc(
-    collection(getFirestore(), componentType),
+    collection(getFirestore(), "categoryGroups"),
     props.group.id
   );
 
@@ -190,8 +194,13 @@ function CategoryGroup(props: Props) {
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
             addLocationForDb={categoryDbLocation}
-            componentType={componentType}
-            rerender={() => loadCategories(categoriesQuery)}
+            componentType={"categoryGroups"}
+            rerender={
+              () =>
+                console.log(
+                  "Rerender click"
+                ) /*loadCategories(categoriesQuery)*/
+            }
             setAddComponentPopupStatus={setAddComponentPopupStatus}
           />
         ) : null}
@@ -202,7 +211,12 @@ function CategoryGroup(props: Props) {
             <Category
               key={idx}
               category={category}
-              rerender={() => loadCategories(categoriesQuery)}
+              rerender={
+                () =>
+                  console.log(
+                    "Rerender click"
+                  ) /*loadCategories(categoriesQuery)*/
+              }
               setEditComponentPopupStatus={setEditComponentPopupStatus}
             />
           );

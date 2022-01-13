@@ -36,7 +36,6 @@ export const setAllTransactions = (transactions: QueryDocumentSnapshot[]) => {
 };
 
 export const setCategoryGroups = (categoryGroups: QueryDocumentSnapshot[]) => {
-  console.log("Category Group added");
   return {
     type: "categoryGroups/addCategoryGroup",
     payload: categoryGroups,
@@ -54,5 +53,12 @@ export const setTotalCategoryGroupAmount = (amount: number) => {
   return {
     type: "categoryGroupAmountTotal/addToTotal",
     payload: amount,
+  };
+};
+
+export const setIsValidToLoad = (flag: boolean) => {
+  return {
+    type: "isValidToLoad/setState",
+    payload: flag,
   };
 };

@@ -31,6 +31,11 @@ function Category(props: Props) {
     (state: any) => state.categoryGroupAmountTotalReducer
   );
 
+  const categories = useSelector((state: any) => state.categoriesReducer.value);
+
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
@@ -54,10 +59,14 @@ function Category(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    const amount = categoryGroupAmountTotal.value + props.category.available;
-    dispatch(setTotalCategoryGroupAmount(amount));
+    if (isValidToLoad) {
+      dispatch(
+        setTotalCategoryGroupAmount(
+          categoryGroupAmountTotal.value + props.category.available
+        )
+      );
+    }
 
-    console.log(categoryGroupAmountTotal.value, props.category.available);
     return () => {
       //cleanup
     };

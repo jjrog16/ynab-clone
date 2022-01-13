@@ -62,10 +62,17 @@ function AccountItem(props: Props) {
     where("accountId", "==", `${props.account.id}`)
   );
 
+  const categoryGroupsReducer = useSelector(
+    (state: any) => state.categoryGroupsReducer
+  );
+
   const loadTransactions = useCallback(
     async (query: Query) => {
       try {
-        console.log(`Load Transaction called.`);
+        console.log(
+          `Transactions. CategoryGroups Length: ${categoryGroupsReducer.value.length}`
+        );
+
         // don't send again while we are sending
         if (isSending) return;
 

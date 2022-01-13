@@ -8,6 +8,7 @@ import editAccountNameInputReducer from "./editAccountNameInput";
 import editAccountWorkingBalanceInputReducer from "./editAccountWorkingBalance";
 import moneyAmountTotalReducer from "./moneyAmountTotal";
 import transactionsReducer from "./transactions";
+import isValidToLoadReducer from "./isValidToLoad";
 
 // Root of all reducers
 const rootReducer = combineReducers({
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   editAccountWorkingBalanceInputReducer,
   moneyAmountTotalReducer,
   transactionsReducer,
+  isValidToLoadReducer,
 });
 
 export default rootReducer;

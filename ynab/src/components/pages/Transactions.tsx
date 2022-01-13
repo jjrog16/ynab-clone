@@ -14,8 +14,6 @@ function Transactions(props: Props) {
   // Collection of all transactions
   const transactions = useSelector((state: any) => state.transactionsReducer);
 
-  console.log(transactions.value);
-
   return (
     <div>
       <nav className="top-bar">
