@@ -18,9 +18,9 @@ import "../styles/css/EditComponentPopup.css";
 interface Props {
   coordinates: { x: number; y: number };
   component: QueryDocumentSnapshot;
-  // componentObjectTemplate: any;
+  componentObjectTemplate: any;
   componentType: string;
-  // editLocationForDb: DocumentReference | string;
+  editLocationForDb: DocumentReference | string;
   rerender: any;
   setEditComponentPopupStatus: any;
 }

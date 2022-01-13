@@ -44,6 +44,10 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
+
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -55,8 +59,10 @@ function Budget(props: Props) {
   const loadCategoryGroups = useCallback(
     async (query: Query) => {
       try {
-        if (categoryGroups?.length === 0) {
-          dispatch(setIsValidToLoad(true));
+        if (isValidToLoad) {
+          // Setting to true allows for the categoryGroupTotalAmount
+          // to be calculated
+          //dispatch(setIsValidToLoad(true));
 
           // don't send again while we are sending
           if (isSending) return;
@@ -75,7 +81,6 @@ function Budget(props: Props) {
           if (isMounted.current) setIsSending(false);
 
           dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
-          dispatch(setIsValidToLoad(false));
         }
       } catch (e) {
         console.log("An error occurred when trying to load your accounts");

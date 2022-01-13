@@ -1,5 +1,5 @@
 const isValidToLoadReducer = (
-  state = { value: false },
+  state = { value: true },
   action: { type: string; payload: boolean }
 ) => {
   switch (action.type) {

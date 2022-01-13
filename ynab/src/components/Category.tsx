@@ -10,12 +10,14 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTotalCategoryGroupAmount } from "../actions";
+import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   category: any;
+  categoryGroup: QueryDocumentSnapshot;
+  index: number;
   rerender: any;
   setEditComponentPopupStatus: any;
 }
@@ -31,8 +33,7 @@ function Category(props: Props) {
     (state: any) => state.categoryGroupAmountTotalReducer
   );
 
-  const categories = useSelector((state: any) => state.categoriesReducer.value);
-
+  // Controls if we should be reloading categoryGroups and categories
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );
@@ -60,11 +61,16 @@ function Category(props: Props) {
   useEffect(() => {
     // Set the total amount for the categories in a category group
     if (isValidToLoad) {
+      // Reset the amount previously set
+      dispatch(setTotalCategoryGroupAmount(0));
+      // Update the count with this new render
       dispatch(
         setTotalCategoryGroupAmount(
           categoryGroupAmountTotal.value + props.category.available
         )
       );
+      // Stop rerenders
+      dispatch(setIsValidToLoad(false));
     }
 
     return () => {
@@ -74,21 +80,19 @@ function Category(props: Props) {
 
   // Implement context menu //
 
-  // // The location for where EditComponentPopup will send data
-  // // Needs the collection with db, the name of the collection,
-  // // and the ID of the item being changed
-  // const categoryDbLocation: DocumentReference = doc(
-  //   collection(getFirestore(), "categoryGroups"),
-  //   props.category.id
-  // );
+  // The location for where EditComponentPopup will send data
+  // Needs the collection with db, the name of the collection,
+  // and the ID of the item being changed
+  const categoryGroupDbLocation: DocumentReference = doc(
+    collection(getFirestore(), "categoryGroups"),
+    props.categoryGroup.id
+  );
 
   // Db Object formatting for when editing a Category Group
-  // const editedCategoryObj = {
-  //   position: props.category.data().position,
-  //   title: props.category.data().title,
-  //   available: props.category.data().available,
-  //   groupId: props.category.data().groupId,
-  // };
+  const editedCategoryObj = {
+    categoryName: props.category.categoryName,
+    available: props.category.available,
+  };
 
   // Use for knowing where the right click occurred
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -227,9 +231,9 @@ function Category(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.category}
-            // componentObjectTemplate={editedCategoryObj}
+            componentObjectTemplate={editedCategoryObj}
             componentType={"categories"}
-            // editLocationForDb={categoryDbLocation}
+            editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerender}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />

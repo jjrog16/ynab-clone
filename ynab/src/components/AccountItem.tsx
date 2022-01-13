@@ -69,10 +69,6 @@ function AccountItem(props: Props) {
   const loadTransactions = useCallback(
     async (query: Query) => {
       try {
-        console.log(
-          `Transactions. CategoryGroups Length: ${categoryGroupsReducer.value.length}`
-        );
-
         // don't send again while we are sending
         if (isSending) return;
 

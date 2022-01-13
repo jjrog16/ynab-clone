@@ -26,10 +26,6 @@ interface Props {
 function CategoryGroup(props: Props) {
   const dispatch = useDispatch();
 
-  console.log("Category Group:", props.group.data());
-
-  props.group.data().categories.forEach((item: any) => console.log(item));
-
   // Array of Categories that relate to each category group
   // const [categories, setCategories] = useState<QueryDocumentSnapshot[]>();
 
@@ -176,9 +172,9 @@ function CategoryGroup(props: Props) {
           <EditComponentPopup
             coordinates={anchorPoint}
             component={props.group}
-            // componentObjectTemplate={editedCategoryGroupObj}
+            componentObjectTemplate={editedCategoryGroupObj}
             componentType={"categoryGroups"}
-            // editLocationForDb={categoryGroupDbLocation}
+            editLocationForDb={categoryGroupDbLocation}
             rerender={props.rerenderLoadCategoryGroups}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
@@ -211,6 +207,8 @@ function CategoryGroup(props: Props) {
             <Category
               key={idx}
               category={category}
+              categoryGroup={props.group}
+              index={idx}
               rerender={
                 () =>
                   console.log(
