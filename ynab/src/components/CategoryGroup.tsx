@@ -147,6 +147,7 @@ function CategoryGroup(props: Props) {
   const editedCategoryGroupObj = {
     position: props.group.data().position,
     title: props.group.data().title,
+    categories: props.group.data().categories,
   };
 
   // Use for knowing where the right click occurred

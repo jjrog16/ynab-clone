@@ -23,7 +23,7 @@ interface Props {
   component: QueryDocumentSnapshot;
   componentObjectTemplate: any;
   componentType: string;
-  editLocationForDb: DocumentReference | string;
+  editLocationForDb: DocumentReference;
   rerender: any;
   setEditComponentPopupStatus: any;
 }
@@ -210,7 +210,7 @@ function EditComponentPopup(props: Props) {
             Cancel
           </button>
           <button
-          // onClick={() => editPassedComponentInDb(props.editLocationForDb)}
+            onClick={() => editPassedComponentInDb(props.editLocationForDb)}
           >
             OK
           </button>
