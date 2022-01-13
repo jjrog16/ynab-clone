@@ -90,8 +90,9 @@ function Category(props: Props) {
 
   // Db Object formatting for when editing a Category Group
   const editedCategoryObj = {
-    categoryName: props.category.categoryName,
+    title: props.category.title,
     available: props.category.available,
+    position: props.category.position,
   };
 
   // Use for knowing where the right click occurred
@@ -239,7 +240,7 @@ function Category(props: Props) {
           />
         ) : null}
         <div className="category-left-side">
-          <div className="category-name">{props.category.categoryName}</div>
+          <div className="category-name">{props.category.title}</div>
         </div>
         <div className="category-right-side">
           <div

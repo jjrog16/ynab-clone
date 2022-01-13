@@ -209,12 +209,7 @@ function CategoryGroup(props: Props) {
               category={category}
               categoryGroup={props.group}
               index={idx}
-              rerender={
-                () =>
-                  console.log(
-                    "Rerender click"
-                  ) /*loadCategories(categoriesQuery)*/
-              }
+              rerender={props.rerenderLoadCategoryGroups}
               setEditComponentPopupStatus={setEditComponentPopupStatus}
             />
           );
