@@ -142,11 +142,6 @@ function EditComponentPopup(props: Props) {
           // only update if we are still mounted
           if (isMounted.current) setIsSending(false);
 
-          // Remove money in category from total Category Group amount to update RTA
-          console.log(
-            props.component.available,
-            typeof props.component.available
-          );
           // dispatch(
           //   setTotalCategoryGroupAmount(
           //     categoryGroupAmountTotal - Number(props.component.available)
@@ -156,8 +151,8 @@ function EditComponentPopup(props: Props) {
           dispatch(setIsValidToLoad(true));
 
           // Load from Firebase to cause a rerender since there is a change
-          //props.rerender();
-          window.location.reload();
+          props.rerender();
+          //window.location.reload();
         }
 
         // Parent groups need to have all of their children deleted

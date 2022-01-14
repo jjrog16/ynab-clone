@@ -49,7 +49,10 @@ export const setCategories = (categories: QueryDocumentSnapshot[]) => {
   };
 };
 
-export const setTotalCategoryGroupAmount = (amount: number) => {
+export const setTotalCategoryGroupAmount = (amount: {
+  title: string;
+  available: number;
+}) => {
   return {
     type: "categoryGroupAmountTotal/addToTotal",
     payload: amount,

@@ -89,11 +89,11 @@ function AddComponentPopup(props: Props) {
             dispatch(setIsValidToLoad(true));
 
             // Load from Firebase to cause a rerender since there is a change
-            //props.rerender();
-            window.location.reload();
+            props.rerender();
+            //window.location.reload();
 
             // Dismiss the popup
-            //props.setAddComponentPopupStatus(false);
+            props.setAddComponentPopupStatus(false);
           }
           break;
       }

@@ -65,9 +65,10 @@ function Category(props: Props) {
     if (isValidToLoad) {
       // Update the count with this new render
       dispatch(
-        setTotalCategoryGroupAmount(
-          categoryGroupAmountTotal + props.category.available
-        )
+        setTotalCategoryGroupAmount({
+          title: props.category.title,
+          available: props.category.available,
+        })
       );
 
       // Stop rerenders

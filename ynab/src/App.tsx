@@ -20,6 +20,24 @@ import { RootStateOrAny, useSelector, useDispatch } from "react-redux";
 import { setBankAccounts, setTotalCategoryGroupAmount } from "./actions";
 
 function App() {
+  const categoryGroupAmountTotal = useSelector(
+    (state: any) => state.categoryGroupAmountTotalReducer.value
+  );
+  console.log(categoryGroupAmountTotal);
+
+  // Holds the total amount of all categoryGroups after the array reduce
+  const [runningCategoryGroupAmount, setRunningCategoryGroupAmount] = useState<{
+    available: number;
+  }>({ available: 0 });
+
+  useEffect(() => {
+    setRunningCategoryGroupAmount(
+      categoryGroupAmountTotal.reduce((prev: any, curr: any) => {
+        return { available: prev.available + curr.available };
+      })
+    );
+  }, [categoryGroupAmountTotal]);
+
   // // Hook to access Redux functions
   // const dispatch = useDispatch();
 
@@ -144,7 +162,16 @@ function App() {
       <BrowserRouter>
         <SideBar />
         <Routes>
-          <Route path="/" element={<Budget />} />
+          <Route
+            path="/"
+            element={
+              <Budget
+                runningCategoryGroupAmount={
+                  runningCategoryGroupAmount.available
+                }
+              />
+            }
+          />
           <Route
             path="/AccountTransactions/:name/:id"
             element={<Transactions />}

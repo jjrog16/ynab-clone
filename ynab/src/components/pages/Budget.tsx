@@ -24,7 +24,9 @@ import {
   setTotalCategoryGroupAmount,
 } from "../../actions";
 
-interface Props {}
+interface Props {
+  runningCategoryGroupAmount: number;
+}
 
 function Budget(props: Props) {
   const dispatch = useDispatch();
@@ -65,9 +67,6 @@ function Budget(props: Props) {
 
           // update state
           setIsSending(true);
-
-          // Reset the amount previously set
-          dispatch(setTotalCategoryGroupAmount(0));
 
           // Asynchronous load of all accounts based off query
           const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
@@ -125,7 +124,7 @@ function Budget(props: Props) {
 
   return (
     <div className="budget-page">
-      <NavBar />
+      <NavBar runningCategoryGroupAmount={props.runningCategoryGroupAmount} />
       <div className="budget-container">
         <div className="budget-wrapper">
           <div className="category-group-bar">
