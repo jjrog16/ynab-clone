@@ -147,11 +147,11 @@ function EditComponentPopup(props: Props) {
             props.component.available,
             typeof props.component.available
           );
-          dispatch(
-            setTotalCategoryGroupAmount(
-              categoryGroupAmountTotal - Number(props.component.available)
-            )
-          );
+          // dispatch(
+          //   setTotalCategoryGroupAmount(
+          //     categoryGroupAmountTotal - Number(props.component.available)
+          //   )
+          // );
 
           dispatch(setIsValidToLoad(true));
 

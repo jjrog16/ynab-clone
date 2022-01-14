@@ -17,7 +17,7 @@ import {
 } from "@firebase/firestore";
 import Transactions from "./components/pages/Transactions";
 import { RootStateOrAny, useSelector, useDispatch } from "react-redux";
-import { setBankAccounts } from "./actions";
+import { setBankAccounts, setTotalCategoryGroupAmount } from "./actions";
 
 function App() {
   // // Hook to access Redux functions

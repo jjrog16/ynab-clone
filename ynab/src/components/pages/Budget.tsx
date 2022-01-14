@@ -44,13 +44,6 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
-  categoryGroups.forEach((group: QueryDocumentSnapshot) => {
-    console.log(group.data());
-    group.data().categories.forEach((category: any) => {
-      console.log(category.title, category.available);
-    });
-  });
-
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );

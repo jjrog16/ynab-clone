@@ -63,7 +63,7 @@ function AddComponentPopup(props: Props) {
             dispatch(setIsValidToLoad(true));
 
             // Load from Firebase to cause a rerender since a new addition has been added
-            props.rerender();
+            //props.rerender();
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);
@@ -124,7 +124,6 @@ function AddComponentPopup(props: Props) {
               props.componentType === "categoryGroups"
                 ? props.addLocationForDbAsCollectionReference
                 : props.addLocationForDbAsDocumentReference;
-            console.log(location);
             addComponentToDb(location);
           }}
         >
