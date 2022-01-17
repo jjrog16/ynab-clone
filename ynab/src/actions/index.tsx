@@ -55,26 +55,26 @@ export const setAllCategories = (amount: {
 };
 
 // Available is the available money in category group
-export const updateTotalCategoryGroupAmount = (amount: {
+export const updateAllCategories = (amount: {
   title: string;
   available: number;
   position: number;
   index: number;
 }) => {
   return {
-    type: "categoryGroupAmountTotal/update",
+    type: "allCategories/update",
     payload: amount,
   };
 };
 
 // Available is now the available index to remove
-export const removeFromTotalCategoryGroupAmount = (index: {
+export const removeFromAllCategoriesAmount = (index: {
   title: "";
   available: number;
   index: number;
 }) => {
   return {
-    type: "categoryGroupAmountTotal/remove",
+    type: "allCategories/remove",
     payload: index,
   };
 };

@@ -15,12 +15,10 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  removeFromTotalCategoryGroupAmount,
   setIsComponentEdited,
   setIsValidToLoad,
-  updateTotalCategoryGroupAmount,
+  updateAllCategories,
 } from "../actions";
-import categoryGroupAmountTotalReducer from "../reducers/allCategories";
 import "../styles/css/EditComponentPopup.css";
 
 interface Props {
@@ -36,8 +34,8 @@ interface Props {
 function EditComponentPopup(props: Props) {
   const dispatch = useDispatch();
 
-  const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer.value
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
   );
 
   // Status for loading API call
@@ -95,7 +93,7 @@ function EditComponentPopup(props: Props) {
           // Change the title of the component based on input if the input has changed
           if (props.componentObjectTemplate["title"] !== inputState) {
             // Find the category in the categories array before sending the request
-            const indexToFind = categoryGroupAmountTotal.findIndex(
+            const indexToFind = allCategories.findIndex(
               (element: {
                 title: string;
                 available: number;
@@ -128,7 +126,7 @@ function EditComponentPopup(props: Props) {
 
             // Update total category groups before sending request
             dispatch(
-              updateTotalCategoryGroupAmount({
+              updateAllCategories({
                 title: props.componentObjectTemplate.title,
                 available: props.componentObjectTemplate.available,
                 position: props.componentObjectTemplate.position,
@@ -143,7 +141,7 @@ function EditComponentPopup(props: Props) {
           }
       }
     },
-    [isSending, inputState, categoryGroupAmountTotal]
+    [isSending, inputState, allCategories]
   );
 
   const deletePassedComponentInDb = useCallback(
@@ -168,14 +166,14 @@ function EditComponentPopup(props: Props) {
           if (isMounted.current) setIsSending(false);
 
           // Find the category in the categories array and remove
-          const indexToFind = categoryGroupAmountTotal.findIndex(
+          const indexToFind = allCategories.findIndex(
             (element: { title: string; available: number }) =>
               props.componentObjectTemplate.title === element.title
           );
 
           // Remove from the total category group array
           dispatch(
-            removeFromTotalCategoryGroupAmount({
+            removeFromAllCategories({
               title: props.componentObjectTemplate.title,
               available: props.componentObjectTemplate.available,
               index: indexToFind,
@@ -249,3 +247,10 @@ function EditComponentPopup(props: Props) {
   );
 }
 export default EditComponentPopup;
+function removeFromAllCategories(arg0: {
+  title: any;
+  available: any;
+  index: any;
+}): any {
+  throw new Error("Function not implemented.");
+}

@@ -61,14 +61,18 @@ function Budget(props: Props) {
   const loadCategoryGroups = useCallback(
     async (query: Query) => {
       try {
+        console.log(
+          "States ->",
+          `isValidToLoad: ${isValidToLoad}, isSending ${isSending}`
+        );
         if (isValidToLoad) {
           console.log("If you see me, loadCategoryGroups worked");
 
           // don't send again while we are sending
-          if (isSending) return;
+          // if (isSending) return;
 
           // update state
-          setIsSending(true);
+          // setIsSending(true);
 
           // Asynchronous load of all accounts based off query
           const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
@@ -78,7 +82,7 @@ function Budget(props: Props) {
 
           // once the request is sent, update state again
           // only update if we are still mounted
-          if (isMounted.current) setIsSending(false);
+          // if (isMounted.current) setIsSending(false);
 
           dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
         }

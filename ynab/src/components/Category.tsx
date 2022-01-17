@@ -12,7 +12,11 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAllCategories, setIsValidToLoad } from "../actions";
+import {
+  setAllCategories,
+  setIsValidToLoad,
+  updateAllCategories,
+} from "../actions";
 import allCategories from "../reducers/allCategories";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
@@ -63,7 +67,12 @@ function Category(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    console.log("Set Total Category Group Amount");
+    console.log("Category:");
+    console.log(
+      props.category.title,
+      props.category.available,
+      props.category.position
+    );
     dispatch(
       setAllCategories({
         title: props.category.title,
@@ -74,7 +83,7 @@ function Category(props: Props) {
     return () => {
       //cleanup
     };
-  }, []);
+  }, [isValidToLoad]);
 
   // Implement context menu //
 
@@ -128,6 +137,14 @@ function Category(props: Props) {
       // update state
       setIsSending(true);
 
+      // Find the category in the categories array before sending the request
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
+
       // Remove the old entry in array
       await updateDoc(categoryGroupDbLocation, {
         categories: arrayRemove({
@@ -152,15 +169,15 @@ function Category(props: Props) {
 
       dispatch(setIsValidToLoad(true));
 
-      // Load from Firebase to cause a rerender since there is a change
-      //props.rerender();
-      //window.location.reload();
-
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      // dispatch(
-      //   setTotalCategoryGroupAmount(categoryGroupAmountTotal + strToNum)
-      // );
+      // Update total category groups before sending request
+      dispatch(
+        updateAllCategories({
+          title: props.category.title,
+          available: props.category.available + strToNum,
+          position: props.category.position,
+          index: indexToFind,
+        })
+      );
 
       // Turn off checking for if Plus was clicked
       setIsPlusActive(false);
@@ -184,6 +201,14 @@ function Category(props: Props) {
 
       // update state
       setIsSending(true);
+
+      // Find the category in the categories array before sending the request
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
 
       // Remove the old entry in array
       await updateDoc(categoryGroupDbLocation, {
@@ -209,15 +234,15 @@ function Category(props: Props) {
 
       dispatch(setIsValidToLoad(true));
 
-      // Load from Firebase to cause a rerender since there is a change
-      //props.rerender();
-      //window.location.reload();
-
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      // dispatch(
-      //   setTotalCategoryGroupAmount(categoryGroupAmountTotal - strToNum)
-      // );
+      // Update total category groups before sending request
+      dispatch(
+        updateAllCategories({
+          title: props.category.title,
+          available: props.category.available - strToNum,
+          position: props.category.position,
+          index: indexToFind,
+        })
+      );
 
       // Turn off checking for if Minus was clicked
       setIsMinusActive(false);

@@ -46,12 +46,9 @@ function App() {
   useEffect(() => {
     setRunningCategoryGroupAmount(
       allCategories.reduce((prev: any, curr: any) => {
-        console.log(prev.available, curr.available);
         return { available: prev.available + curr.available };
       })
     );
-
-    console.log(runningCategoryGroupAmount);
   }, [allCategories]);
 
   // // Hook to access Redux functions
