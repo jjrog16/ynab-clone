@@ -17,20 +17,25 @@ import {
 } from "@firebase/firestore";
 import Transactions from "./components/pages/Transactions";
 import { RootStateOrAny, useSelector, useDispatch } from "react-redux";
-import { setBankAccounts, setTotalCategoryGroupAmount } from "./actions";
+import {
+  setBankAccounts,
+  setIsComponentEdited,
+  setIsValidToLoad,
+} from "./actions";
 import isValidToLoadReducer from "./reducers/isValidToLoad";
 
 function App() {
-  const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer.value
+  const dispatch = useDispatch();
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
+  );
+
+  const isComponentEdited = useSelector(
+    (state: any) => state.isComponentEditedReducer.value
   );
 
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
-  );
-
-  const categoryGroups = useSelector(
-    (state: any) => state.categoryGroupsReducer.value
   );
 
   // Holds the total amount of all categoryGroups after the array reduce
@@ -39,13 +44,19 @@ function App() {
   }>({ available: 0 });
 
   useEffect(() => {
-    console.log("Running total called");
-    setRunningCategoryGroupAmount(
-      categoryGroupAmountTotal.reduce((prev: any, curr: any) => {
-        return { available: prev.available + curr.available };
-      })
-    );
-  }, [isValidToLoad, categoryGroups]);
+    if (isComponentEdited) {
+      console.log(isComponentEdited);
+      setRunningCategoryGroupAmount(
+        allCategories.reduce((prev: any, curr: any) => {
+          console.log(prev.available, curr.available);
+          return { available: prev.available + curr.available };
+        })
+      );
+    }
+    console.log(runningCategoryGroupAmount);
+    // Stop rerenders
+    dispatch(setIsComponentEdited(false));
+  }, [allCategories]);
 
   // // Hook to access Redux functions
   // const dispatch = useDispatch();

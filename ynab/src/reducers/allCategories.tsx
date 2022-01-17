@@ -1,8 +1,6 @@
 // Keep track of the total amount of money from a Category Group
 
-import { title } from "process";
-
-const categoryGroupAmountTotalReducer = (
+const allCategoriesReducer = (
   state = {
     value: [{ title: "", available: 0, position: 0 }],
   },
@@ -17,9 +15,9 @@ const categoryGroupAmountTotalReducer = (
   }
 ) => {
   switch (action.type) {
-    case "categoryGroupAmountTotal/addToTotal":
+    case "allCategories/addToTotal":
       return { ...state, value: [...state.value, action.payload] };
-    case "categoryGroupAmountTotal/remove":
+    case "allCategories/remove":
       return {
         ...state,
         value: [
@@ -27,7 +25,7 @@ const categoryGroupAmountTotalReducer = (
           ...state.value.slice(action.payload.index + 1),
         ],
       };
-    case "categoryGroupAmountTotal/update":
+    case "allCategories/update":
       return {
         ...state,
         value: [
@@ -45,4 +43,4 @@ const categoryGroupAmountTotalReducer = (
   }
 };
 
-export default categoryGroupAmountTotalReducer;
+export default allCategoriesReducer;

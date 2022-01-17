@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
+import { setIsComponentEdited, setIsValidToLoad } from "../actions";
 import "../styles/css/NavBar.css";
 
 interface Props {
@@ -28,7 +28,9 @@ function NavBar(props: Props) {
   //   );
   // }, [categoryGroups]);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+  dispatch(setIsValidToLoad(false));
 
   return (
     <nav className="navbar">

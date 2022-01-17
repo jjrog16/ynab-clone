@@ -7,7 +7,7 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
+import { setIsValidToLoad } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {

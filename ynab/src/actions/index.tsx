@@ -42,21 +42,14 @@ export const setCategoryGroups = (categoryGroups: QueryDocumentSnapshot[]) => {
   };
 };
 
-export const setCategories = (categories: QueryDocumentSnapshot[]) => {
-  return {
-    type: "categories/addCategory",
-    payload: categories,
-  };
-};
-
 // Available is the available money in category group
-export const setTotalCategoryGroupAmount = (amount: {
+export const setAllCategories = (amount: {
   title: string;
   available: number;
   position: number;
 }) => {
   return {
-    type: "categoryGroupAmountTotal/addToTotal",
+    type: "allCategories/addToTotal",
     payload: amount,
   };
 };
@@ -89,6 +82,12 @@ export const removeFromTotalCategoryGroupAmount = (index: {
 export const setIsValidToLoad = (flag: boolean) => {
   return {
     type: "isValidToLoad/setState",
+    payload: flag,
+  };
+};
+export const setIsComponentEdited = (flag: boolean) => {
+  return {
+    type: "isComponentEdited/setState",
     payload: flag,
   };
 };

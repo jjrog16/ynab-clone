@@ -12,7 +12,8 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
+import { setAllCategories, setIsValidToLoad } from "../actions";
+import allCategories from "../reducers/allCategories";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
@@ -31,8 +32,8 @@ function Category(props: Props) {
   const LIGHT_BLUE = "#4795d8";
   const DARK_GRAY = "#656568";
 
-  const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer.value
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
   );
 
   // Controls if we should be reloading categoryGroups and categories
@@ -62,23 +63,14 @@ function Category(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    if (isValidToLoad) {
-      // Update the count with this new render
-      dispatch(
-        setTotalCategoryGroupAmount({
-          title: props.category.title,
-          available: props.category.available,
-          position: props.index,
-        })
-      );
-
-      console.log("New being added");
-      console.log(props.category.title, props.category.available);
-
-      // Stop rerenders
-      dispatch(setIsValidToLoad(false));
-    }
-
+    console.log("Set Total Category Group Amount");
+    dispatch(
+      setAllCategories({
+        title: props.category.title,
+        available: props.category.available,
+        position: props.index,
+      })
+    );
     return () => {
       //cleanup
     };

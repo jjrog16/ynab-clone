@@ -16,11 +16,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   removeFromTotalCategoryGroupAmount,
+  setIsComponentEdited,
   setIsValidToLoad,
-  setTotalCategoryGroupAmount,
   updateTotalCategoryGroupAmount,
 } from "../actions";
-import categoryGroupAmountTotalReducer from "../reducers/categoryGroupAmountTotal";
+import categoryGroupAmountTotalReducer from "../reducers/allCategories";
 import "../styles/css/EditComponentPopup.css";
 
 interface Props {
@@ -106,8 +106,6 @@ function EditComponentPopup(props: Props) {
                 props.componentObjectTemplate.position === element.position
             );
 
-            console.log(`Index being updated: ${indexToFind}`);
-
             // Remove the old entry in array
             await updateDoc(location, {
               categories: arrayRemove(props.componentObjectTemplate),
@@ -125,7 +123,8 @@ function EditComponentPopup(props: Props) {
             // only update if we are still mounted
             if (isMounted.current) setIsSending(false);
 
-            console.log(`Index being updated before dispatch: ${indexToFind}`);
+            // Set reload of CategoryGroups to true
+            dispatch(setIsValidToLoad(true));
 
             // Update total category groups before sending request
             dispatch(
@@ -137,8 +136,10 @@ function EditComponentPopup(props: Props) {
               })
             );
 
-            // Set reload of CategoryGroups to true
-            dispatch(setIsValidToLoad(true));
+            dispatch(setIsComponentEdited(true));
+
+            // Hide the edit component popup
+            props.setEditComponentPopupStatus(false);
           }
       }
     },

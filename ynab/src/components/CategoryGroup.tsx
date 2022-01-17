@@ -12,7 +12,6 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCategories, setTotalCategoryGroupAmount } from "../actions";
 import "../styles/css/CategoryGroup.css";
 import AddComponentPopup from "./AddComponentPopup";
 import Category from "./Category";

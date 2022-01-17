@@ -17,12 +17,7 @@ import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
 import EditAccountPopup from "../EditAccountPopup";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setCategories,
-  setCategoryGroups,
-  setIsValidToLoad,
-  setTotalCategoryGroupAmount,
-} from "../../actions";
+import { setCategoryGroups, setIsValidToLoad } from "../../actions";
 
 interface Props {
   runningCategoryGroupAmount: number;
@@ -51,8 +46,8 @@ function Budget(props: Props) {
   );
 
   // Total amount of money reserved for categories
-  const categoryGroupAmountTotal = useSelector(
-    (state: any) => state.categoryGroupAmountTotalReducer.value
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
   );
 
   // Controls if popup should be visible
@@ -103,17 +98,10 @@ function Budget(props: Props) {
       loadCategoryGroups(groupsQuery);
     }
 
-    // categoryGroups.forEach((item: any) => {
-    //   console.log(
-    //     "These are the category groups after load:",
-    //     item.data().title
-    //   );
-    // });
-
     return () => {
       isMounted.current = false;
     };
-  }, [isValidToLoad, categoryGroupAmountTotal]);
+  }, [isValidToLoad, allCategories]);
 
   // Sort responses based on position once they are in
   categoryGroups?.sort(
