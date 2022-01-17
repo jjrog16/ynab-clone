@@ -49,6 +49,9 @@ function App() {
         return { available: prev.available + curr.available };
       })
     );
+    return () => {
+      dispatch(setIsValidToLoad(false));
+    };
   }, [allCategories]);
 
   // // Hook to access Redux functions

@@ -83,7 +83,6 @@ function Category(props: Props) {
 
       // If  you cannot find the index, then it is not in the array. So load it
       if (indexToFind === -1) {
-        console.log("Setting new category:", props.category.title);
         dispatch(
           setAllCategories({
             title: props.category.title,
@@ -93,7 +92,6 @@ function Category(props: Props) {
         );
       } else {
         // Value exists, so just update it
-        console.log("Updating previous category:", props.category.title);
         dispatch(
           updateAllCategories({
             title: props.category.title,
@@ -105,14 +103,14 @@ function Category(props: Props) {
       }
     }
 
-    if (props.isLastCategory) {
-      dispatch(setIsValidToLoad(false));
-    }
+    // if (props.isLastCategory) {
+    //   dispatch(setIsValidToLoad(false));
+    // }
 
     return () => {
       //cleanup
     };
-  }, [isComponentEdited]);
+  }, []);
 
   // Implement context menu //
 

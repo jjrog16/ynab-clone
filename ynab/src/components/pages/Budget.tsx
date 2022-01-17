@@ -94,9 +94,10 @@ function Budget(props: Props) {
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
     console.log(`load category groups called. Valid? ${isValidToLoad}`);
-    if (isValidToLoad) {
-      loadCategoryGroups(groupsQuery);
-    }
+    // if (isValidToLoad) {
+
+    // }
+    loadCategoryGroups(groupsQuery);
 
     return () => {
       isMounted.current = false;

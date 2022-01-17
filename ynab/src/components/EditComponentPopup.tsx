@@ -51,6 +51,10 @@ function EditComponentPopup(props: Props) {
     (state: any) => state.isComponentEditedReducer.value
   );
 
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
+
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
@@ -114,8 +118,6 @@ function EditComponentPopup(props: Props) {
                 props.componentObjectTemplate.position === element.position
             );
 
-            console.log("Edited Index: ", indexToFind);
-
             // Remove the old entry in array
             await updateDoc(location, {
               categories: arrayRemove(props.componentObjectTemplate),
@@ -124,16 +126,7 @@ function EditComponentPopup(props: Props) {
             // Update the name to the new name
             props.componentObjectTemplate["title"] = inputState;
 
-            // Add to the array in the document
-            await updateDoc(location, {
-              categories: arrayUnion(props.componentObjectTemplate),
-            });
-
-            // once the request is sent, update state again
-            // only update if we are still mounted
-            //if (isMounted.current) setIsSending(false);
-
-            // Update total category groups before sending request
+            // Update allCategories before sending request
             dispatch(
               updateAllCategories({
                 title: props.componentObjectTemplate.title,
@@ -143,10 +136,13 @@ function EditComponentPopup(props: Props) {
               })
             );
 
+            // Add to the array in the document
+            await updateDoc(location, {
+              categories: arrayUnion(props.componentObjectTemplate),
+            });
+
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
-
-            dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Hide the edit component popup
             props.setEditComponentPopupStatus(false);

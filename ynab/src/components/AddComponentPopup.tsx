@@ -7,7 +7,12 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsComponentEdited, setIsValidToLoad } from "../actions";
+import {
+  setAllCategories,
+  setIsComponentEdited,
+  setIsValidToLoad,
+  updateAllCategories,
+} from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -32,6 +37,14 @@ function AddComponentPopup(props: Props) {
 
   const isComponentEdited = useSelector(
     (state: any) => state.isComponentEditedReducer.value
+  );
+
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
+  );
+
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
   );
 
   // set isMounted to false when we unmount the component
@@ -84,14 +97,42 @@ function AddComponentPopup(props: Props) {
               categories: arrayUnion(props.componentObjectAdded),
             });
 
-            // once the request is sent, update state again
-            // only update if we are still mounted
-            //if (isMounted.current) setIsSending(false);
+            const indexToFind = allCategories.findIndex(
+              (element: {
+                title: string;
+                available: number;
+                position: number;
+              }) =>
+                props.componentObjectAdded.title === element.title &&
+                props.componentObjectAdded.available === element.available &&
+                props.componentObjectAdded.position === element.position
+            );
+
+            // If  you cannot find the index, then it is not in the array. So load it
+            if (indexToFind === -1) {
+              dispatch(
+                setAllCategories({
+                  title: props.componentObjectAdded.title,
+                  available: props.componentObjectAdded.available,
+                  position: props.componentObjectAdded.position,
+                })
+              );
+            } else {
+              // Value exists, so just update it
+              dispatch(
+                updateAllCategories({
+                  title: props.componentObjectAdded.title,
+                  available: props.componentObjectAdded.available,
+                  position: props.componentObjectAdded.position,
+                  index: indexToFind,
+                })
+              );
+            }
 
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
 
-            dispatch(setIsComponentEdited(!isComponentEdited));
+            //dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);
