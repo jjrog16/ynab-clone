@@ -7,7 +7,7 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsValidToLoad } from "../actions";
+import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -62,9 +62,6 @@ function AddComponentPopup(props: Props) {
             // Set reload to true
             dispatch(setIsValidToLoad(true));
 
-            // Load from Firebase to cause a rerender since a new addition has been added
-            //props.rerender();
-
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);
           }
@@ -87,10 +84,6 @@ function AddComponentPopup(props: Props) {
 
             // Set reload to true
             dispatch(setIsValidToLoad(true));
-
-            // Load from Firebase to cause a rerender since there is a change
-            props.rerender();
-            //window.location.reload();
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);

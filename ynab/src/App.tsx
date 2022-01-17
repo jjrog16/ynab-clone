@@ -18,11 +18,13 @@ import {
 import Transactions from "./components/pages/Transactions";
 import { RootStateOrAny, useSelector, useDispatch } from "react-redux";
 import { setBankAccounts, setTotalCategoryGroupAmount } from "./actions";
+import isValidToLoadReducer from "./reducers/isValidToLoad";
 
 function App() {
   const categoryGroupAmountTotal = useSelector(
     (state: any) => state.categoryGroupAmountTotalReducer.value
   );
+
   console.log(categoryGroupAmountTotal);
 
   // Holds the total amount of all categoryGroups after the array reduce
@@ -31,6 +33,7 @@ function App() {
   }>({ available: 0 });
 
   useEffect(() => {
+    console.log("Running total called");
     setRunningCategoryGroupAmount(
       categoryGroupAmountTotal.reduce((prev: any, curr: any) => {
         return { available: prev.available + curr.available };

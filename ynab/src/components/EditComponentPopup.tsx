@@ -81,9 +81,6 @@ function EditComponentPopup(props: Props) {
 
             // Set reload to true
             dispatch(setIsValidToLoad(true));
-
-            // Load from Firebase to cause a rerender since there is a change
-            props.rerender();
           }
 
           // Dismiss the popup
@@ -111,10 +108,6 @@ function EditComponentPopup(props: Props) {
 
             // Set reload to true
             dispatch(setIsValidToLoad(true));
-
-            // Load from Firebase to cause a rerender since there is a change
-            //props.rerender();
-            window.location.reload();
           }
       }
     },

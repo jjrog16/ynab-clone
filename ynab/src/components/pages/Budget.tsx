@@ -50,6 +50,11 @@ function Budget(props: Props) {
     (state: any) => state.isValidToLoadReducer.value
   );
 
+  // Total amount of money reserved for categories
+  const categoryGroupAmountTotal = useSelector(
+    (state: any) => state.categoryGroupAmountTotalReducer.value
+  );
+
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -91,11 +96,15 @@ function Budget(props: Props) {
   // Use for initial render of Category Groups and Categories
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
-    loadCategoryGroups(groupsQuery);
+    console.log(`load category groups called. Valid? ${isValidToLoad}`);
+    if (isValidToLoad) {
+      loadCategoryGroups(groupsQuery);
+    }
+
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [isValidToLoad]);
 
   // Sort responses based on position once they are in
   categoryGroups?.sort(
@@ -118,9 +127,8 @@ function Budget(props: Props) {
   const categoryGroupObj = {
     position: latestPosition + 1,
     title: "",
+    categories: [],
   };
-
-  const [debugCount, setDebugCount] = useState(0);
 
   return (
     <div className="budget-page">

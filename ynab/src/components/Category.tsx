@@ -107,12 +107,12 @@ function Category(props: Props) {
     setEditComponentPopupStatus(true);
   }
 
-  // set isMounted to false when we unmount the component
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
+  // // set isMounted to false when we unmount the component
+  // useEffect(() => {
+  //   return () => {
+  //     isMounted.current = false;
+  //   };
+  // }, []);
 
   /**
    * When isPlusActive is true, this function
@@ -156,7 +156,7 @@ function Category(props: Props) {
 
       // Load from Firebase to cause a rerender since there is a change
       //props.rerender();
-      window.location.reload();
+      //window.location.reload();
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
@@ -211,7 +211,7 @@ function Category(props: Props) {
 
       // Load from Firebase to cause a rerender since there is a change
       //props.rerender();
-      window.location.reload();
+      //window.location.reload();
 
       // Update the total amount set for the categories so that Ready to Assign can
       // update its state
@@ -234,6 +234,7 @@ function Category(props: Props) {
     if (e.key === "Enter") {
       // Prevents keyDown from refreshing page
       e.preventDefault();
+      dispatch(setIsValidToLoad(true));
       if (isPlusActive) {
         addToAvailable();
         // Clear the input field after enter is pressed
