@@ -44,18 +44,14 @@ function App() {
   }>({ available: 0 });
 
   useEffect(() => {
-    if (isComponentEdited) {
-      console.log(isComponentEdited);
-      setRunningCategoryGroupAmount(
-        allCategories.reduce((prev: any, curr: any) => {
-          console.log(prev.available, curr.available);
-          return { available: prev.available + curr.available };
-        })
-      );
-    }
+    setRunningCategoryGroupAmount(
+      allCategories.reduce((prev: any, curr: any) => {
+        console.log(prev.available, curr.available);
+        return { available: prev.available + curr.available };
+      })
+    );
+
     console.log(runningCategoryGroupAmount);
-    // Stop rerenders
-    dispatch(setIsComponentEdited(false));
   }, [allCategories]);
 
   // // Hook to access Redux functions

@@ -101,7 +101,7 @@ function Budget(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [isValidToLoad, allCategories]);
+  }, [isValidToLoad]);
 
   // Sort responses based on position once they are in
   categoryGroups?.sort(
