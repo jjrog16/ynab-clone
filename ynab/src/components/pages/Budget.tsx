@@ -67,6 +67,8 @@ function Budget(props: Props) {
     async (query: Query) => {
       try {
         if (isValidToLoad) {
+          console.log("If you see me, loadCategoryGroups worked");
+
           // don't send again while we are sending
           if (isSending) return;
 
@@ -101,10 +103,17 @@ function Budget(props: Props) {
       loadCategoryGroups(groupsQuery);
     }
 
+    // categoryGroups.forEach((item: any) => {
+    //   console.log(
+    //     "These are the category groups after load:",
+    //     item.data().title
+    //   );
+    // });
+
     return () => {
       isMounted.current = false;
     };
-  }, [isValidToLoad]);
+  }, [isValidToLoad, categoryGroupAmountTotal]);
 
   // Sort responses based on position once they are in
   categoryGroups?.sort(

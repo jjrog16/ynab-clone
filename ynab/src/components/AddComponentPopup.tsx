@@ -59,7 +59,7 @@ function AddComponentPopup(props: Props) {
             // only update if we are still mounted
             if (isMounted.current) setIsSending(false);
 
-            // Set reload to true
+            // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
 
             // Dismiss the popup
@@ -82,7 +82,7 @@ function AddComponentPopup(props: Props) {
             // only update if we are still mounted
             if (isMounted.current) setIsSending(false);
 
-            // Set reload to true
+            // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
 
             // Dismiss the popup

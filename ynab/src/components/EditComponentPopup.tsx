@@ -14,7 +14,12 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsValidToLoad, setTotalCategoryGroupAmount } from "../actions";
+import {
+  removeFromTotalCategoryGroupAmount,
+  setIsValidToLoad,
+  setTotalCategoryGroupAmount,
+  updateTotalCategoryGroupAmount,
+} from "../actions";
 import categoryGroupAmountTotalReducer from "../reducers/categoryGroupAmountTotal";
 import "../styles/css/EditComponentPopup.css";
 
@@ -79,7 +84,7 @@ function EditComponentPopup(props: Props) {
             // only update if we are still mounted
             if (isMounted.current) setIsSending(false);
 
-            // Set reload to true
+            // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
           }
 
@@ -89,6 +94,20 @@ function EditComponentPopup(props: Props) {
         case "categories":
           // Change the title of the component based on input if the input has changed
           if (props.componentObjectTemplate["title"] !== inputState) {
+            // Find the category in the categories array before sending the request
+            const indexToFind = categoryGroupAmountTotal.findIndex(
+              (element: {
+                title: string;
+                available: number;
+                position: number;
+              }) =>
+                props.componentObjectTemplate.title === element.title &&
+                props.componentObjectTemplate.available === element.available &&
+                props.componentObjectTemplate.position === element.position
+            );
+
+            console.log(`Index being updated: ${indexToFind}`);
+
             // Remove the old entry in array
             await updateDoc(location, {
               categories: arrayRemove(props.componentObjectTemplate),
@@ -106,7 +125,19 @@ function EditComponentPopup(props: Props) {
             // only update if we are still mounted
             if (isMounted.current) setIsSending(false);
 
-            // Set reload to true
+            console.log(`Index being updated before dispatch: ${indexToFind}`);
+
+            // Update total category groups before sending request
+            dispatch(
+              updateTotalCategoryGroupAmount({
+                title: props.componentObjectTemplate.title,
+                available: props.componentObjectTemplate.available,
+                position: props.componentObjectTemplate.position,
+                index: indexToFind,
+              })
+            );
+
+            // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
           }
       }
@@ -135,17 +166,23 @@ function EditComponentPopup(props: Props) {
           // only update if we are still mounted
           if (isMounted.current) setIsSending(false);
 
-          // dispatch(
-          //   setTotalCategoryGroupAmount(
-          //     categoryGroupAmountTotal - Number(props.component.available)
-          //   )
-          // );
+          // Find the category in the categories array and remove
+          const indexToFind = categoryGroupAmountTotal.findIndex(
+            (element: { title: string; available: number }) =>
+              props.componentObjectTemplate.title === element.title
+          );
 
+          // Remove from the total category group array
+          dispatch(
+            removeFromTotalCategoryGroupAmount({
+              title: props.componentObjectTemplate.title,
+              available: props.componentObjectTemplate.available,
+              index: indexToFind,
+            })
+          );
+
+          // Set reload of CategoryGroups to true
           dispatch(setIsValidToLoad(true));
-
-          // Load from Firebase to cause a rerender since there is a change
-          props.rerender();
-          //window.location.reload();
         }
 
         // Parent groups need to have all of their children deleted
@@ -158,11 +195,11 @@ function EditComponentPopup(props: Props) {
             )
           );
         }
-
+        // Set reload of CategoryGroups to true
         dispatch(setIsValidToLoad(true));
 
         // Load from Firebase to cause a rerender since there is a change
-        props.rerender();
+        //props.rerender();
 
         // Dismiss the popup
         props.setEditComponentPopupStatus(false);

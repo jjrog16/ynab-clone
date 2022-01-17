@@ -68,8 +68,12 @@ function Category(props: Props) {
         setTotalCategoryGroupAmount({
           title: props.category.title,
           available: props.category.available,
+          position: props.index,
         })
       );
+
+      console.log("New being added");
+      console.log(props.category.title, props.category.available);
 
       // Stop rerenders
       dispatch(setIsValidToLoad(false));
@@ -154,6 +158,8 @@ function Category(props: Props) {
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
+      dispatch(setIsValidToLoad(true));
+
       // Load from Firebase to cause a rerender since there is a change
       //props.rerender();
       //window.location.reload();
@@ -209,6 +215,8 @@ function Category(props: Props) {
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
+      dispatch(setIsValidToLoad(true));
+
       // Load from Firebase to cause a rerender since there is a change
       //props.rerender();
       //window.location.reload();
@@ -234,7 +242,6 @@ function Category(props: Props) {
     if (e.key === "Enter") {
       // Prevents keyDown from refreshing page
       e.preventDefault();
-      dispatch(setIsValidToLoad(true));
       if (isPlusActive) {
         addToAvailable();
         // Clear the input field after enter is pressed

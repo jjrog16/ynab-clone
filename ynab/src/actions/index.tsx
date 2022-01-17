@@ -49,13 +49,40 @@ export const setCategories = (categories: QueryDocumentSnapshot[]) => {
   };
 };
 
+// Available is the available money in category group
 export const setTotalCategoryGroupAmount = (amount: {
   title: string;
   available: number;
+  position: number;
 }) => {
   return {
     type: "categoryGroupAmountTotal/addToTotal",
     payload: amount,
+  };
+};
+
+// Available is the available money in category group
+export const updateTotalCategoryGroupAmount = (amount: {
+  title: string;
+  available: number;
+  position: number;
+  index: number;
+}) => {
+  return {
+    type: "categoryGroupAmountTotal/update",
+    payload: amount,
+  };
+};
+
+// Available is now the available index to remove
+export const removeFromTotalCategoryGroupAmount = (index: {
+  title: "";
+  available: number;
+  index: number;
+}) => {
+  return {
+    type: "categoryGroupAmountTotal/remove",
+    payload: index,
   };
 };
 

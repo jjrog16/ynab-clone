@@ -25,7 +25,13 @@ function App() {
     (state: any) => state.categoryGroupAmountTotalReducer.value
   );
 
-  console.log(categoryGroupAmountTotal);
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
+
+  const categoryGroups = useSelector(
+    (state: any) => state.categoryGroupsReducer.value
+  );
 
   // Holds the total amount of all categoryGroups after the array reduce
   const [runningCategoryGroupAmount, setRunningCategoryGroupAmount] = useState<{
@@ -39,7 +45,7 @@ function App() {
         return { available: prev.available + curr.available };
       })
     );
-  }, [categoryGroupAmountTotal]);
+  }, [isValidToLoad, categoryGroups]);
 
   // // Hook to access Redux functions
   // const dispatch = useDispatch();

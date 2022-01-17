@@ -113,9 +113,6 @@ function CategoryGroup(props: Props) {
     }
   }
 
-  // The location for where the AddComponentPopup will send data
-  const categoryDbLocation = collection(getFirestore(), "categories");
-
   // Db Object formatting for adding a new category
   const newCategoryObj = {
     position: latestPosition + 1,
