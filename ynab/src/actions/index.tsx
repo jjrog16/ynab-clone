@@ -68,7 +68,7 @@ export const updateAllCategories = (amount: {
 };
 
 // Available is now the available index to remove
-export const removeFromAllCategoriesAmount = (index: {
+export const removeFromAllCategories = (index: {
   title: "";
   available: number;
   index: number;

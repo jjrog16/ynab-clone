@@ -30,8 +30,6 @@ function NavBar(props: Props) {
 
   const dispatch = useDispatch();
 
-  dispatch(setIsValidToLoad(false));
-
   return (
     <nav className="navbar">
       <div className="date">DEC 2021</div>

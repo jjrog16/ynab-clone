@@ -7,7 +7,7 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsValidToLoad } from "../actions";
+import { setIsComponentEdited, setIsValidToLoad } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -29,6 +29,10 @@ function AddComponentPopup(props: Props) {
 
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
+
+  const isComponentEdited = useSelector(
+    (state: any) => state.isComponentEditedReducer.value
+  );
 
   // set isMounted to false when we unmount the component
   useEffect(() => {
@@ -62,6 +66,8 @@ function AddComponentPopup(props: Props) {
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
 
+            dispatch(setIsComponentEdited(!isComponentEdited));
+
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);
           }
@@ -80,10 +86,12 @@ function AddComponentPopup(props: Props) {
 
             // once the request is sent, update state again
             // only update if we are still mounted
-            if (isMounted.current) setIsSending(false);
+            //if (isMounted.current) setIsSending(false);
 
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
+
+            dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);

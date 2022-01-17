@@ -15,6 +15,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  removeFromAllCategories,
   setIsComponentEdited,
   setIsValidToLoad,
   updateAllCategories,
@@ -44,6 +45,10 @@ function EditComponentPopup(props: Props) {
   // State of input field
   const [inputState, setInputState] = useState<string>(
     props.componentObjectTemplate.title
+  );
+
+  const isComponentEdited = useSelector(
+    (state: any) => state.isComponentEditedReducer.value
   );
 
   // Keep track of when the component is unmounted
@@ -93,6 +98,11 @@ function EditComponentPopup(props: Props) {
           // Change the title of the component based on input if the input has changed
           if (props.componentObjectTemplate["title"] !== inputState) {
             // Find the category in the categories array before sending the request
+
+            console.log(
+              `Category before awaits: ${props.componentObjectTemplate.title}`
+            );
+
             const indexToFind = allCategories.findIndex(
               (element: {
                 title: string;
@@ -103,6 +113,8 @@ function EditComponentPopup(props: Props) {
                 props.componentObjectTemplate.available === element.available &&
                 props.componentObjectTemplate.position === element.position
             );
+
+            console.log("Edited Index: ", indexToFind);
 
             // Remove the old entry in array
             await updateDoc(location, {
@@ -119,10 +131,7 @@ function EditComponentPopup(props: Props) {
 
             // once the request is sent, update state again
             // only update if we are still mounted
-            if (isMounted.current) setIsSending(false);
-
-            // Set reload of CategoryGroups to true
-            dispatch(setIsValidToLoad(true));
+            //if (isMounted.current) setIsSending(false);
 
             // Update total category groups before sending request
             dispatch(
@@ -134,7 +143,10 @@ function EditComponentPopup(props: Props) {
               })
             );
 
-            dispatch(setIsComponentEdited(true));
+            // Set reload of CategoryGroups to true
+            dispatch(setIsValidToLoad(true));
+
+            dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Hide the edit component popup
             props.setEditComponentPopupStatus(false);
@@ -247,10 +259,3 @@ function EditComponentPopup(props: Props) {
   );
 }
 export default EditComponentPopup;
-function removeFromAllCategories(arg0: {
-  title: any;
-  available: any;
-  index: any;
-}): any {
-  throw new Error("Function not implemented.");
-}

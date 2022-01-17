@@ -61,10 +61,6 @@ function Budget(props: Props) {
   const loadCategoryGroups = useCallback(
     async (query: Query) => {
       try {
-        console.log(
-          "States ->",
-          `isValidToLoad: ${isValidToLoad}, isSending ${isSending}`
-        );
         if (isValidToLoad) {
           console.log("If you see me, loadCategoryGroups worked");
 
@@ -171,17 +167,23 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {categoryGroups?.map((categoryGroup: QueryDocumentSnapshot) => {
-                  return (
-                    <CategoryGroup
-                      key={categoryGroup.id}
-                      group={categoryGroup}
-                      rerenderLoadCategoryGroups={() =>
-                        loadCategoryGroups(groupsQuery)
-                      }
-                    />
-                  );
-                })}
+                {categoryGroups?.map(
+                  (
+                    categoryGroup: QueryDocumentSnapshot,
+                    categoryGroupIndex: number
+                  ) => {
+                    return (
+                      <CategoryGroup
+                        key={categoryGroup.id}
+                        group={categoryGroup}
+                        categoryGroupIndex={categoryGroupIndex}
+                        rerenderLoadCategoryGroups={() =>
+                          loadCategoryGroups(groupsQuery)
+                        }
+                      />
+                    );
+                  }
+                )}
               </div>
             </div>
           </div>

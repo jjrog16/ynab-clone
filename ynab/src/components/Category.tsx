@@ -24,6 +24,7 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   category: { available: number; title: string; position: number };
   categoryGroup: QueryDocumentSnapshot;
+  isLastCategory: boolean;
   index: number;
   rerender: any;
   setEditComponentPopupStatus: any;
@@ -40,7 +41,11 @@ function Category(props: Props) {
     (state: any) => state.allCategoriesReducer.value
   );
 
-  // Controls if we should be reloading categoryGroups and categories
+  // State of the category Groups
+  const isComponentEdited = useSelector(
+    (state: any) => state.isComponentEditedReducer.value
+  );
+
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );
@@ -66,24 +71,48 @@ function Category(props: Props) {
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
+    console.log(`isValidToLoad: ${isValidToLoad}`);
     // Set the total amount for the categories in a category group
-    console.log("Category:");
-    console.log(
-      props.category.title,
-      props.category.available,
-      props.category.position
-    );
-    dispatch(
-      setAllCategories({
-        title: props.category.title,
-        available: props.category.available,
-        position: props.index,
-      })
-    );
+    if (isValidToLoad) {
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
+
+      // If  you cannot find the index, then it is not in the array. So load it
+      if (indexToFind === -1) {
+        console.log("Setting new category:", props.category.title);
+        dispatch(
+          setAllCategories({
+            title: props.category.title,
+            available: props.category.available,
+            position: props.index,
+          })
+        );
+      } else {
+        // Value exists, so just update it
+        console.log("Updating previous category:", props.category.title);
+        dispatch(
+          updateAllCategories({
+            title: props.category.title,
+            available: props.category.available,
+            position: props.category.position,
+            index: indexToFind,
+          })
+        );
+      }
+    }
+
+    if (props.isLastCategory) {
+      dispatch(setIsValidToLoad(false));
+    }
+
     return () => {
       //cleanup
     };
-  }, [isValidToLoad]);
+  }, [isComponentEdited]);
 
   // Implement context menu //
 

@@ -19,6 +19,7 @@ import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
   group: QueryDocumentSnapshot;
+  categoryGroupIndex: number;
   rerenderLoadCategoryGroups: any;
 }
 
@@ -31,6 +32,10 @@ function CategoryGroup(props: Props) {
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
+
+  const categoryGroups = useSelector(
+    (state: any) => state.categoryGroupsReducer.value
+  );
 
   // // Status for loading API call
   // const [isSending, setIsSending] = useState(false);
@@ -189,11 +194,18 @@ function CategoryGroup(props: Props) {
               category: { available: number; title: string; position: number },
               idx: number
             ) => {
+              // TODO: Set this global
+              const isLastCategory =
+                categoryGroups.length - 1 === props.categoryGroupIndex &&
+                props.group.data().categories.length - 1 === idx
+                  ? true
+                  : false;
               return (
                 <Category
                   key={idx}
                   category={category}
                   categoryGroup={props.group}
+                  isLastCategory={isLastCategory}
                   index={idx}
                   rerender={props.rerenderLoadCategoryGroups}
                   setEditComponentPopupStatus={setEditComponentPopupStatus}
