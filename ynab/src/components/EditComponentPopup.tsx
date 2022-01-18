@@ -58,12 +58,26 @@ function EditComponentPopup(props: Props) {
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
+  // Monitor States for button press
+  const [isOkPressed, setOkPressed] = useState(false);
+  const [isDeletePressed, setDeletePressed] = useState(false);
+
   // set isMounted to false when we unmount the component
   useEffect(() => {
+    if (isOkPressed) {
+      console.log("editPassedComponentInDb running");
+      editPassedComponentInDb(props.editLocationForDb);
+    }
+
+    if (isDeletePressed) {
+      console.log("deletePassedComponentInDb running");
+      deletePassedComponentInDb(props.editLocationForDb);
+    }
     return () => {
-      isMounted.current = false;
+      console.log("EditComponentPopup setting isValidToLoad to false");
+      dispatch(setIsValidToLoad(false));
     };
-  }, []);
+  }, [isOkPressed, isDeletePressed]);
 
   /**
    * Use the ID for the category group passed in as a prop in order to know which
@@ -145,7 +159,11 @@ function EditComponentPopup(props: Props) {
             dispatch(setIsValidToLoad(true));
 
             // Hide the edit component popup
+
             props.setEditComponentPopupStatus(false);
+
+            //setInterval(dispatch(setIsValidToLoad), 3000);
+            //dispatch(setIsValidToLoad(false));
           }
       }
     },
@@ -234,21 +252,13 @@ function EditComponentPopup(props: Props) {
       </div>
       <div className="edit-components-btn-container">
         <div className="left-side-buttons">
-          <button
-            onClick={() => deletePassedComponentInDb(props.editLocationForDb)}
-          >
-            Delete
-          </button>
+          <button onClick={() => setDeletePressed(true)}>Delete</button>
         </div>
         <div className="right-side-buttons">
           <button onClick={() => props.setEditComponentPopupStatus(false)}>
             Cancel
           </button>
-          <button
-            onClick={() => editPassedComponentInDb(props.editLocationForDb)}
-          >
-            OK
-          </button>
+          <button onClick={() => setOkPressed(true)}>OK</button>
         </div>
       </div>
     </div>

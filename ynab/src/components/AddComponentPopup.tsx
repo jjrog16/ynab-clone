@@ -47,12 +47,25 @@ function AddComponentPopup(props: Props) {
     (state: any) => state.isValidToLoadReducer.value
   );
 
+  const [isOkPressed, setIsOkPressed] = useState(false);
+
   // set isMounted to false when we unmount the component
   useEffect(() => {
+    // Location changes based on if we need a collection reference or document reference
+    const location =
+      props.componentType === "categoryGroups"
+        ? props.addLocationForDbAsCollectionReference
+        : props.addLocationForDbAsDocumentReference;
+
+    if (isOkPressed) {
+      console.log("AddComponentToDB running");
+      addComponentToDb(location);
+    }
     return () => {
-      isMounted.current = false;
+      console.log("AddComponentPopup setting isValidToLoad to false");
+      dispatch(setIsValidToLoad(false));
     };
-  }, []);
+  }, [isOkPressed]);
 
   const addComponentToDb = useCallback(
     async (location: any) => {
@@ -135,7 +148,7 @@ function AddComponentPopup(props: Props) {
             //dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Dismiss the popup
-            props.setAddComponentPopupStatus(false);
+            setInterval(props.setAddComponentPopupStatus(false), 5000);
           }
           break;
       }
@@ -161,12 +174,7 @@ function AddComponentPopup(props: Props) {
         </button>
         <button
           onClick={() => {
-            // Location changes based on if we need a collection reference or document reference
-            const location =
-              props.componentType === "categoryGroups"
-                ? props.addLocationForDbAsCollectionReference
-                : props.addLocationForDbAsDocumentReference;
-            addComponentToDb(location);
+            setIsOkPressed(true);
           }}
         >
           OK
