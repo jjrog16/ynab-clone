@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
-import { setIsComponentEdited, setIsValidToLoad } from "../actions";
+import { useSelector } from "react-redux";
+
 import "../styles/css/NavBar.css";
 
 interface Props {

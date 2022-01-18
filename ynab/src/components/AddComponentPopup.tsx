@@ -9,7 +9,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setAllCategories,
-  setIsComponentEdited,
   setIsValidToLoad,
   updateAllCategories,
 } from "../actions";
@@ -94,8 +93,6 @@ function AddComponentPopup(props: Props) {
 
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
-
-            dispatch(setIsComponentEdited(!isComponentEdited));
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);

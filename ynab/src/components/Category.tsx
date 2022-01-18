@@ -39,11 +39,6 @@ function Category(props: Props) {
     (state: any) => state.allCategoriesReducer.value
   );
 
-  // State of the category Groups
-  const isComponentEdited = useSelector(
-    (state: any) => state.isComponentEditedReducer.value
-  );
-
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );

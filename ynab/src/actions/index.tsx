@@ -85,9 +85,3 @@ export const setIsValidToLoad = (flag: boolean) => {
     payload: flag,
   };
 };
-export const setIsComponentEdited = (flag: boolean) => {
-  return {
-    type: "isComponentEdited/setState",
-    payload: flag,
-  };
-};
