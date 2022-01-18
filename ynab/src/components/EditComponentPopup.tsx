@@ -76,6 +76,8 @@ function EditComponentPopup(props: Props) {
     return () => {
       console.log("EditComponentPopup setting isValidToLoad to false");
       dispatch(setIsValidToLoad(false));
+      // Hide the edit component popup
+      props.setEditComponentPopupStatus(false);
     };
   }, [isOkPressed, isDeletePressed]);
 
@@ -155,15 +157,8 @@ function EditComponentPopup(props: Props) {
               categories: arrayUnion(props.componentObjectTemplate),
             });
 
-            // Set reload of CategoryGroups to true
+            // Set reload of CategoryGroups to true to cause a rerender
             dispatch(setIsValidToLoad(true));
-
-            // Hide the edit component popup
-
-            props.setEditComponentPopupStatus(false);
-
-            //setInterval(dispatch(setIsValidToLoad), 3000);
-            //dispatch(setIsValidToLoad(false));
           }
       }
     },
@@ -222,12 +217,6 @@ function EditComponentPopup(props: Props) {
         }
         // Set reload of CategoryGroups to true
         dispatch(setIsValidToLoad(true));
-
-        // Load from Firebase to cause a rerender since there is a change
-        //props.rerender();
-
-        // Dismiss the popup
-        props.setEditComponentPopupStatus(false);
       } else {
         console.log("Cancelled");
       }

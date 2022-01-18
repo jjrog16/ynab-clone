@@ -102,13 +102,11 @@ function Category(props: Props) {
         );
       }
     }
-
-    // if (props.isLastCategory) {
-    //   dispatch(setIsValidToLoad(false));
-    // }
-
+    // Set loading to done when category is mounted
+    dispatch(setIsValidToLoad(false));
     return () => {
-      //cleanup
+      //cleanup - set isValidToLoad to false when the category is unmounted
+      dispatch(setIsValidToLoad(false));
     };
   }, []);
 

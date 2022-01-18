@@ -50,7 +50,7 @@ function App() {
       })
     );
     return () => {
-      dispatch(setIsValidToLoad(false));
+      //dispatch(setIsValidToLoad(false));
     };
   }, [allCategories]);
 

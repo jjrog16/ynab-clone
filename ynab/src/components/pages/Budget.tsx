@@ -99,7 +99,7 @@ function Budget(props: Props) {
     }
 
     return () => {
-      isMounted.current = false;
+      //isMounted.current = false;
     };
   }, [isValidToLoad]);
 

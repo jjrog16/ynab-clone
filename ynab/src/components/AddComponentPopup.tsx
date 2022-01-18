@@ -58,12 +58,16 @@ function AddComponentPopup(props: Props) {
         : props.addLocationForDbAsDocumentReference;
 
     if (isOkPressed) {
+      // TODO: Figure out why editComponent works but addComponent doesn't
+      // rerender page
       console.log("AddComponentToDB running");
       addComponentToDb(location);
     }
     return () => {
       console.log("AddComponentPopup setting isValidToLoad to false");
       dispatch(setIsValidToLoad(false));
+      // Dismiss the popup
+      props.setAddComponentPopupStatus(false);
     };
   }, [isOkPressed]);
 
@@ -142,13 +146,16 @@ function AddComponentPopup(props: Props) {
               );
             }
 
+            console.log(
+              "Status of isValid in AddComponentPopup before assignment",
+              isValidToLoad
+            );
             // Set reload of CategoryGroups to true
             dispatch(setIsValidToLoad(true));
-
-            //dispatch(setIsComponentEdited(!isComponentEdited));
-
-            // Dismiss the popup
-            setInterval(props.setAddComponentPopupStatus(false), 5000);
+            console.log(
+              "Status of isValid in AddComponentPopup after assignment",
+              isValidToLoad
+            );
           }
           break;
       }

@@ -12,23 +12,6 @@ function NavBar(props: Props) {
   const moneyAmountTotal = useSelector(
     (state: any) => state.moneyAmountTotalReducer
   );
-  // const categoryGroupAmountTotal = useSelector(
-  //   (state: any) => state.categoryGroupAmountTotalReducer.value
-  // );
-
-  // let totalGroupAmount = 0;
-
-  // const categoryGroups = useSelector(
-  //   (state: any) => state.categoryGroups.value
-  // );
-
-  // useEffect(() => {
-  //   totalGroupAmount = categoryGroupAmountTotal.reduce(
-  //     (prev: any, curr: any) => prev + curr
-  //   );
-  // }, [categoryGroups]);
-
-  const dispatch = useDispatch();
 
   return (
     <nav className="navbar">
