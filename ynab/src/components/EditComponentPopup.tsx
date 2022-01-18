@@ -28,7 +28,6 @@ interface Props {
   componentObjectTemplate: any;
   componentType: string;
   editLocationForDb: DocumentReference;
-  rerender: any;
   setEditComponentPopupStatus: any;
 }
 

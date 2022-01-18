@@ -146,7 +146,6 @@ function Budget(props: Props) {
                 componentObjectAdded={categoryGroupObj}
                 addLocationForDbAsCollectionReference={categoryGroupDbLocation}
                 componentType={"categoryGroups"}
-                rerender={() => loadCategoryGroups(groupsQuery)}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
                 addLocationForDbAsDocumentReference={null}
               />
@@ -177,9 +176,6 @@ function Budget(props: Props) {
                         key={categoryGroup.id}
                         group={categoryGroup}
                         categoryGroupIndex={categoryGroupIndex}
-                        rerenderLoadCategoryGroups={() =>
-                          loadCategoryGroups(groupsQuery)
-                        }
                       />
                     );
                   }

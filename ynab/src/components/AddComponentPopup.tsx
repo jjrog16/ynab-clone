@@ -20,7 +20,6 @@ interface Props {
   addLocationForDbAsCollectionReference: CollectionReference | null;
   addLocationForDbAsDocumentReference: DocumentReference | null;
   componentType: string;
-  rerender: any;
   setAddComponentPopupStatus: any;
 }
 

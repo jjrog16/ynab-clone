@@ -24,9 +24,7 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   category: { available: number; title: string; position: number };
   categoryGroup: QueryDocumentSnapshot;
-  isLastCategory: boolean;
   index: number;
-  rerender: any;
   setEditComponentPopupStatus: any;
 }
 
@@ -311,7 +309,6 @@ function Category(props: Props) {
             componentObjectTemplate={editedCategoryObj}
             componentType={"categories"}
             editLocationForDb={categoryGroupDbLocation}
-            rerender={props.rerender}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}

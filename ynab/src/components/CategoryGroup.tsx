@@ -20,7 +20,6 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   group: QueryDocumentSnapshot;
   categoryGroupIndex: number;
-  rerenderLoadCategoryGroups: any;
 }
 
 function CategoryGroup(props: Props) {
@@ -164,7 +163,6 @@ function CategoryGroup(props: Props) {
             componentObjectTemplate={editedCategoryGroupObj}
             componentType={"categoryGroups"}
             editLocationForDb={categoryGroupDbLocation}
-            rerender={props.rerenderLoadCategoryGroups}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
@@ -179,7 +177,6 @@ function CategoryGroup(props: Props) {
           <AddComponentPopup
             componentObjectAdded={newCategoryObj}
             componentType={"categories"}
-            rerender={props.rerenderLoadCategoryGroups}
             setAddComponentPopupStatus={setAddComponentPopupStatus}
             addLocationForDbAsCollectionReference={null}
             addLocationForDbAsDocumentReference={categoryGroupDbLocation}
@@ -194,20 +191,12 @@ function CategoryGroup(props: Props) {
               category: { available: number; title: string; position: number },
               idx: number
             ) => {
-              // TODO: Set this global
-              const isLastCategory =
-                categoryGroups.length - 1 === props.categoryGroupIndex &&
-                props.group.data().categories.length - 1 === idx
-                  ? true
-                  : false;
               return (
                 <Category
                   key={idx}
                   category={category}
                   categoryGroup={props.group}
-                  isLastCategory={isLastCategory}
                   index={idx}
-                  rerender={props.rerenderLoadCategoryGroups}
                   setEditComponentPopupStatus={setEditComponentPopupStatus}
                 />
               );
