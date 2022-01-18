@@ -284,11 +284,19 @@ function Category(props: Props) {
       e.preventDefault();
       if (isPlusActive) {
         addToAvailable();
+
+        // Set Status to false to allow for sequential changes
+        dispatch(setIsValidToLoad(false));
+
         // Clear the input field after enter is pressed
         setInputState("");
       }
       if (isMinusActive) {
         subtractFromAvailable();
+
+        // Set Status to false to allow for sequential changes
+        dispatch(setIsValidToLoad(false));
+
         // Clear the input field after enter is pressed
         setInputState("");
       }
