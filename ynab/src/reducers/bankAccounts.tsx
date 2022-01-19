@@ -1,16 +1,16 @@
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 
 interface BankAccounts {
-  value: { arr: QueryDocumentSnapshot[] };
+  value: QueryDocumentSnapshot[];
 }
 // Holds all bank accounts
 const bankAccountsReducer = (
-  state: BankAccounts = { value: { arr: [] } },
+  state: BankAccounts = { value: [] },
   action: { type: string; payload: QueryDocumentSnapshot[] }
 ) => {
   switch (action.type) {
     case "bankAccount/addAccount":
-      return { ...state, value: { ...state.value, arr: action.payload } };
+      return { ...state, value: action.payload };
     default:
       return state;
   }

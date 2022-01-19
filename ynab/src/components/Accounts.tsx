@@ -34,7 +34,11 @@ function Accounts(props: Props) {
     (state: any) => state.moneyAmountTotalReducer
   );
 
+  // Sets status for editAccount popup, which appears on edit and on new accounts
   const [editAccountPopupStatus, setEditAccountPopupStatus] = useState(false);
+
+  // Controls if we should rerender the accounts
+  const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -42,8 +46,20 @@ function Accounts(props: Props) {
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
+  // Keep track of the index for accounts in order to send to EditAccountPopup
+  const [accountIndex, setAccountIndex] = useState(-1);
+
   // Query to get all accounts in Firebase
   const accountQuery: Query = query(collection(getFirestore(), "accounts"));
+
+  useEffect(() => {
+    if (isValidToLoadAccounts) {
+      loadAccounts(accountQuery);
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, [isValidToLoadAccounts]);
 
   const loadAccounts = useCallback(
     async (accountQuery) => {
@@ -79,13 +95,6 @@ function Accounts(props: Props) {
     [isSending]
   );
 
-  useEffect(() => {
-    loadAccounts(accountQuery);
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   // Amount of money with dollar sign and decimal
   let totalAmountFixed = `$${Number(moneyAmountTotal.value).toFixed(2)}`;
 
@@ -93,9 +102,8 @@ function Accounts(props: Props) {
    * Set of operations to perform once add account button is clicked
    */
   function handleAddAccount() {
-    // Set popup to true
-    //dispatch(enableEditAccountPopup());
-
+    // Toggle showing add account
+    setEditAccountPopupStatus(!editAccountPopupStatus);
     // Set account name input to be empty
     dispatch(setEditAccountNameInput(""));
 
@@ -116,18 +124,24 @@ function Accounts(props: Props) {
                 x: 300,
                 y: 200,
               }}
-              rerenderLoadAccounts={() => loadAccounts(accountQuery)}
+              accountIndex={accountIndex}
               editAccountPopupStatus={editAccountPopupStatus}
               setEditAccountPopupStatus={setEditAccountPopupStatus}
+              isValidToLoadAccounts={isValidToLoadAccounts}
+              setIsValidToLoadAccounts={setIsValidToLoadAccounts}
             />
           ) : null}
           <ul className="account-items">
-            {bankAccounts.value.arr.map((account: any) => {
+            {bankAccounts.value.map((account: any, idx: number) => {
               return (
                 <AccountItem
                   key={account.id}
                   account={account}
+                  index={idx}
+                  setAccountIndex={setAccountIndex}
                   setEditAccountPopupStatus={setEditAccountPopupStatus}
+                  isValidToLoadAccounts={isValidToLoadAccounts}
+                  setIsValidToLoadAccounts={setIsValidToLoadAccounts}
                 />
               );
             })}

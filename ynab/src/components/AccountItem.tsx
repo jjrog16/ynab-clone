@@ -13,6 +13,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { isUnparsedPrepend } from "typescript";
 import {
   setAllTransactions,
   setEditAccountNameInput,
@@ -25,45 +26,51 @@ import EditAccountPopup from "./EditAccountPopup";
 interface Props {
   account: QueryDocumentSnapshot;
   setEditAccountPopupStatus: any;
+  isValidToLoadAccounts: boolean;
+  setIsValidToLoadAccounts: any;
+  index: number;
+  setAccountIndex: any;
 }
 
 function AccountItem(props: Props) {
   const dispatch: Dispatch<any> = useDispatch();
 
   const moneyAmountTotal = useSelector(
-    (state: any) => state.moneyAmountTotalReducer
+    (state: any) => state.moneyAmountTotalReducer.value
   );
+
+  // Status for loading API call
+  const [isSending, setIsSending] = useState(false);
+
+  const [isAccountItemClicked, setIsAccountItemClicked] = useState(false);
+
+  // Keep track of when the component is unmounted
+  const isMounted = useRef(true);
 
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    // props.setTotalAmount(
-    //   (previousAmount: number) => previousAmount + props.account.data().amount
-    // );
-    dispatch(
-      setTotalAmount(moneyAmountTotal.value + props.account.data().amount)
-    );
+    if (isAccountItemClicked) {
+      loadTransactions(transactionsQuery);
+    }
+
+    // Only load into the total amount if we are loading accounts
+    if (props.isValidToLoadAccounts) {
+      dispatch(setTotalAmount(moneyAmountTotal + props.account.data().amount));
+    }
+
+    props.setIsValidToLoadAccounts(false);
 
     return () => {
       //cleanup
     };
-  }, []);
-
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
+  }, [isAccountItemClicked]);
 
   // Query to get all transactions in Firebase based on the account
   const transactionsQuery: Query = query(
     collection(getFirestore(), "transactions"),
     where("accountId", "==", `${props.account.id}`)
-  );
-
-  const categoryGroupsReducer = useSelector(
-    (state: any) => state.categoryGroupsReducer
   );
 
   const loadTransactions = useCallback(
@@ -102,6 +109,7 @@ function AccountItem(props: Props) {
   function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
     props.setEditAccountPopupStatus(true);
+    props.setAccountIndex(props.index);
     dispatch(setEditAccountNameInput(props.account.data().title));
     dispatch(setEditAccountWorkingBalanceInput(props.account.data().amount));
   }
@@ -117,7 +125,7 @@ function AccountItem(props: Props) {
           key={props.account.id}
           className="account"
           onContextMenu={(event) => handleContextMenu(event)}
-          onClick={() => loadTransactions(transactionsQuery)}
+          onClick={() => setIsAccountItemClicked(true)}
         >
           <div className="account-name">{props.account.data().title}</div>
           <div className="account-amount">{`$${Number(

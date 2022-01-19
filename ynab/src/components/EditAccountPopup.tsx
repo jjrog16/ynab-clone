@@ -16,13 +16,17 @@ import {
   setEditAccountWorkingBalanceInput,
   setTotalAmount,
 } from "../actions";
+import moneyAmountTotalReducer from "../reducers/moneyAmountTotal";
 import "../styles/css/EditAccountPopup.css";
 interface Props {
   coodinates: { x: number; y: number };
-  rerenderLoadAccounts: any;
   editAccountPopupStatus: boolean;
   setEditAccountPopupStatus: any;
+  isValidToLoadAccounts: boolean;
+  setIsValidToLoadAccounts: any;
+  accountIndex: number;
 }
+
 function EditAccountPopup(props: Props) {
   const dispatch = useDispatch();
 
@@ -35,7 +39,11 @@ function EditAccountPopup(props: Props) {
   const moneyTotalAmount = useSelector(
     (state: RootStateOrAny) => state.moneyTotalAmountReducer
   );
-  const account = useSelector((state: RootStateOrAny) => state.accountReducer);
+
+  // Array of QueryDocumentSnapshot containing all bank accounts
+  const bankAccounts = useSelector(
+    (state: any) => state.bankAccountsReducer.value
+  );
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -45,6 +53,9 @@ function EditAccountPopup(props: Props) {
 
   // The location for where accounts are stored
   const accountDbLocation = collection(getFirestore(), "accounts");
+
+  const [isSavePressed, setIsSavePressed] = useState(false);
+  const [isDeletePressed, setIsDeletePressed] = useState(false);
 
   // set isMounted to false when we unmount the component
   useEffect(() => {
@@ -79,43 +90,33 @@ function EditAccountPopup(props: Props) {
 
         // If the input the user entered for the change is higher than account amount in Db,
         // subtract the account amount from the input amount and add that to totalAmount
-        if (account.data().amount < editAccountWorkingBalanceInput.value) {
+        if (
+          bankAccounts[props.accountIndex].data().amount <
+          editAccountWorkingBalanceInput.value
+        ) {
           dispatch(
             setTotalAmount(
               moneyTotalAmount.value +
                 Number(editAccountWorkingBalanceInput.value) -
-                account.data().amount
+                bankAccounts[props.accountIndex].data().amount
             )
           );
-          // props.setTotalAmount(
-          //   (prevAmount: number) =>
-          //     prevAmount +
-          //     (Number(props.editAccountWorkingBalanceInput) -
-          //       props.accountPassed?.data().amount)
-          // );
         } else {
           // Otherwise, the input is less than what we have in the db,
           // so we are going to subtract that from the totalAmount
           dispatch(
             setTotalAmount(
               moneyTotalAmount.value -
-                (account.data().amount -
+                (bankAccounts[props.accountIndex].data().amount -
                   Number(editAccountWorkingBalanceInput.value))
             )
           );
-          // props.setTotalAmount(
-          //   (prevAmount: number) =>
-          //     prevAmount -
-          //     (props.accountPassed?.data().amount -
-          //       Number(props.editAccountWorkingBalanceInput))
-          // );
         }
 
         // Load from Firebase to cause a rerender since there is a change
-        props.rerenderLoadAccounts();
+        //props.rerenderLoadAccounts();
 
         // Remove the popup window
-        //dispatch(disableEditAccountPopup());
       }
     },
     [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
@@ -146,10 +147,8 @@ function EditAccountPopup(props: Props) {
         if (isMounted.current) setIsSending(false);
 
         // Load from Firebase to cause a rerender since there is a change
-        props.rerenderLoadAccounts();
 
         // Remove the popup window
-        //dispatch(disableEditAccountPopup());
       }
     },
     [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
@@ -165,19 +164,27 @@ function EditAccountPopup(props: Props) {
     // eslint-disable-next-line no-restricted-globals
     if (confirm("Are you sure you want to delete?")) {
       // Delete the doc for the passed account
-      deleteDoc(doc(collection(getFirestore(), "accounts"), account.id));
+      deleteDoc(
+        doc(
+          collection(getFirestore(), "accounts"),
+          bankAccounts[props.accountIndex].id
+        )
+      );
       // once the request is sent, update state again
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
       // Remove money from the total balance
-      dispatch(setTotalAmount(moneyTotalAmount.value - account.data().amount));
+      dispatch(
+        setTotalAmount(
+          moneyTotalAmount.value -
+            bankAccounts[props.accountIndex].data().amount
+        )
+      );
 
       // Load from Firebase to cause a rerender since there is a change
-      props.rerenderLoadAccounts();
 
       // Remove the popup window
-      //dispatch(disableEditAccountPopup());
     }
   }, [isSending]);
 
@@ -187,8 +194,10 @@ function EditAccountPopup(props: Props) {
   function handleSave() {
     // If there is a valid id and the value being passed is not undefined, then
     // we know we can edit the existing account
-    if (account.id) {
-      saveEditedAccountToDb(doc(accountDbLocation, account.id));
+    if (bankAccounts[props.accountIndex].id) {
+      saveEditedAccountToDb(
+        doc(accountDbLocation, bankAccounts[props.accountIndex].id)
+      );
     } else {
       // Add as a new doc
       saveNewAccountToDb(accountDbLocation);
