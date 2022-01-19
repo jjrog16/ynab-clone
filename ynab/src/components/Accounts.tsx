@@ -16,22 +16,20 @@ import {
   setBankAccounts,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
-  setTotalAmount,
 } from "../actions";
 import { useDispatch, useSelector } from "react-redux";
 
-interface Props {}
+interface Props {
+  runningAccountAmount: number;
+}
 
 function Accounts(props: Props) {
   // Hook to access Redux functions
   const dispatch = useDispatch();
 
   // Collection of all Bank accounts
-  const bankAccounts = useSelector((state: any) => state.bankAccountsReducer);
-
-  // Total amount of money of all bank accounts
-  const moneyAmountTotal = useSelector(
-    (state: any) => state.moneyAmountTotalReducer
+  const bankAccounts = useSelector(
+    (state: any) => state.bankAccountsReducer.value
   );
 
   // Sets status for editAccount popup, which appears on edit and on new accounts
@@ -53,6 +51,7 @@ function Accounts(props: Props) {
   const accountQuery: Query = query(collection(getFirestore(), "accounts"));
 
   useEffect(() => {
+    console.log("isValidToLoadAccounts", isValidToLoadAccounts);
     if (isValidToLoadAccounts) {
       loadAccounts(accountQuery);
     }
@@ -69,9 +68,6 @@ function Accounts(props: Props) {
 
         // update state
         setIsSending(true);
-
-        // Set total amount to start at 0 on rerender
-        dispatch(setTotalAmount(0));
 
         // Asynchronous load of all accounts based off query
         const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
@@ -96,7 +92,7 @@ function Accounts(props: Props) {
   );
 
   // Amount of money with dollar sign and decimal
-  let totalAmountFixed = `$${Number(moneyAmountTotal.value).toFixed(2)}`;
+  let totalAmountFixed = `$${Number(props.runningAccountAmount).toFixed(2)}`;
 
   /**
    * Set of operations to perform once add account button is clicked
@@ -132,7 +128,7 @@ function Accounts(props: Props) {
             />
           ) : null}
           <ul className="account-items">
-            {bankAccounts.value.map((account: any, idx: number) => {
+            {bankAccounts.map((account: any, idx: number) => {
               return (
                 <AccountItem
                   key={account.id}

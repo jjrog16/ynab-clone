@@ -18,7 +18,6 @@ import {
   setAllTransactions,
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
-  setTotalAmount,
 } from "../actions";
 import "../styles/css/AccountItem.css";
 import EditAccountPopup from "./EditAccountPopup";
@@ -34,10 +33,6 @@ interface Props {
 
 function AccountItem(props: Props) {
   const dispatch: Dispatch<any> = useDispatch();
-
-  const moneyAmountTotal = useSelector(
-    (state: any) => state.moneyAmountTotalReducer.value
-  );
 
   // Status for loading API call
   const [isSending, setIsSending] = useState(false);
@@ -57,7 +52,7 @@ function AccountItem(props: Props) {
 
     // Only load into the total amount if we are loading accounts
     if (props.isValidToLoadAccounts) {
-      //dispatch(setTotalAmount(moneyAmountTotal + props.account.data().amount));
+      //dispatchmoneyAmountTotal + props.account.data().amount));
     }
 
     props.setIsValidToLoadAccounts(false);

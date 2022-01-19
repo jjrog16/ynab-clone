@@ -14,9 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setEditAccountNameInput,
   setEditAccountWorkingBalanceInput,
-  setTotalAmount,
 } from "../actions";
-import moneyAmountTotalReducer from "../reducers/moneyAmountTotal";
 import "../styles/css/EditAccountPopup.css";
 interface Props {
   coodinates: { x: number; y: number };
@@ -35,9 +33,6 @@ function EditAccountPopup(props: Props) {
   );
   const editAccountWorkingBalanceInput = useSelector(
     (state: any) => state.editAccountWorkingBalanceInputReducer.value
-  );
-  const moneyTotalAmount = useSelector(
-    (state: any) => state.moneyAmountTotalReducer.value
   );
 
   // Array of QueryDocumentSnapshot containing all bank accounts
@@ -99,37 +94,12 @@ function EditAccountPopup(props: Props) {
 
         await setDoc(location, {
           amount: bankAmount,
-          title: editAccountNameInput.value,
+          title: editAccountNameInput,
         });
 
         // once the request is sent, update state again
         // only update if we are still mounted
         if (isMounted.current) setIsSending(false);
-
-        // If the input the user entered for the change is higher than account amount in Db,
-        // subtract the account amount from the input amount and add that to totalAmount
-        if (
-          bankAccounts[props.accountIndex].data().amount <
-          editAccountWorkingBalanceInput
-        ) {
-          dispatch(
-            setTotalAmount(
-              moneyTotalAmount +
-                Number(editAccountWorkingBalanceInput) -
-                bankAccounts[props.accountIndex].data().amount
-            )
-          );
-        } else {
-          // Otherwise, the input is less than what we have in the db,
-          // so we are going to subtract that from the totalAmount
-          dispatch(
-            setTotalAmount(
-              moneyTotalAmount -
-                (bankAccounts[props.accountIndex].data().amount -
-                  Number(editAccountWorkingBalanceInput))
-            )
-          );
-        }
 
         // Load from Firebase to cause a rerender since there is a change
         props.setIsValidToLoadAccounts(true);
@@ -195,15 +165,9 @@ function EditAccountPopup(props: Props) {
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
-      // Remove money from the total balance
-      dispatch(
-        setTotalAmount(
-          moneyTotalAmount - bankAccounts[props.accountIndex].data().amount
-        )
-      );
-
       // Load from Firebase to cause a rerender since there is a change
       props.setIsValidToLoadAccounts(true);
+
       // Remove the popup window
       props.setEditAccountPopupStatus(false);
     }

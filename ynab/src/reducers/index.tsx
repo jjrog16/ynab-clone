@@ -3,7 +3,6 @@ import bankAccountsReducer from "./bankAccounts";
 import categoryGroupsReducer from "./categoryGroups";
 import editAccountNameInputReducer from "./editAccountNameInput";
 import editAccountWorkingBalanceInputReducer from "./editAccountWorkingBalance";
-import moneyAmountTotalReducer from "./moneyAmountTotal";
 import transactionsReducer from "./transactions";
 import isValidToLoadReducer from "./isValidToLoad";
 import allCategoriesReducer from "./allCategories";
@@ -15,7 +14,6 @@ const rootReducer = combineReducers({
   allCategoriesReducer,
   editAccountNameInputReducer,
   editAccountWorkingBalanceInputReducer,
-  moneyAmountTotalReducer,
   transactionsReducer,
   isValidToLoadReducer,
 });

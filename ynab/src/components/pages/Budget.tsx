@@ -21,6 +21,7 @@ import { setCategoryGroups, setIsValidToLoad } from "../../actions";
 
 interface Props {
   runningCategoryGroupAmount: number;
+  runningAccountAmount: number;
 }
 
 function Budget(props: Props) {
@@ -129,7 +130,10 @@ function Budget(props: Props) {
 
   return (
     <div className="budget-page">
-      <NavBar runningCategoryGroupAmount={props.runningCategoryGroupAmount} />
+      <NavBar
+        runningCategoryGroupAmount={props.runningCategoryGroupAmount}
+        runningAccountAmount={props.runningAccountAmount}
+      />
       <div className="budget-container">
         <div className="budget-wrapper">
           <div className="category-group-bar">

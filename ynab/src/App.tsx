@@ -12,6 +12,8 @@ import { QueryDocumentSnapshot } from "@firebase/firestore";
 
 function App() {
   const dispatch = useDispatch();
+
+  // An array of Categories as objects, independent of their CategoryGroup parent
   const allCategories = useSelector(
     (state: any) => state.allCategoriesReducer.value
   );
@@ -27,31 +29,43 @@ function App() {
   }>({ available: 0 });
 
   useEffect(() => {
-    setRunningCategoryGroupAmount(
-      allCategories.reduce((prev: any, curr: any) => {
-        return { available: prev.available + curr.available };
-      })
-    );
+    // Get the running total for category amounts
+    if (allCategories.length > 0) {
+      setRunningCategoryGroupAmount(
+        allCategories.reduce((prev: any, curr: any) => {
+          return { available: prev.available + curr.available };
+        })
+      );
+    }
+
     return () => {};
   }, [allCategories]);
 
-  const [runningAccountAmount, setRunningAccountAmount] = useState();
+  // Holds the amount for bank accounts after array reduce
+  const [runningAccountAmount, setRunningAccountAmount] = useState<any>();
 
-  // TODO: Fix bank account reduce
-  // useEffect(() => {
-  //   if (bankAccounts.length > 0) {
-  //     setRunningAccountAmount(
-  //       bankAccounts.reduce((prev: any, curr: any) => {
-  //         return prev.data().amount + curr.data().amount;
-  //       })
-  //     );
-  //   }
-  // }, [bankAccounts]);
+  useEffect(() => {
+    if (bankAccounts.length > 0) {
+      setRunningAccountAmount(
+        bankAccounts.reduce((prev: any, curr: any) => {
+          console.log(
+            `Previous: ${prev.data().amount}`,
+            `Current: ${curr.data().amount}`
+          );
+          return {
+            data: () => {
+              return { amount: prev.data().amount + curr.data().amount };
+            },
+          };
+        })
+      );
+    }
+  }, [bankAccounts]);
 
   return (
     <div className="App">
       <BrowserRouter>
-        <SideBar />
+        <SideBar runningAccountAmount={runningAccountAmount?.data().amount} />
         <Routes>
           <Route
             path="/"
@@ -60,6 +74,7 @@ function App() {
                 runningCategoryGroupAmount={
                   runningCategoryGroupAmount.available
                 }
+                runningAccountAmount={runningAccountAmount?.data().amount}
               />
             }
           />

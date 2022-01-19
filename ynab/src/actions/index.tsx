@@ -7,13 +7,6 @@ export const setBankAccounts = (bankAccount: QueryDocumentSnapshot[]) => {
   };
 };
 
-export const setTotalAmount = (number: number) => {
-  return {
-    type: "moneyAccountTotal/addToTotal",
-    payload: number,
-  };
-};
-
 export const setEditAccountNameInput = (input: string) => {
   return {
     type: "editAccountNumberInput/updateInputValue",

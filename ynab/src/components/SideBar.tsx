@@ -5,7 +5,9 @@ import Accounts from "./Accounts";
 import { QueryDocumentSnapshot } from "@firebase/firestore";
 import { Link } from "react-router-dom";
 
-interface Props {}
+interface Props {
+  runningAccountAmount: number;
+}
 
 function SideBar(props: Props) {
   return (
@@ -19,7 +21,7 @@ function SideBar(props: Props) {
           <h3 className="page-overview">Budget</h3>
         </Link>
       </div>
-      <Accounts />
+      <Accounts runningAccountAmount={props.runningAccountAmount} />
     </div>
   );
 }
