@@ -57,13 +57,14 @@ function AccountItem(props: Props) {
 
     // Only load into the total amount if we are loading accounts
     if (props.isValidToLoadAccounts) {
-      dispatch(setTotalAmount(moneyAmountTotal + props.account.data().amount));
+      //dispatch(setTotalAmount(moneyAmountTotal + props.account.data().amount));
     }
 
     props.setIsValidToLoadAccounts(false);
 
     return () => {
       //cleanup
+      props.setIsValidToLoadAccounts(false);
     };
   }, [isAccountItemClicked]);
 

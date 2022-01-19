@@ -45,10 +45,6 @@ function EditComponentPopup(props: Props) {
     props.componentObjectTemplate.title
   );
 
-  const isComponentEdited = useSelector(
-    (state: any) => state.isComponentEditedReducer.value
-  );
-
   const isValidToLoad = useSelector(
     (state: any) => state.isValidToLoadReducer.value
   );

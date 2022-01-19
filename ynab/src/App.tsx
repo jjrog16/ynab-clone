@@ -8,11 +8,17 @@ import { getFirebaseConfig } from "./firebase-config";
 
 import Transactions from "./components/pages/Transactions";
 import { useSelector, useDispatch } from "react-redux";
+import { QueryDocumentSnapshot } from "@firebase/firestore";
 
 function App() {
   const dispatch = useDispatch();
   const allCategories = useSelector(
     (state: any) => state.allCategoriesReducer.value
+  );
+
+  // Array of QueryDocumentSnapshot containing all bank accounts
+  const bankAccounts = useSelector(
+    (state: any) => state.bankAccountsReducer.value
   );
 
   // Holds the total amount of all categoryGroups after the array reduce
@@ -28,6 +34,19 @@ function App() {
     );
     return () => {};
   }, [allCategories]);
+
+  const [runningAccountAmount, setRunningAccountAmount] = useState();
+
+  // TODO: Fix bank account reduce
+  // useEffect(() => {
+  //   if (bankAccounts.length > 0) {
+  //     setRunningAccountAmount(
+  //       bankAccounts.reduce((prev: any, curr: any) => {
+  //         return prev.data().amount + curr.data().amount;
+  //       })
+  //     );
+  //   }
+  // }, [bankAccounts]);
 
   return (
     <div className="App">

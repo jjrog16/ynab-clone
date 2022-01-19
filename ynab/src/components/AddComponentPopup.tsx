@@ -33,10 +33,6 @@ function AddComponentPopup(props: Props) {
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
-  const isComponentEdited = useSelector(
-    (state: any) => state.isComponentEditedReducer.value
-  );
-
   const allCategories = useSelector(
     (state: any) => state.allCategoriesReducer.value
   );
