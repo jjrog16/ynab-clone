@@ -52,9 +52,6 @@ function AddComponentPopup(props: Props) {
         : props.addLocationForDbAsDocumentReference;
 
     if (isOkPressed) {
-      // TODO: Figure out why editComponent works but addComponent doesn't
-      // rerender page
-      console.log("AddComponentToDB running");
       addComponentToDb(location);
     }
     return () => {

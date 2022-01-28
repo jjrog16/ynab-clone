@@ -98,8 +98,12 @@ function Accounts(props: Props) {
    * Set of operations to perform once add account button is clicked
    */
   function handleAddAccount() {
+    // Set the accountIndex to -1 since we are not editing a current account
+    setAccountIndex(-1);
+
     // Toggle showing add account
     setEditAccountPopupStatus(!editAccountPopupStatus);
+
     // Set account name input to be empty
     dispatch(setEditAccountNameInput(""));
 

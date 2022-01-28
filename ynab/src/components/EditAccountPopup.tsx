@@ -54,6 +54,8 @@ function EditAccountPopup(props: Props) {
 
   // set isMounted to false when we unmount the component
   useEffect(() => {
+    console.log(`The account index is ${props.accountIndex}`);
+
     if (isSavePressed) {
       // If there is a valid id and the value being passed is not undefined, then
       // we know we can edit the existing account
