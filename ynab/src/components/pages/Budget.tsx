@@ -27,12 +27,6 @@ interface Props {
 function Budget(props: Props) {
   const dispatch = useDispatch();
 
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
-
   // Query to get all accounts in Firebase
   const groupsQuery: Query = query(
     collection(getFirestore(), "categoryGroups")
@@ -46,11 +40,6 @@ function Budget(props: Props) {
     (state: any) => state.isValidToLoadReducer.value
   );
 
-  // Total amount of money reserved for categories
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
-
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -59,42 +48,26 @@ function Budget(props: Props) {
    * @param query The firebase query to get Docs and store the results as
    * an array of QueryDocumentSnapshot
    */
-  const loadCategoryGroups = useCallback(
-    async (query: Query) => {
-      try {
-        if (isValidToLoad) {
-          console.log("If you see me, loadCategoryGroups worked");
+  const loadCategoryGroups = useCallback(async (query: Query) => {
+    try {
+      if (isValidToLoad) {
+        // Asynchronous load of all accounts based off query
+        const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
+        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+          groupsAsQuerySnapshot.docs;
 
-          // don't send again while we are sending
-          // if (isSending) return;
-
-          // update state
-          // setIsSending(true);
-
-          // Asynchronous load of all accounts based off query
-          const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-          // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-          const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-            groupsAsQuerySnapshot.docs;
-
-          // once the request is sent, update state again
-          // only update if we are still mounted
-          // if (isMounted.current) setIsSending(false);
-
-          dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
-        }
-      } catch (e) {
-        console.log("An error occurred when trying to load your accounts");
-        console.log(`Error: ${e}`);
+        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
       }
-    },
-    [isSending]
-  );
+    } catch (e) {
+      console.log("An error occurred when trying to load your accounts");
+      console.log(`Error: ${e}`);
+    }
+  }, []);
 
   // Use for initial render of Category Groups and Categories
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
-    console.log(`load category groups called. Valid? ${isValidToLoad}`);
     if (isValidToLoad) {
       loadCategoryGroups(groupsQuery);
     }

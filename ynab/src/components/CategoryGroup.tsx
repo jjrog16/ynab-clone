@@ -23,77 +23,12 @@ interface Props {
 }
 
 function CategoryGroup(props: Props) {
-  const dispatch = useDispatch();
-
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
-
-  const categoryGroups = useSelector(
-    (state: any) => state.categoryGroupsReducer.value
-  );
-
-  // // Status for loading API call
-  // const [isSending, setIsSending] = useState(false);
-
-  // // Keep track of when the component is unmounted
-  // const isMounted = useRef(true);
-
-  // // Query to get all categories in Firebase based on corresponding to its
-  // // correct Category Group parent id
-  // const categoriesQuery: Query = query(
-  //   collection(getFirestore(), "categories"),
-  //   where("groupId", "==", `${props.group.id}`)
-  // );
-
-  // /**
-  //  * Load Categories from Firebase
-  //  * @param query Type of Firebase query used to load data. Used to get all Categories
-  //  */
-  // const loadCategories = useCallback(
-  //   async (query: Query) => {
-  //     try {
-  //       // don't send again while we are sending
-  //       if (isSending) return;
-
-  //       // update state
-  //       setIsSending(true);
-
-  //       // Set the amount for total category group to 0 to start
-  //       //dispatch(setTotalCategoryGroupAmount(0));
-
-  //       // Asynchronous load of all categories based off query
-  //       const categoriesAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-
-  //       // Array of QueryDocumentSnapshots that allows for mapping
-  //       const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-  //         categoriesAsQuerySnapshot.docs;
-
-  //       // once the request is sent, update state again
-  //       // only update if we are still mounted
-  //       if (isMounted.current) setIsSending(false);
-
-  //       dispatch(setCategories(arrayOfQueryDocumentSnapshots));
-  //       //setCategories(arrayOfQueryDocumentSnapshots);
-  //     } catch (e) {
-  //       console.log("An error occurred when trying to load your accounts");
-  //       console.log(`Error: ${e}`);
-  //     }
-  //   },
-  //   [isSending]
-  // );
-
-  // // set isMounted to false when we unmount the component
-  // // Dependencies need to be empty to allow for rerendering
-  // useEffect(() => {
-  //   //loadCategories(categoriesQuery);
-  //   return () => {
-  //     isMounted.current = false;
-  //   };
-  // }, []);
 
   // Category Group title derived from props
   const categoryGroupTitle: string = props.group.data().title;

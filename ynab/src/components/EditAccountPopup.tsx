@@ -54,8 +54,6 @@ function EditAccountPopup(props: Props) {
 
   // set isMounted to false when we unmount the component
   useEffect(() => {
-    console.log(`The account index is ${props.accountIndex}`);
-
     if (isSavePressed) {
       // If there is a valid id and the value being passed is not undefined, then
       // we know we can edit the existing account
@@ -139,6 +137,10 @@ function EditAccountPopup(props: Props) {
 
         // Load from Firebase to cause a rerender since there is a change
         props.setIsValidToLoadAccounts(true);
+
+        console.log(
+          `Status of isValidToLoadAccount in save new account: ${props.isValidToLoadAccounts}`
+        );
 
         // Remove the popup window
         props.setEditAccountPopupStatus(false);

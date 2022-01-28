@@ -38,12 +38,6 @@ function Accounts(props: Props) {
   // Controls if we should rerender the accounts
   const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
 
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
-
   // Keep track of the index for accounts in order to send to EditAccountPopup
   const [accountIndex, setAccountIndex] = useState(-1);
 
@@ -55,41 +49,26 @@ function Accounts(props: Props) {
     if (isValidToLoadAccounts) {
       loadAccounts(accountQuery);
     }
-    return () => {
-      isMounted.current = false;
-    };
+    return () => {};
   }, [isValidToLoadAccounts]);
 
-  const loadAccounts = useCallback(
-    async (accountQuery) => {
-      try {
-        // don't send again while we are sending
-        if (isSending) return;
+  const loadAccounts = useCallback(async (accountQuery) => {
+    try {
+      // Asynchronous load of all accounts based off query
+      const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
+        accountQuery
+      );
 
-        // update state
-        setIsSending(true);
+      // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
+      const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+        accountsAsQuerySnapshot.docs;
 
-        // Asynchronous load of all accounts based off query
-        const accountsAsQuerySnapshot: QuerySnapshot = await getDocs(
-          accountQuery
-        );
-
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
-
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          accountsAsQuerySnapshot.docs;
-
-        dispatch(setBankAccounts(arrayOfQueryDocumentSnapshots));
-      } catch (e) {
-        console.log("An error occurred when trying to load your accounts");
-        console.log(`Error: ${e}`);
-      }
-    },
-    [isSending]
-  );
+      dispatch(setBankAccounts(arrayOfQueryDocumentSnapshots));
+    } catch (e) {
+      console.log("An error occurred when trying to load your accounts");
+      console.log(`Error: ${e}`);
+    }
+  }, []);
 
   // Amount of money with dollar sign and decimal
   let totalAmountFixed = `$${Number(props.runningAccountAmount).toFixed(2)}`;

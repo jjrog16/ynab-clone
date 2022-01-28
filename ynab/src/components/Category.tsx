@@ -64,7 +64,6 @@ function Category(props: Props) {
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
-    console.log(`isValidToLoad: ${isValidToLoad}`);
     // Set the total amount for the categories in a category group
     if (isValidToLoad) {
       const indexToFind = allCategories.findIndex(

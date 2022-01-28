@@ -56,6 +56,9 @@ function AccountItem(props: Props) {
     }
 
     props.setIsValidToLoadAccounts(false);
+    console.log(
+      `Status of isValidToLoadAccount after accountitem: ${props.isValidToLoadAccounts}`
+    );
 
     return () => {
       //cleanup
