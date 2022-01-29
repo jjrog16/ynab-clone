@@ -1,17 +1,30 @@
-import { addDoc, CollectionReference } from "@firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  CollectionReference,
+  DocumentReference,
+  updateDoc,
+} from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setAllCategories,
+  setIsValidToLoad,
+  updateAllCategories,
+} from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
   componentObjectAdded: any;
-  addLocationForDb: CollectionReference;
+  addLocationForDbAsCollectionReference: CollectionReference | null;
+  addLocationForDbAsDocumentReference: DocumentReference | null;
   componentType: string;
-  rerender: any;
-  popupStatus: boolean;
-  setPopupStatus: any;
+  setAddComponentPopupStatus: any;
 }
 
 function AddComponentPopup(props: Props) {
+  const dispatch = useDispatch();
+
   const [inputState, setInputState] = useState<string>("");
 
   // Status for loading API call
@@ -20,47 +33,124 @@ function AddComponentPopup(props: Props) {
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
+  );
+
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
+
+  const [isOkPressed, setIsOkPressed] = useState(false);
+
   // set isMounted to false when we unmount the component
   useEffect(() => {
+    // Location changes based on if we need a collection reference or document reference
+    const location =
+      props.componentType === "categoryGroups"
+        ? props.addLocationForDbAsCollectionReference
+        : props.addLocationForDbAsDocumentReference;
+
+    if (isOkPressed) {
+      addComponentToDb(location);
+    }
     return () => {
-      isMounted.current = false;
+      console.log("AddComponentPopup setting isValidToLoad to false");
+      dispatch(setIsValidToLoad(false));
+      // Dismiss the popup
+      props.setAddComponentPopupStatus(false);
     };
-  }, []);
+  }, [isOkPressed]);
 
   const addComponentToDb = useCallback(
-    async (location: CollectionReference) => {
-      console.log(props.componentType);
-      console.log(`isSending: ${isSending}`);
-
+    async (location: any) => {
       // don't send again while we are sending
       if (isSending) return;
 
       // update state
       setIsSending(true);
 
-      // Change the title of the component based on the input
-      props.componentObjectAdded["title"] = inputState;
+      switch (props.componentType) {
+        case "categoryGroups":
+          // Change the title of the component based on input if the input has changed
+          if (props.componentObjectAdded["title"] !== inputState) {
+            // Change the title of the component based on the input
+            props.componentObjectAdded["title"] = inputState;
 
-      // Add the doc based on location passed and the object type passed in props
-      await addDoc(location, props.componentObjectAdded);
+            // Add the doc based on location passed and the object type passed in props
+            await addDoc(location, props.componentObjectAdded);
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
+            // once the request is sent, update state again
+            // only update if we are still mounted
+            if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since a new addition has been added
-      props.rerender();
+            // Set reload of CategoryGroups to true
+            dispatch(setIsValidToLoad(true));
 
-      // Dismiss the popup
-      removePopup();
+            // Dismiss the popup
+            props.setAddComponentPopupStatus(false);
+          }
+
+          break;
+        case "categories":
+          // Change the title of the component based on input if the input has changed
+          if (props.componentObjectAdded["title"] !== inputState) {
+            // Update the name to the new name
+            props.componentObjectAdded["title"] = inputState;
+
+            // Add to the array in the document
+            await updateDoc(location, {
+              categories: arrayUnion(props.componentObjectAdded),
+            });
+
+            const indexToFind = allCategories.findIndex(
+              (element: {
+                title: string;
+                available: number;
+                position: number;
+              }) =>
+                props.componentObjectAdded.title === element.title &&
+                props.componentObjectAdded.available === element.available &&
+                props.componentObjectAdded.position === element.position
+            );
+
+            // If  you cannot find the index, then it is not in the array. So load it
+            if (indexToFind === -1) {
+              dispatch(
+                setAllCategories({
+                  title: props.componentObjectAdded.title,
+                  available: props.componentObjectAdded.available,
+                  position: props.componentObjectAdded.position,
+                })
+              );
+            } else {
+              // Value exists, so just update it
+              dispatch(
+                updateAllCategories({
+                  title: props.componentObjectAdded.title,
+                  available: props.componentObjectAdded.available,
+                  position: props.componentObjectAdded.position,
+                  index: indexToFind,
+                })
+              );
+            }
+
+            console.log(
+              "Status of isValid in AddComponentPopup before assignment",
+              isValidToLoad
+            );
+            // Set reload of CategoryGroups to true
+            dispatch(setIsValidToLoad(true));
+            console.log(
+              "Status of isValid in AddComponentPopup after assignment",
+              isValidToLoad
+            );
+          }
+          break;
+      }
     },
     [isSending, inputState]
   );
-
-  // Sets popup status to false to remove popup from view.
-  function removePopup() {
-    props.setPopupStatus(false);
-  }
 
   return (
     <div className="add-component-popup-container">
@@ -75,8 +165,14 @@ function AddComponentPopup(props: Props) {
         </form>
       </div>
       <div className="btn-container">
-        <button onClick={() => props.setPopupStatus(false)}>Cancel</button>
-        <button onClick={() => addComponentToDb(props.addLocationForDb)}>
+        <button onClick={() => props.setAddComponentPopupStatus(false)}>
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            setIsOkPressed(true);
+          }}
+        >
           OK
         </button>
       </div>

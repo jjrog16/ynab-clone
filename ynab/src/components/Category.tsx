@@ -1,4 +1,6 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   DocumentData,
@@ -6,72 +8,43 @@ import {
   getFirestore,
   QueryDocumentSnapshot,
   setDoc,
+  updateDoc,
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setAllCategories,
+  setIsValidToLoad,
+  updateAllCategories,
+} from "../actions";
+import allCategories from "../reducers/allCategories";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
 interface Props {
-  category: QueryDocumentSnapshot;
-  rerender: any;
-  totalAmount: number;
-  totalCategoryGroupAmount: number;
-  setTotalCategoryGroupAmount: any;
-  readyToAssignTotal: number;
-  setReadyToAssignTotal: any;
+  category: { available: number; title: string; position: number };
+  categoryGroup: QueryDocumentSnapshot;
+  index: number;
+  setEditComponentPopupStatus: any;
 }
 
 function Category(props: Props) {
-  // The data related to a Category as specified in Db
-  const category: DocumentData = props.category.data();
-  const categoryAvailableFixed = `$${Number(category.available).toFixed(2)}`;
+  const dispatch = useDispatch();
 
-  // Using useEffect on setTotalCategoryGroupAmount prevents warning with
-  // being unable to update a component while rendering a different componenet
-  useEffect(() => {
-    // Set the total amount for the categories in a category group
-    props.setTotalCategoryGroupAmount(
-      (previousAmount: number) => previousAmount + category.available
-    );
+  // System colors in SCSS
+  const LIGHT_BLUE = "#4795d8";
+  const DARK_GRAY = "#656568";
 
-    return () => {
-      //cleanup
-    };
-  }, []);
-
-  // Implement context menu //
-
-  // Type of component being passed for Edit
-  const componentType = "categories";
-
-  // The location for where EditComponentPopup will send data
-  // Needs the collection with db, the name of the collection,
-  // and the ID of the item being changed
-  const categoryDbLocation: DocumentReference = doc(
-    collection(getFirestore(), componentType),
-    props.category.id
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
   );
 
-  // Db Object formatting for when editing a Category Group
-  const editedCategoryObj = {
-    position: props.category.data().position,
-    title: props.category.data().title,
-    available: props.category.data().available,
-    groupId: props.category.data().groupId,
-  };
-
-  // Use for knowing where the right click occurred
-  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
-
+  const isValidToLoad = useSelector(
+    (state: any) => state.isValidToLoadReducer.value
+  );
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
-
-  function handleContextMenu(event: React.MouseEvent) {
-    event.preventDefault();
-    setAnchorPoint({ x: event.pageX, y: event.pageY });
-    setEditComponentPopupStatus(true);
-  }
 
   // Money user is attempting to add
   const [inputState, setInputState] = useState<string>("");
@@ -88,12 +61,80 @@ function Category(props: Props) {
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
 
-  // set isMounted to false when we unmount the component
+  // Using useEffect on setTotalCategoryGroupAmount prevents warning with
+  // being unable to update a component while rendering a different componenet
   useEffect(() => {
+    // Set the total amount for the categories in a category group
+    if (isValidToLoad) {
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
+
+      // If  you cannot find the index, then it is not in the array. So load it
+      if (indexToFind === -1) {
+        dispatch(
+          setAllCategories({
+            title: props.category.title,
+            available: props.category.available,
+            position: props.index,
+          })
+        );
+      } else {
+        // Value exists, so just update it
+        dispatch(
+          updateAllCategories({
+            title: props.category.title,
+            available: props.category.available,
+            position: props.category.position,
+            index: indexToFind,
+          })
+        );
+      }
+    }
+    // Set loading to done when category is mounted
+    dispatch(setIsValidToLoad(false));
     return () => {
-      isMounted.current = false;
+      //cleanup - set isValidToLoad to false when the category is unmounted
+      dispatch(setIsValidToLoad(false));
     };
   }, []);
+
+  // Implement context menu //
+
+  // The location for where EditComponentPopup will send data
+  // Needs the collection with db, the name of the collection,
+  // and the ID of the item being changed
+  const categoryGroupDbLocation: DocumentReference = doc(
+    collection(getFirestore(), "categoryGroups"),
+    props.categoryGroup.id
+  );
+
+  // Db Object formatting for when editing a Category Group
+  const editedCategoryObj = {
+    title: props.category.title,
+    available: props.category.available,
+    position: props.category.position,
+  };
+
+  // Use for knowing where the right click occurred
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+
+  function handleContextMenu(event: React.MouseEvent) {
+    event.preventDefault();
+    setAnchorPoint({ x: event.pageX, y: event.pageY });
+    // Set the popup status for the category
+    setEditComponentPopupStatus(true);
+  }
+
+  // // set isMounted to false when we unmount the component
+  // useEffect(() => {
+  //   return () => {
+  //     isMounted.current = false;
+  //   };
+  // }, []);
 
   /**
    * When isPlusActive is true, this function
@@ -113,24 +154,46 @@ function Category(props: Props) {
       // update state
       setIsSending(true);
 
-      await setDoc(categoryDbLocation, {
-        available: props.category.data().available + strToNum,
-        groupId: props.category.data().groupId,
-        position: props.category.data().position,
-        title: props.category.data().title,
+      // Find the category in the categories array before sending the request
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
+
+      // Remove the old entry in array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: props.category.available,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
+
+      // Add the new entry to array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: props.category.available + strToNum,
+          title: props.category.title,
+          position: props.category.position,
+        }),
       });
 
       // once the request is sent, update state again
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since there is a change
-      props.rerender();
+      dispatch(setIsValidToLoad(true));
 
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      props.setTotalCategoryGroupAmount(
-        (prevAmount: number) => prevAmount + strToNum
+      // Update total category groups before sending request
+      dispatch(
+        updateAllCategories({
+          title: props.category.title,
+          available: props.category.available + strToNum,
+          position: props.category.position,
+          index: indexToFind,
+        })
       );
 
       // Turn off checking for if Plus was clicked
@@ -156,24 +219,46 @@ function Category(props: Props) {
       // update state
       setIsSending(true);
 
-      await setDoc(categoryDbLocation, {
-        available: props.category.data().available - strToNum,
-        groupId: props.category.data().groupId,
-        position: props.category.data().position,
-        title: props.category.data().title,
+      // Find the category in the categories array before sending the request
+      const indexToFind = allCategories.findIndex(
+        (element: { title: string; available: number; position: number }) =>
+          props.category.title === element.title &&
+          props.category.available === element.available &&
+          props.category.position === element.position
+      );
+
+      // Remove the old entry in array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: props.category.available,
+          title: props.category.title,
+          position: props.category.position,
+        }),
+      });
+
+      // Add the new entry to array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: props.category.available - strToNum,
+          title: props.category.title,
+          position: props.category.position,
+        }),
       });
 
       // once the request is sent, update state again
       // only update if we are still mounted
       if (isMounted.current) setIsSending(false);
 
-      // Load from Firebase to cause a rerender since there is a change
-      props.rerender();
+      dispatch(setIsValidToLoad(true));
 
-      // Update the total amount set for the categories so that Ready to Assign can
-      // update its state
-      props.setTotalCategoryGroupAmount(
-        (prevAmount: number) => prevAmount - strToNum
+      // Update total category groups before sending request
+      dispatch(
+        updateAllCategories({
+          title: props.category.title,
+          available: props.category.available - strToNum,
+          position: props.category.position,
+          index: indexToFind,
+        })
       );
 
       // Turn off checking for if Minus was clicked
@@ -193,25 +278,29 @@ function Category(props: Props) {
       e.preventDefault();
       if (isPlusActive) {
         addToAvailable();
+
+        // Set Status to false to allow for sequential changes
+        dispatch(setIsValidToLoad(false));
+
         // Clear the input field after enter is pressed
         setInputState("");
       }
       if (isMinusActive) {
         subtractFromAvailable();
+
+        // Set Status to false to allow for sequential changes
+        dispatch(setIsValidToLoad(false));
+
         // Clear the input field after enter is pressed
         setInputState("");
       }
     }
   }
 
-  // System colors in SCSS
-  const LIGHT_BLUE = "#4795d8";
-  const DARK_GRAY = "#656568";
-
   return (
     <>
       <li
-        key={props.category.id}
+        key={props.index}
         className="category"
         onContextMenu={(event) => handleContextMenu(event)}
       >
@@ -220,16 +309,13 @@ function Category(props: Props) {
             coordinates={anchorPoint}
             component={props.category}
             componentObjectTemplate={editedCategoryObj}
-            componentType={componentType}
-            editLocationForDb={categoryDbLocation}
-            rerender={props.rerender}
-            popupStatus={editComponentPopupStatus}
-            setPopupStatus={setEditComponentPopupStatus}
-            setTotalCategoryGroupAmount={props.setTotalCategoryGroupAmount}
+            componentType={"categories"}
+            editLocationForDb={categoryGroupDbLocation}
+            setEditComponentPopupStatus={setEditComponentPopupStatus}
           />
         ) : null}
         <div className="category-left-side">
-          <div className="category-name">{category.title}</div>
+          <div className="category-name">{props.category.title}</div>
         </div>
         <div className="category-right-side">
           <div
@@ -263,7 +349,9 @@ function Category(props: Props) {
               onKeyDown={(e) => handleKeyDown(e)}
             ></input>
           </form>
-          <div className="category-amount">{categoryAvailableFixed}</div>
+          <div className="category-amount">{`$${Number(
+            props.category.available
+          ).toFixed(2)}`}</div>
         </div>
       </li>
     </>

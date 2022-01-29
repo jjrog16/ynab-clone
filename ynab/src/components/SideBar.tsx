@@ -6,17 +6,7 @@ import { QueryDocumentSnapshot } from "@firebase/firestore";
 import { Link } from "react-router-dom";
 
 interface Props {
-  accounts: QueryDocumentSnapshot[] | undefined;
-  totalAmount: number;
-  setTotalAmount: any;
-  editAccountPopupStatus: boolean;
-  setEditAccountPopupStatus: any;
-  editAccountNameInput: string;
-  setEditAccountNameInput: any;
-  editAccountWorkingBalanceInput: string;
-  setEditAccountWorkingBalanceInput: any;
-  loadTransactions: any;
-  setAccountPassed: any;
+  runningAccountAmount: number;
 }
 
 function SideBar(props: Props) {
@@ -31,21 +21,7 @@ function SideBar(props: Props) {
           <h3 className="page-overview">Budget</h3>
         </Link>
       </div>
-      <Accounts
-        accounts={props.accounts}
-        totalAmount={props.totalAmount}
-        setTotalAmount={props.setTotalAmount}
-        editAccountPopupStatus={props.editAccountPopupStatus}
-        setEditAccountPopupStatus={props.setEditAccountPopupStatus}
-        editAccountNameInput={props.editAccountNameInput}
-        setEditAccountNameInput={props.setEditAccountNameInput}
-        editAccountWorkingBalanceInput={props.editAccountWorkingBalanceInput}
-        setEditAccountWorkingBalanceInput={
-          props.setEditAccountWorkingBalanceInput
-        }
-        setAccountPassed={props.setAccountPassed}
-        loadTransactions={props.loadTransactions}
-      />
+      <Accounts runningAccountAmount={props.runningAccountAmount} />
     </div>
   );
 }
