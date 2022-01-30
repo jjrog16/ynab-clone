@@ -40,12 +40,6 @@ function EditAccountPopup(props: Props) {
     (state: any) => state.bankAccountsReducer.value
   );
 
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
-
   // The location for where accounts are stored
   const accountDbLocation = collection(getFirestore(), "accounts");
 
@@ -73,19 +67,14 @@ function EditAccountPopup(props: Props) {
     }
 
     return () => {
-      isMounted.current = false;
+      //isMounted.current = false;
       console.log("Edit Popup is now gone from the screen");
+      props.setIsValidToLoadAccounts(true);
     };
   }, [isSavePressed, isDeletePressed]);
 
   const saveEditedAccountToDb = useCallback(
     async (location: DocumentReference) => {
-      // don't send again while we are sending
-      //if (isSending) return;
-
-      // update state
-      setIsSending(true);
-
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
@@ -98,28 +87,15 @@ function EditAccountPopup(props: Props) {
           title: editAccountNameInput,
         });
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        //if (isMounted.current) setIsSending(false);
-
-        // Load from Firebase to cause a rerender since there is a change
-        props.setIsValidToLoadAccounts(true);
-
         // Remove the popup window
         props.setEditAccountPopupStatus(false);
       }
     },
-    [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
+    [editAccountNameInput, editAccountWorkingBalanceInput]
   );
 
   const saveNewAccountToDb = useCallback(
     async (location: CollectionReference) => {
-      // don't send again while we are sending
-      if (isSending) return;
-
-      // update state
-      setIsSending(true);
-
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
@@ -132,27 +108,14 @@ function EditAccountPopup(props: Props) {
           title: editAccountNameInput,
         });
 
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
-
-        // Load from Firebase to cause a rerender since there is a change
-        props.setIsValidToLoadAccounts(true);
-
         // Remove the popup window
         props.setEditAccountPopupStatus(false);
       }
     },
-    [isSending, editAccountNameInput, editAccountWorkingBalanceInput]
+    [, editAccountNameInput, editAccountWorkingBalanceInput]
   );
 
   const deleteAccountInDb = useCallback(async () => {
-    // don't send again while we are sending
-    if (isSending) return;
-
-    // update state
-    setIsSending(true);
-
     // eslint-disable-next-line no-restricted-globals
     if (confirm("Are you sure you want to delete?")) {
       // Delete the doc for the passed account
@@ -162,17 +125,11 @@ function EditAccountPopup(props: Props) {
           bankAccounts[props.accountIndex].id
         )
       );
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
-
-      // Load from Firebase to cause a rerender since there is a change
-      props.setIsValidToLoadAccounts(true);
 
       // Remove the popup window
       props.setEditAccountPopupStatus(false);
     }
-  }, [isSending]);
+  }, []);
 
   return (
     <div

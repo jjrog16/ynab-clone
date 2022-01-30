@@ -49,6 +49,7 @@ function Accounts(props: Props) {
     if (isValidToLoadAccounts) {
       loadAccounts(accountQuery);
     }
+    setIsValidToLoadAccounts(false);
     return () => {};
   }, [isValidToLoadAccounts]);
 
