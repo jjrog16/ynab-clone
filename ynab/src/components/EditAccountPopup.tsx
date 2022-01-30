@@ -74,13 +74,14 @@ function EditAccountPopup(props: Props) {
 
     return () => {
       isMounted.current = false;
+      console.log("Edit Popup is now gone from the screen");
     };
   }, [isSavePressed, isDeletePressed]);
 
   const saveEditedAccountToDb = useCallback(
     async (location: DocumentReference) => {
       // don't send again while we are sending
-      if (isSending) return;
+      //if (isSending) return;
 
       // update state
       setIsSending(true);
@@ -99,7 +100,7 @@ function EditAccountPopup(props: Props) {
 
         // once the request is sent, update state again
         // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
+        //if (isMounted.current) setIsSending(false);
 
         // Load from Firebase to cause a rerender since there is a change
         props.setIsValidToLoadAccounts(true);

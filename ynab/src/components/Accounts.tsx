@@ -119,6 +119,7 @@ function Accounts(props: Props) {
                   account={account}
                   index={idx}
                   setAccountIndex={setAccountIndex}
+                  editAccountPopupStatus={editAccountPopupStatus}
                   setEditAccountPopupStatus={setEditAccountPopupStatus}
                   isValidToLoadAccounts={isValidToLoadAccounts}
                   setIsValidToLoadAccounts={setIsValidToLoadAccounts}

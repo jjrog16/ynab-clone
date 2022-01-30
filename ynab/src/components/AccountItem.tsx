@@ -26,6 +26,7 @@ interface Props {
   account: QueryDocumentSnapshot;
   setEditAccountPopupStatus: any;
   isValidToLoadAccounts: boolean;
+  editAccountPopupStatus: boolean;
   setIsValidToLoadAccounts: any;
   index: number;
   setAccountIndex: any;
