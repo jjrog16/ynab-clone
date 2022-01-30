@@ -126,10 +126,13 @@ function AccountItem(props: Props) {
           onContextMenu={(event) => handleContextMenu(event)}
           onClick={() => setIsAccountItemClicked(true)}
         >
-          <div className="account-name">{props.account.data().title}</div>
-          <div className="account-amount">{`$${Number(
-            props.account.data().amount
-          ).toFixed(2)}`}</div>
+          <div className="account-name" id={props.account.data().title}>
+            {props.account.data().title}
+          </div>
+          <div
+            className="account-amount"
+            id={`${props.account.data().title}amount`}
+          >{`$${Number(props.account.data().amount).toFixed(2)}`}</div>
         </li>
       </Link>
     </>

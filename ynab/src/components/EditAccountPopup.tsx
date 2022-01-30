@@ -88,8 +88,8 @@ function EditAccountPopup(props: Props) {
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(editAccountWorkingBalanceInput.value)
-          ? Number(editAccountWorkingBalanceInput.value)
+        const bankAmount = Number(editAccountWorkingBalanceInput)
+          ? Number(editAccountWorkingBalanceInput)
           : 0;
 
         await setDoc(location, {
@@ -138,10 +138,6 @@ function EditAccountPopup(props: Props) {
         // Load from Firebase to cause a rerender since there is a change
         props.setIsValidToLoadAccounts(true);
 
-        console.log(
-          `Status of isValidToLoadAccount in save new account: ${props.isValidToLoadAccounts}`
-        );
-
         // Remove the popup window
         props.setEditAccountPopupStatus(false);
       }
@@ -188,7 +184,7 @@ function EditAccountPopup(props: Props) {
           <form>
             <input
               type="text"
-              id="et-account-name"
+              id={"et-account-name"}
               value={editAccountNameInput}
               onChange={(e) =>
                 dispatch(setEditAccountNameInput(e.target.value))

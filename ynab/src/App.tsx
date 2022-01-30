@@ -1,18 +1,15 @@
 import "../src/styles/css/App.css";
-import { BrowserRouter, Routes, Route, Params } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SideBar from "./components/SideBar";
 import Budget from "./components/pages/Budget";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { initializeApp } from "@firebase/app";
 import { getFirebaseConfig } from "./firebase-config";
 
 import Transactions from "./components/pages/Transactions";
-import { useSelector, useDispatch } from "react-redux";
-import { QueryDocumentSnapshot } from "@firebase/firestore";
+import { useSelector } from "react-redux";
 
 function App() {
-  const dispatch = useDispatch();
-
   // An array of Categories as objects, independent of their CategoryGroup parent
   const allCategories = useSelector(
     (state: any) => state.allCategoriesReducer.value
@@ -48,10 +45,6 @@ function App() {
     if (bankAccounts.length > 0) {
       setRunningAccountAmount(
         bankAccounts.reduce((prev: any, curr: any) => {
-          console.log(
-            `Previous: ${prev.data().amount}`,
-            `Current: ${curr.data().amount}`
-          );
           return {
             data: () => {
               return { amount: prev.data().amount + curr.data().amount };

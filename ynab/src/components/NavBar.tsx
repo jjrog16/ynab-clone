@@ -14,9 +14,11 @@ function NavBar(props: Props) {
       <div className="date">DEC 2021</div>
       <div className="ready-to-assign">
         <div className="ready-to-assign-left">
-          <div className="ready-to-assign-amount">{`$${Number(
-            props.runningAccountAmount - props.runningCategoryGroupAmount
-          ).toFixed(2)}`}</div>
+          {Number(props.runningCategoryGroupAmount) && (
+            <div className="ready-to-assign-amount">{`$${Number(
+              props.runningAccountAmount - props.runningCategoryGroupAmount
+            ).toFixed(2)}`}</div>
+          )}
           <p className="ready-to-assign-title">Ready to Assign</p>
         </div>
         <div className="ready-to-assign-right"></div>
