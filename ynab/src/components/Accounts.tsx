@@ -45,11 +45,10 @@ function Accounts(props: Props) {
   const accountQuery: Query = query(collection(getFirestore(), "accounts"));
 
   useEffect(() => {
-    console.log("isValidToLoadAccounts", isValidToLoadAccounts);
     if (isValidToLoadAccounts) {
       loadAccounts(accountQuery);
+      setIsValidToLoadAccounts(false);
     }
-    setIsValidToLoadAccounts(false);
     return () => {};
   }, [isValidToLoadAccounts]);
 

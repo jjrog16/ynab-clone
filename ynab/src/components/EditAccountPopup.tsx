@@ -67,9 +67,7 @@ function EditAccountPopup(props: Props) {
     }
 
     return () => {
-      //isMounted.current = false;
-      console.log("Edit Popup is now gone from the screen");
-      props.setIsValidToLoadAccounts(true);
+      // props.setIsValidToLoadAccounts(true);
     };
   }, [isSavePressed, isDeletePressed]);
 
@@ -86,6 +84,8 @@ function EditAccountPopup(props: Props) {
           amount: bankAmount,
           title: editAccountNameInput,
         });
+
+        props.setIsValidToLoadAccounts(true);
 
         // Remove the popup window
         props.setEditAccountPopupStatus(false);
@@ -108,11 +108,13 @@ function EditAccountPopup(props: Props) {
           title: editAccountNameInput,
         });
 
+        props.setIsValidToLoadAccounts(true);
+
         // Remove the popup window
         props.setEditAccountPopupStatus(false);
       }
     },
-    [, editAccountNameInput, editAccountWorkingBalanceInput]
+    [editAccountNameInput, editAccountWorkingBalanceInput]
   );
 
   const deleteAccountInDb = useCallback(async () => {
@@ -126,8 +128,12 @@ function EditAccountPopup(props: Props) {
         )
       );
 
+      props.setIsValidToLoadAccounts(true);
+
       // Remove the popup window
       props.setEditAccountPopupStatus(false);
+    } else {
+      setIsDeletePressed(false);
     }
   }, []);
 
