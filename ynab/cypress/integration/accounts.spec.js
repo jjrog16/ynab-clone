@@ -203,20 +203,25 @@ describe("accounts", () => {
     });
 
     // Review RTA balance went up by new account start balance amount
-    cy.get(".ready-to-assign-amount").then((currentRta) => {
-      const convertedCurrentRta = parseFloat(
-        currentRta.text().replace(/\$/g, "")
-      );
-      const convertedOldRta = parseFloat(oldRta.replace(/\$/g, ""));
-      const convertedBalanceChangeAmount = parseFloat(
-        newAccountAmount.replace(/\$/g, "")
-      );
+    cy.get(".ready-to-assign-amount")
+      .then((currentRta) => {
+        const convertedCurrentRta = parseFloat(
+          currentRta.text().replace(/\$/g, "")
+        );
+        const convertedOldRta = parseFloat(oldRta.replace(/\$/g, ""));
+        const convertedBalanceChangeAmount = parseFloat(
+          newAccountAmount.replace(/\$/g, "")
+        );
 
-      // eslint-disable-next-line jest/valid-expect
-      expect(convertedCurrentRta - convertedOldRta).to.equal(
-        convertedBalanceChangeAmount
-      );
-    });
+        // eslint-disable-next-line jest/valid-expect
+        expect(convertedCurrentRta - convertedOldRta).to.equal(
+          convertedBalanceChangeAmount
+        );
+      })
+      .then(() => {
+        // Find account that was just created
+        cy.get(`#${name}amount`).rightclick();
+      });
 
     // Find account that was just created
     cy.get(`#${name}amount`).rightclick();
