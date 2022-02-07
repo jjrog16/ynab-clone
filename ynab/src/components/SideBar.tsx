@@ -11,7 +11,7 @@ interface Props {
 
 function SideBar(props: Props) {
   return (
-    <div className="sidebar-container">
+    <aside className="sidebar-container">
       <div className="account-header">
         <h2 className="current-budget">My Budget</h2>
         <div className="user-account">example@email.com</div>
@@ -22,7 +22,7 @@ function SideBar(props: Props) {
         </Link>
       </div>
       <Accounts runningAccountAmount={props.runningAccountAmount} />
-    </div>
+    </aside>
   );
 }
 

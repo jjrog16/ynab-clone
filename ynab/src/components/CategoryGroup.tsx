@@ -107,6 +107,7 @@ function CategoryGroup(props: Props) {
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div
           className="plus-add-category"
+          id={`${categoryGroupTitle}-add-category`}
           onClick={() => setAddComponentPopupStatus(true)}
         >
           +
