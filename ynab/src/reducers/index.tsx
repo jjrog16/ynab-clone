@@ -4,7 +4,6 @@ import categoryGroupsReducer from "./categoryGroups";
 import editAccountNameInputReducer from "./editAccountNameInput";
 import editAccountWorkingBalanceInputReducer from "./editAccountWorkingBalance";
 import transactionsReducer from "./transactions";
-import isValidToLoadReducer from "./isValidToLoad";
 import allCategoriesReducer from "./allCategories";
 
 // Root of all reducers
@@ -15,7 +14,6 @@ const rootReducer = combineReducers({
   editAccountNameInputReducer,
   editAccountWorkingBalanceInputReducer,
   transactionsReducer,
-  isValidToLoadReducer,
 });
 
 export default rootReducer;

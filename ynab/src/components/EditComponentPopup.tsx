@@ -14,11 +14,7 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  removeFromAllCategories,
-  setIsValidToLoad,
-  updateAllCategories,
-} from "../actions";
+import { removeFromAllCategories, updateAllCategories } from "../actions";
 import "../styles/css/EditComponentPopup.css";
 
 interface Props {
@@ -28,6 +24,7 @@ interface Props {
   componentType: string;
   editLocationForDb: DocumentReference;
   setEditComponentPopupStatus: any;
+  setIsValidToLoadCategories: any;
 }
 
 function EditComponentPopup(props: Props) {
@@ -43,10 +40,6 @@ function EditComponentPopup(props: Props) {
   // State of input field
   const [inputState, setInputState] = useState<string>(
     props.componentObjectTemplate.title
-  );
-
-  const isValidToLoad = useSelector(
-    (state: any) => state.isValidToLoadReducer.value
   );
 
   // Keep track of when the component is unmounted
@@ -68,8 +61,6 @@ function EditComponentPopup(props: Props) {
       deletePassedComponentInDb(props.editLocationForDb);
     }
     return () => {
-      console.log("EditComponentPopup setting isValidToLoad to false");
-      dispatch(setIsValidToLoad(false));
       // Hide the edit component popup
       props.setEditComponentPopupStatus(false);
     };
@@ -82,12 +73,6 @@ function EditComponentPopup(props: Props) {
    */
   const editPassedComponentInDb = useCallback(
     async (location: DocumentReference) => {
-      // don't send again while we are sending
-      if (isSending) return;
-
-      // update state
-      setIsSending(true);
-
       switch (props.componentType) {
         case "categoryGroups":
           // Change the title of the component based on input if the input has changed
@@ -97,12 +82,8 @@ function EditComponentPopup(props: Props) {
             // Set the Docu based on the location passed and the object type passed in props
             await setDoc(location, props.componentObjectTemplate);
 
-            // once the request is sent, update state again
-            // only update if we are still mounted
-            if (isMounted.current) setIsSending(false);
-
             // Set reload of CategoryGroups to true
-            dispatch(setIsValidToLoad(true));
+            props.setIsValidToLoadCategories(true);
           }
 
           // Dismiss the popup
@@ -152,7 +133,7 @@ function EditComponentPopup(props: Props) {
             });
 
             // Set reload of CategoryGroups to true to cause a rerender
-            dispatch(setIsValidToLoad(true));
+            props.setIsValidToLoadCategories(true);
           }
       }
     },
@@ -196,7 +177,7 @@ function EditComponentPopup(props: Props) {
           );
 
           // Set reload of CategoryGroups to true
-          dispatch(setIsValidToLoad(true));
+          props.setIsValidToLoadCategories(true);
         }
 
         // Parent groups need to have all of their children deleted
@@ -210,7 +191,7 @@ function EditComponentPopup(props: Props) {
           );
         }
         // Set reload of CategoryGroups to true
-        dispatch(setIsValidToLoad(true));
+        props.setIsValidToLoadCategories(true);
       } else {
         console.log("Cancelled");
       }

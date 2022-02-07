@@ -12,11 +12,7 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setAllCategories,
-  setIsValidToLoad,
-  updateAllCategories,
-} from "../actions";
+import { setAllCategories, updateAllCategories } from "../actions";
 import allCategories from "../reducers/allCategories";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
@@ -26,6 +22,8 @@ interface Props {
   categoryGroup: QueryDocumentSnapshot;
   index: number;
   setEditComponentPopupStatus: any;
+  isValidToLoadCategories: boolean;
+  setIsValidToLoadCategories: any;
 }
 
 function Category(props: Props) {
@@ -39,9 +37,6 @@ function Category(props: Props) {
     (state: any) => state.allCategoriesReducer.value
   );
 
-  const isValidToLoad = useSelector(
-    (state: any) => state.isValidToLoadReducer.value
-  );
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
@@ -65,41 +60,35 @@ function Category(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
-    if (isValidToLoad) {
-      const indexToFind = allCategories.findIndex(
-        (element: { title: string; available: number; position: number }) =>
-          props.category.title === element.title &&
-          props.category.available === element.available &&
-          props.category.position === element.position
-      );
+    const indexToFind = allCategories.findIndex(
+      (element: { title: string; available: number; position: number }) =>
+        props.category.title === element.title &&
+        props.category.available === element.available &&
+        props.category.position === element.position
+    );
 
-      // If  you cannot find the index, then it is not in the array. So load it
-      if (indexToFind === -1) {
-        dispatch(
-          setAllCategories({
-            title: props.category.title,
-            available: props.category.available,
-            position: props.index,
-          })
-        );
-      } else {
-        // Value exists, so just update it
-        dispatch(
-          updateAllCategories({
-            title: props.category.title,
-            available: props.category.available,
-            position: props.category.position,
-            index: indexToFind,
-          })
-        );
-      }
+    // If  you cannot find the index, then it is not in the array. So load it
+    if (indexToFind === -1) {
+      dispatch(
+        setAllCategories({
+          title: props.category.title,
+          available: props.category.available,
+          position: props.index,
+        })
+      );
+    } else {
+      // Value exists, so just update it
+      dispatch(
+        updateAllCategories({
+          title: props.category.title,
+          available: props.category.available,
+          position: props.category.position,
+          index: indexToFind,
+        })
+      );
     }
     // Set loading to done when category is mounted
-    dispatch(setIsValidToLoad(false));
-    return () => {
-      //cleanup - set isValidToLoad to false when the category is unmounted
-      dispatch(setIsValidToLoad(false));
-    };
+    return () => {};
   }, []);
 
   // Implement context menu //
@@ -149,10 +138,10 @@ function Category(props: Props) {
 
     if (strToNum) {
       // don't send again while we are sending
-      if (isSending) return;
+      //if (isSending) return;
 
       // update state
-      setIsSending(true);
+      //setIsSending(true);
 
       // Find the category in the categories array before sending the request
       const indexToFind = allCategories.findIndex(
@@ -182,9 +171,8 @@ function Category(props: Props) {
 
       // once the request is sent, update state again
       // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
-
-      dispatch(setIsValidToLoad(true));
+      //if (isMounted.current) setIsSending(false);
+      props.setIsValidToLoadCategories(true);
 
       // Update total category groups before sending request
       dispatch(
@@ -214,10 +202,10 @@ function Category(props: Props) {
 
     if (strToNum) {
       // don't send again while we are sending
-      if (isSending) return;
+      //if (isSending) return;
 
       // update state
-      setIsSending(true);
+      //setIsSending(true);
 
       // Find the category in the categories array before sending the request
       const indexToFind = allCategories.findIndex(
@@ -247,9 +235,9 @@ function Category(props: Props) {
 
       // once the request is sent, update state again
       // only update if we are still mounted
-      if (isMounted.current) setIsSending(false);
+      //if (isMounted.current) setIsSending(false);
 
-      dispatch(setIsValidToLoad(true));
+      props.setIsValidToLoadCategories(true);
 
       // Update total category groups before sending request
       dispatch(
@@ -280,7 +268,6 @@ function Category(props: Props) {
         addToAvailable();
 
         // Set Status to false to allow for sequential changes
-        dispatch(setIsValidToLoad(false));
 
         // Clear the input field after enter is pressed
         setInputState("");
@@ -289,7 +276,6 @@ function Category(props: Props) {
         subtractFromAvailable();
 
         // Set Status to false to allow for sequential changes
-        dispatch(setIsValidToLoad(false));
 
         // Clear the input field after enter is pressed
         setInputState("");
@@ -312,6 +298,7 @@ function Category(props: Props) {
             componentType={"categories"}
             editLocationForDb={categoryGroupDbLocation}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
+            setIsValidToLoadCategories={props.setIsValidToLoadCategories}
           />
         ) : null}
         <div className="category-left-side">

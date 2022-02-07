@@ -51,10 +51,7 @@ function AccountItem(props: Props) {
       props.setIsValidToLoadAccounts(true);
     }
 
-    return () => {
-      //cleanup
-      //props.setIsValidToLoadAccounts(false);
-    };
+    return () => {};
   }, [isAccountItemClicked]);
 
   // Query to get all transactions in Firebase based on the account

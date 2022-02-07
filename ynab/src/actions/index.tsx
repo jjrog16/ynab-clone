@@ -71,10 +71,3 @@ export const removeFromAllCategories = (index: {
     payload: index,
   };
 };
-
-export const setIsValidToLoad = (flag: boolean) => {
-  return {
-    type: "isValidToLoad/setState",
-    payload: flag,
-  };
-};

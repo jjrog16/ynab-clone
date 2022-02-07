@@ -66,9 +66,7 @@ function EditAccountPopup(props: Props) {
       deleteAccountInDb();
     }
 
-    return () => {
-      // props.setIsValidToLoadAccounts(true);
-    };
+    return () => {};
   }, [isSavePressed, isDeletePressed]);
 
   const saveEditedAccountToDb = useCallback(

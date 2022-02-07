@@ -7,11 +7,7 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setAllCategories,
-  setIsValidToLoad,
-  updateAllCategories,
-} from "../actions";
+import { setAllCategories, updateAllCategories } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -20,6 +16,7 @@ interface Props {
   addLocationForDbAsDocumentReference: DocumentReference | null;
   componentType: string;
   setAddComponentPopupStatus: any;
+  setIsValidToLoadCategories: any;
 }
 
 function AddComponentPopup(props: Props) {
@@ -37,10 +34,6 @@ function AddComponentPopup(props: Props) {
     (state: any) => state.allCategoriesReducer.value
   );
 
-  const isValidToLoad = useSelector(
-    (state: any) => state.isValidToLoadReducer.value
-  );
-
   const [isOkPressed, setIsOkPressed] = useState(false);
 
   // set isMounted to false when we unmount the component
@@ -55,8 +48,6 @@ function AddComponentPopup(props: Props) {
       addComponentToDb(location);
     }
     return () => {
-      console.log("AddComponentPopup setting isValidToLoad to false");
-      dispatch(setIsValidToLoad(false));
       // Dismiss the popup
       props.setAddComponentPopupStatus(false);
     };
@@ -85,7 +76,7 @@ function AddComponentPopup(props: Props) {
             if (isMounted.current) setIsSending(false);
 
             // Set reload of CategoryGroups to true
-            dispatch(setIsValidToLoad(true));
+            props.setIsValidToLoadCategories(true);
 
             // Dismiss the popup
             props.setAddComponentPopupStatus(false);
@@ -135,16 +126,8 @@ function AddComponentPopup(props: Props) {
               );
             }
 
-            console.log(
-              "Status of isValid in AddComponentPopup before assignment",
-              isValidToLoad
-            );
             // Set reload of CategoryGroups to true
-            dispatch(setIsValidToLoad(true));
-            console.log(
-              "Status of isValid in AddComponentPopup after assignment",
-              isValidToLoad
-            );
+            props.setIsValidToLoadCategories(true);
           }
           break;
       }
