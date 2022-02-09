@@ -41,8 +41,9 @@ function AccountItem(props: Props) {
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
+    console.log(`isAccountClicked: ${isAccountItemClicked}`);
     if (isAccountItemClicked) {
-      console.log("Account item was clicked");
+      console.log(`${props.account.data().title} clicked`);
       loadTransactions(transactionsQuery);
     }
 
