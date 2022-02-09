@@ -12,7 +12,18 @@ function Transactions(props: Props) {
   const params = useParams();
 
   // Collection of all transactions
-  const transactions = useSelector((state: any) => state.transactionsReducer);
+  const transactions = useSelector(
+    (state: any) => state.transactionsReducer.value
+  );
+
+  // Determines if new row to add transaction is shown.
+  const [isAddTransactionClicked, setIsAddTransactionClicked] = useState(false);
+
+  const [date, setDate] = useState("");
+  const [payee, setPayee] = useState("");
+  const [category, setCategory] = useState("");
+  const [outflow, setOutflow] = useState("");
+  const [inflow, setInflow] = useState("");
 
   return (
     <div>
@@ -20,7 +31,12 @@ function Transactions(props: Props) {
         <div className="name-of-bank">{params.name}</div>
       </nav>
       <div className="add-transaction-bar">
-        <p className="add-transaction">+ Add Transaction</p>
+        <p
+          className="add-transaction"
+          onClick={() => setIsAddTransactionClicked(!isAddTransactionClicked)}
+        >
+          + Add Transaction
+        </p>
       </div>
       <table className="list-of-transactions">
         <tbody>
@@ -31,8 +47,41 @@ function Transactions(props: Props) {
             <th>OUTFLOW</th>
             <th>INFLOW</th>
           </tr>
-
-          {transactions?.value.map((transaction: any) => {
+          {isAddTransactionClicked && (
+            <tr>
+              <td>
+                <input
+                  value={date}
+                  onChange={({ target: { value } }) => setDate(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={payee}
+                  onChange={({ target: { value } }) => setPayee(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={category}
+                  onChange={({ target: { value } }) => setCategory(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={outflow}
+                  onChange={({ target: { value } }) => setOutflow(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={inflow}
+                  onChange={({ target: { value } }) => setInflow(value)}
+                ></input>
+              </td>
+            </tr>
+          )}
+          {transactions?.map((transaction: any) => {
             return (
               <tr key={transaction.id}>
                 <td className="date">{transaction.data().date}</td>
