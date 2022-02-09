@@ -7,7 +7,7 @@
   padding: dimens.$medium;
   border: 1px solid colors.$medium-gray;
   &:hover {
-    #et-edit-available {
+    .et-edit-available {
       display: flex;
       margin-right: dimens.$medium;
       width: 100px;
@@ -31,7 +31,7 @@
   display: flex;
 }
 
-#et-edit-available {
+.et-edit-available {
   display: none;
 }
 

@@ -26,6 +26,7 @@ interface Props {
   account: QueryDocumentSnapshot;
   setEditAccountPopupStatus: any;
   isValidToLoadAccounts: boolean;
+  editAccountPopupStatus: boolean;
   setIsValidToLoadAccounts: any;
   index: number;
   setAccountIndex: any;
@@ -34,36 +35,24 @@ interface Props {
 function AccountItem(props: Props) {
   const dispatch: Dispatch<any> = useDispatch();
 
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
   const [isAccountItemClicked, setIsAccountItemClicked] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
 
   // Using useEffect on setTotalCategoryGroupAmount prevents warning with
   // being unable to update a component while rendering a different componenet
   useEffect(() => {
     // Set the total amount for the categories in a category group
+    console.log(`isAccountClicked: ${isAccountItemClicked}`);
     if (isAccountItemClicked) {
+      console.log(`${props.account.data().title} clicked`);
       loadTransactions(transactionsQuery);
     }
 
     // Only load into the total amount if we are loading accounts
-    if (props.isValidToLoadAccounts) {
-      //dispatchmoneyAmountTotal + props.account.data().amount));
+    if (!props.isValidToLoadAccounts) {
+      props.setIsValidToLoadAccounts(true);
     }
 
-    props.setIsValidToLoadAccounts(false);
-    console.log(
-      `Status of isValidToLoadAccount after accountitem: ${props.isValidToLoadAccounts}`
-    );
-
-    return () => {
-      //cleanup
-      props.setIsValidToLoadAccounts(false);
-    };
+    return () => {};
   }, [isAccountItemClicked]);
 
   // Query to get all transactions in Firebase based on the account
@@ -72,34 +61,21 @@ function AccountItem(props: Props) {
     where("accountId", "==", `${props.account.id}`)
   );
 
-  const loadTransactions = useCallback(
-    async (query: Query) => {
-      try {
-        // don't send again while we are sending
-        if (isSending) return;
+  const loadTransactions = useCallback(async (query: Query) => {
+    try {
+      // Asynchronous load of all transactions
+      const transactionsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
 
-        // update state
-        setIsSending(true);
+      // Array of QueryDocumentSnapshots that allows for mapping
+      const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+        transactionsAsQuerySnapshot.docs;
 
-        // Asynchronous load of all transactions
-        const transactionsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-
-        // Array of QueryDocumentSnapshots that allows for mapping
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          transactionsAsQuerySnapshot.docs;
-
-        // once the request is sent, update state again
-        // only update if we are still mounted
-        if (isMounted.current) setIsSending(false);
-
-        dispatch(setAllTransactions(arrayOfQueryDocumentSnapshots));
-      } catch (e) {
-        console.log("An error occurred when trying to load your accounts");
-        console.log(`Error: ${e}`);
-      }
-    },
-    [isSending]
-  );
+      dispatch(setAllTransactions(arrayOfQueryDocumentSnapshots));
+    } catch (e) {
+      console.log("An error occurred when trying to load your accounts");
+      console.log(`Error: ${e}`);
+    }
+  }, []);
 
   /**
    * Handles the result of entering the context menu for a bank account
@@ -126,10 +102,13 @@ function AccountItem(props: Props) {
           onContextMenu={(event) => handleContextMenu(event)}
           onClick={() => setIsAccountItemClicked(true)}
         >
-          <div className="account-name">{props.account.data().title}</div>
-          <div className="account-amount">{`$${Number(
-            props.account.data().amount
-          ).toFixed(2)}`}</div>
+          <div className="account-name" id={props.account.data().title}>
+            {props.account.data().title}
+          </div>
+          <div
+            className="account-amount"
+            id={`${props.account.data().title}amount`}
+          >{`$${Number(props.account.data().amount).toFixed(2)}`}</div>
         </li>
       </Link>
     </>

@@ -20,6 +20,8 @@ import EditComponentPopup from "./EditComponentPopup";
 interface Props {
   group: QueryDocumentSnapshot;
   categoryGroupIndex: number;
+  isValidToLoadCategories: boolean;
+  setIsValidToLoadCategories: any;
 }
 
 function CategoryGroup(props: Props) {
@@ -99,11 +101,13 @@ function CategoryGroup(props: Props) {
             componentType={"categoryGroups"}
             editLocationForDb={categoryGroupDbLocation}
             setEditComponentPopupStatus={setEditComponentPopupStatus}
+            setIsValidToLoadCategories={props.setIsValidToLoadCategories}
           />
         ) : null}
         <div className="category-group-title">{categoryGroupTitle}</div>
         <div
           className="plus-add-category"
+          id={`${categoryGroupTitle}-add-category`}
           onClick={() => setAddComponentPopupStatus(true)}
         >
           +
@@ -115,6 +119,7 @@ function CategoryGroup(props: Props) {
             setAddComponentPopupStatus={setAddComponentPopupStatus}
             addLocationForDbAsCollectionReference={null}
             addLocationForDbAsDocumentReference={categoryGroupDbLocation}
+            setIsValidToLoadCategories={props.setIsValidToLoadCategories}
           />
         ) : null}
       </div>
@@ -133,6 +138,8 @@ function CategoryGroup(props: Props) {
                   categoryGroup={props.group}
                   index={idx}
                   setEditComponentPopupStatus={setEditComponentPopupStatus}
+                  isValidToLoadCategories={props.isValidToLoadCategories}
+                  setIsValidToLoadCategories={props.setIsValidToLoadCategories}
                 />
               );
             }

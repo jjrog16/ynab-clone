@@ -45,9 +45,9 @@ function Accounts(props: Props) {
   const accountQuery: Query = query(collection(getFirestore(), "accounts"));
 
   useEffect(() => {
-    console.log("isValidToLoadAccounts", isValidToLoadAccounts);
     if (isValidToLoadAccounts) {
       loadAccounts(accountQuery);
+      setIsValidToLoadAccounts(false);
     }
     return () => {};
   }, [isValidToLoadAccounts]);
@@ -70,9 +70,6 @@ function Accounts(props: Props) {
     }
   }, []);
 
-  // Amount of money with dollar sign and decimal
-  let totalAmountFixed = `$${Number(props.runningAccountAmount).toFixed(2)}`;
-
   /**
    * Set of operations to perform once add account button is clicked
    */
@@ -94,7 +91,11 @@ function Accounts(props: Props) {
       <div className="all-accounts">
         <div className="budget-header">
           <h5 className="budget-title">BUDGET</h5>
-          <h5 className="budget-total-amount">{totalAmountFixed}</h5>
+          {Number(props.runningAccountAmount) && (
+            <h5 className="budget-total-amount">{`$${Number(
+              props.runningAccountAmount
+            ).toFixed(2)}`}</h5>
+          )}
         </div>
         <div className="account-wrapper">
           {editAccountPopupStatus ? (
@@ -118,6 +119,7 @@ function Accounts(props: Props) {
                   account={account}
                   index={idx}
                   setAccountIndex={setAccountIndex}
+                  editAccountPopupStatus={editAccountPopupStatus}
                   setEditAccountPopupStatus={setEditAccountPopupStatus}
                   isValidToLoadAccounts={isValidToLoadAccounts}
                   setIsValidToLoadAccounts={setIsValidToLoadAccounts}

@@ -17,7 +17,7 @@ import CategoryGroup from "../CategoryGroup";
 import AddComponentPopup from "../AddComponentPopup";
 import EditAccountPopup from "../EditAccountPopup";
 import { useDispatch, useSelector } from "react-redux";
-import { setCategoryGroups, setIsValidToLoad } from "../../actions";
+import { setCategoryGroups } from "../../actions";
 
 interface Props {
   runningCategoryGroupAmount: number;
@@ -36,9 +36,7 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
-  const isValidToLoad = useSelector(
-    (state: any) => state.isValidToLoadReducer.value
-  );
+  const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
 
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
@@ -50,7 +48,7 @@ function Budget(props: Props) {
    */
   const loadCategoryGroups = useCallback(async (query: Query) => {
     try {
-      if (isValidToLoad) {
+      if (isValidToLoadCategories) {
         // Asynchronous load of all accounts based off query
         const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
         // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
@@ -68,14 +66,11 @@ function Budget(props: Props) {
   // Use for initial render of Category Groups and Categories
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
-    if (isValidToLoad) {
+    if (isValidToLoadCategories) {
       loadCategoryGroups(groupsQuery);
+      setIsValidToLoadCategories(false);
     }
-
-    return () => {
-      //isMounted.current = false;
-    };
-  }, [isValidToLoad]);
+  }, [isValidToLoadCategories]);
 
   // Sort responses based on position once they are in
   categoryGroups?.sort(
@@ -125,6 +120,7 @@ function Budget(props: Props) {
                 componentType={"categoryGroups"}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
                 addLocationForDbAsDocumentReference={null}
+                setIsValidToLoadCategories={setIsValidToLoadCategories}
               />
             ) : null}
           </div>
@@ -153,6 +149,8 @@ function Budget(props: Props) {
                         key={categoryGroup.id}
                         group={categoryGroup}
                         categoryGroupIndex={categoryGroupIndex}
+                        isValidToLoadCategories={isValidToLoadCategories}
+                        setIsValidToLoadCategories={setIsValidToLoadCategories}
                       />
                     );
                   }
