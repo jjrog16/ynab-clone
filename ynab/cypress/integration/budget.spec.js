@@ -4,6 +4,8 @@ let name = uuidv4();
 let categoryName = uuidv4();
 let oldBalance;
 let oldRta;
+const addedValue = 100;
+const subtractedValue = 50;
 describe("category group", () => {
   it("User can add a category group", () => {
     // Visit the site
@@ -199,8 +201,135 @@ describe("categories", () => {
     // Review that the category exists
     cy.findByText(categoryName).should("exist");
   });
-  it.skip("User can add money to a category");
-  it.skip("User can subtract money from a category");
-  it.skip("User can delete category");
-  it.skip("User can delete category group");
+  it("User can add money to a category", () => {
+    // Hover over category title
+    cy.findByText(categoryName).trigger("mouseover");
+    // Click to add money to a group
+    cy.get(`#${categoryName}-plus`).click({ force: true });
+
+    // Enter 100 for category to add
+    cy.get(`#${categoryName}et-edit-available`).invoke("show").type(addedValue);
+    cy.get(`#${categoryName}et-edit-available`).invoke("show").type("{enter}");
+
+    // New amount should appear for category
+    cy.get(`#${categoryName}amount`).should("contain", "$100");
+  });
+  it("Old RTA minus new RTA should equal added amount", () => {
+    // Compare RTA before and after values
+
+    // eslint-disable-next-line jest/valid-expect-in-promise
+    cy.get(".ready-to-assign-amount").then((currentRta) => {
+      const convertedCurrentRta = parseFloat(
+        currentRta.text().replace(/\$/g, "")
+      );
+      const convertedOldRta = parseFloat(oldRta.replace(/\$/g, ""));
+
+      // eslint-disable-next-line jest/valid-expect
+      expect(convertedOldRta - convertedCurrentRta).to.equal(addedValue);
+    });
+  });
+  it("User can subtract money from a category", () => {
+    // Hover over category title
+    cy.findByText(categoryName).trigger("mouseover");
+    // Click to add money to a group
+    cy.get(`#${categoryName}-minus`).click({ force: true });
+
+    // Enter 50 for category to add
+    cy.get(`#${categoryName}et-edit-available`)
+      .invoke("show")
+      .type(subtractedValue);
+    cy.get(`#${categoryName}et-edit-available`).invoke("show").type("{enter}");
+
+    // New amount should appear for category
+    cy.get(`#${categoryName}amount`).should("contain", "$50");
+  });
+  it("User can delete category", () => {
+    // Right click the entry
+    cy.findByText(categoryName).rightclick();
+
+    // Click Delete
+    cy.findByRole("button", {
+      name: /delete/i,
+    }).click({ force: true });
+
+    // Click ok for the prompt
+    cy.on("window:confirm", () => true);
+
+    // Review that account is no longer in view
+    cy.findByText(categoryName).should("not.exist");
+  });
+  it("User can add a new category in its place", () => {
+    categoryName = `${categoryName}ver2`;
+
+    // Hover over category group title
+    cy.findByText(name).trigger("mouseover");
+
+    // Click to add new category name
+    cy.get(`#${name}-add-category`).click({ force: true });
+
+    // Enter categoryName
+    cy.get("#et-add-new-component").type(categoryName);
+
+    // Save the category
+    cy.findByRole("button", {
+      name: /ok/i,
+    }).click({ force: true });
+
+    // Review that the category exists
+    cy.findByText(categoryName).should("exist");
+  });
+  it("User can assign money to the new category", () => {
+    // Hover over category title
+    cy.findByText(categoryName).trigger("mouseover");
+    // Click to add money to a group
+    cy.get(`#${categoryName}-plus`).click({ force: true });
+
+    // Enter 100 for category to add
+    cy.get(`#${categoryName}et-edit-available`).invoke("show").type(addedValue);
+    cy.get(`#${categoryName}et-edit-available`).invoke("show").type("{enter}");
+
+    // New amount should appear for category
+    cy.get(`#${categoryName}amount`).should("contain", "$100");
+  });
+  it("Old RTA minus new RTA should equal added amount on new category", () => {
+    // Compare RTA before and after values
+
+    // eslint-disable-next-line jest/valid-expect-in-promise
+    cy.get(".ready-to-assign-amount").then((currentRta) => {
+      const convertedCurrentRta = parseFloat(
+        currentRta.text().replace(/\$/g, "")
+      );
+      const convertedOldRta = parseFloat(oldRta.replace(/\$/g, ""));
+
+      // eslint-disable-next-line jest/valid-expect
+      expect(convertedOldRta - convertedCurrentRta).to.equal(addedValue);
+    });
+  });
+  it("User can delete category group", () => {
+    // Right click the entry
+    cy.findByText(name).rightclick();
+
+    // Click Delete
+    cy.findByRole("button", {
+      name: /delete/i,
+    }).click({ force: true });
+
+    // Click ok for the prompt
+    cy.on("window:confirm", () => true);
+
+    // Review that account is no longer in view
+    cy.findByText(name).should("not.exist");
+  });
+  it("RTA amount should equal old amount", () => {
+    // eslint-disable-next-line jest/valid-expect-in-promise
+    cy.get(".ready-to-assign-amount").then((currentRta) => {
+      const convertedCurrentRta = parseFloat(
+        currentRta.text().replace(/\$/g, "")
+      );
+      const convertedOldRta = parseFloat(oldRta.replace(/\$/g, ""));
+
+      // eslint-disable-next-line jest/valid-expect
+      expect(convertedCurrentRta).to.equal(convertedOldRta);
+    });
+  });
 });

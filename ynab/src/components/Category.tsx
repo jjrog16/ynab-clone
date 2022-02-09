@@ -307,17 +307,20 @@ function Category(props: Props) {
         <div className="category-right-side">
           <div
             className="plus calc-category-available"
+            id={`${props.category.title}-plus`}
             style={{ color: isPlusActive ? LIGHT_BLUE : DARK_GRAY }}
             onClick={() => {
               setIsPlusActive(!isPlusActive);
               // Set minus to false since you cannot do both
               setIsMinusActive(false);
+              console.log("Plus clicked!");
             }}
           >
             +
           </div>
           <div
             className="minus calc-category-available"
+            id={`${props.category.title}-minus`}
             style={{ color: isMinusActive ? LIGHT_BLUE : DARK_GRAY }}
             onClick={() => {
               setIsMinusActive(!isMinusActive);
@@ -330,15 +333,17 @@ function Category(props: Props) {
           <form>
             <input
               type="text"
-              id="et-edit-available"
+              className="et-edit-available"
+              id={`${props.category.title}et-edit-available`}
               value={inputState}
               onChange={(e) => setInputState(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e)}
             ></input>
           </form>
-          <div className="category-amount">{`$${Number(
-            props.category.available
-          ).toFixed(2)}`}</div>
+          <div
+            className="category-amount"
+            id={`${props.category.title}amount`}
+          >{`$${Number(props.category.available).toFixed(2)}`}</div>
         </div>
       </li>
     </>
