@@ -41,6 +41,7 @@ function Transactions(props: Props) {
   const [category, setCategory] = useState("");
   const [outflow, setOutflow] = useState("");
   const [inflow, setInflow] = useState("");
+  const [isSaveClicked, setIsSaveClicked] = useState(false);
 
   return (
     <div>
@@ -79,7 +80,10 @@ function Transactions(props: Props) {
                 ></input>
               </td>
               <td>
-                <select id="categories">
+                <select
+                  id="categoryType"
+                  onChange={({ target: { value } }) => setCategory(value)}
+                >
                   {allCategories.map((category: any) => {
                     return (
                       <option value={category.title}>{category.title}</option>
@@ -100,7 +104,7 @@ function Transactions(props: Props) {
                 ></input>
               </td>
               <td>
-                <button>Save</button>
+                <button onClick={() => setIsSaveClicked(true)}>Save</button>
               </td>
             </tr>
           )}
