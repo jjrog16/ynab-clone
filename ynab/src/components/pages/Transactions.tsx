@@ -7,9 +7,26 @@ import "../../styles/css/Transactions.css";
 interface Props {}
 
 function Transactions(props: Props) {
+  /**
+   * Tasks to complete:
+   *
+   * 1. Add dropdown so that user can select a category for a transaction
+   * 2. Allow user to save transaction on button press "Save"
+   * 3. New transaction saved to db.
+   * 4. Category selected should have its values altered in db
+   * 5. Account selected should have its values altered in db
+   * 6. Set isValidToLoadAccounts, isValidToLoadCategories to true to rerender values
+   *
+   */
+
   // Passed in params are the account id passed from accounts.
   // use params.name to get the name of bank. params.id to get the id from the url
   const params = useParams();
+
+  // Collection of all categories
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
+  );
 
   // Collection of all transactions
   const transactions = useSelector(
@@ -62,10 +79,13 @@ function Transactions(props: Props) {
                 ></input>
               </td>
               <td>
-                <input
-                  value={category}
-                  onChange={({ target: { value } }) => setCategory(value)}
-                ></input>
+                <select id="categories">
+                  {allCategories.map((category: any) => {
+                    return (
+                      <option value={category.title}>{category.title}</option>
+                    );
+                  })}
+                </select>
               </td>
               <td>
                 <input
@@ -78,6 +98,9 @@ function Transactions(props: Props) {
                   value={inflow}
                   onChange={({ target: { value } }) => setInflow(value)}
                 ></input>
+              </td>
+              <td>
+                <button>Save</button>
               </td>
             </tr>
           )}
