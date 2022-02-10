@@ -7,12 +7,41 @@ import "../../styles/css/Transactions.css";
 interface Props {}
 
 function Transactions(props: Props) {
+  /**
+   * Tasks to complete:
+   *
+   * 1. Add dropdown so that user can select a category for a transaction
+   * 2. Allow user to save transaction on button press "Save"
+   * 3. New transaction saved to db.
+   * 4. Category selected should have its values altered in db
+   * 5. Account selected should have its values altered in db
+   * 6. Set isValidToLoadAccounts, isValidToLoadCategories to true to rerender values
+   *
+   */
+
   // Passed in params are the account id passed from accounts.
   // use params.name to get the name of bank. params.id to get the id from the url
   const params = useParams();
 
+  // Collection of all categories
+  const allCategories = useSelector(
+    (state: any) => state.allCategoriesReducer.value
+  );
+
   // Collection of all transactions
-  const transactions = useSelector((state: any) => state.transactionsReducer);
+  const transactions = useSelector(
+    (state: any) => state.transactionsReducer.value
+  );
+
+  // Determines if new row to add transaction is shown.
+  const [isAddTransactionClicked, setIsAddTransactionClicked] = useState(false);
+
+  const [date, setDate] = useState("");
+  const [payee, setPayee] = useState("");
+  const [category, setCategory] = useState("");
+  const [outflow, setOutflow] = useState("");
+  const [inflow, setInflow] = useState("");
+  const [isSaveClicked, setIsSaveClicked] = useState(false);
 
   return (
     <div>
@@ -20,7 +49,12 @@ function Transactions(props: Props) {
         <div className="name-of-bank">{params.name}</div>
       </nav>
       <div className="add-transaction-bar">
-        <p className="add-transaction">+ Add Transaction</p>
+        <p
+          className="add-transaction"
+          onClick={() => setIsAddTransactionClicked(!isAddTransactionClicked)}
+        >
+          + Add Transaction
+        </p>
       </div>
       <table className="list-of-transactions">
         <tbody>
@@ -31,8 +65,50 @@ function Transactions(props: Props) {
             <th>OUTFLOW</th>
             <th>INFLOW</th>
           </tr>
-
-          {transactions?.value.map((transaction: any) => {
+          {isAddTransactionClicked && (
+            <tr>
+              <td>
+                <input
+                  value={date}
+                  onChange={({ target: { value } }) => setDate(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={payee}
+                  onChange={({ target: { value } }) => setPayee(value)}
+                ></input>
+              </td>
+              <td>
+                <select
+                  id="categoryType"
+                  onChange={({ target: { value } }) => setCategory(value)}
+                >
+                  {allCategories.map((category: any) => {
+                    return (
+                      <option value={category.title}>{category.title}</option>
+                    );
+                  })}
+                </select>
+              </td>
+              <td>
+                <input
+                  value={outflow}
+                  onChange={({ target: { value } }) => setOutflow(value)}
+                ></input>
+              </td>
+              <td>
+                <input
+                  value={inflow}
+                  onChange={({ target: { value } }) => setInflow(value)}
+                ></input>
+              </td>
+              <td>
+                <button onClick={() => setIsSaveClicked(true)}>Save</button>
+              </td>
+            </tr>
+          )}
+          {transactions?.map((transaction: any) => {
             return (
               <tr key={transaction.id}>
                 <td className="date">{transaction.data().date}</td>
