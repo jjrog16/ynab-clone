@@ -52,10 +52,13 @@ function Budget(props: Props) {
         // Asynchronous load of all accounts based off query
         const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
         // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          groupsAsQuerySnapshot.docs;
+        // const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
+        //   groupsAsQuerySnapshot.docs;
 
-        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+        //dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+        if (!groupsAsQuerySnapshot.empty) {
+          dispatch(setCategoryGroups(groupsAsQuerySnapshot));
+        }
       }
     } catch (e) {
       console.log("An error occurred when trying to load your accounts");
@@ -73,7 +76,7 @@ function Budget(props: Props) {
   }, [isValidToLoadCategories]);
 
   // Sort responses based on position once they are in
-  categoryGroups?.sort(
+  categoryGroups.doc?.sort(
     (a: any, b: any) => a.data().position - b.data().position
   );
 
@@ -139,7 +142,7 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {categoryGroups?.map(
+                {categoryGroups.docs?.map(
                   (
                     categoryGroup: QueryDocumentSnapshot,
                     categoryGroupIndex: number

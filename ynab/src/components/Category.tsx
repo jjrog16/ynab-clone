@@ -136,7 +136,7 @@ function Category(props: Props) {
     // Try to convert to number. If fails, exit
     const strToNum: number = Number(inputState);
 
-    if (strToNum) {
+    if (!Number.isNaN(strToNum)) {
       // don't send again while we are sending
       //if (isSending) return;
 
@@ -313,7 +313,6 @@ function Category(props: Props) {
               setIsPlusActive(!isPlusActive);
               // Set minus to false since you cannot do both
               setIsMinusActive(false);
-              console.log("Plus clicked!");
             }}
           >
             +

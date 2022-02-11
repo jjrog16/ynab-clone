@@ -1,4 +1,4 @@
-import { QueryDocumentSnapshot } from "@firebase/firestore";
+import { QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -10,7 +10,6 @@ function Transactions(props: Props) {
   /**
    * Tasks to complete:
    *
-   * 1. Add dropdown so that user can select a category for a transaction
    * 2. Allow user to save transaction on button press "Save"
    * 3. New transaction saved to db.
    * 4. Category selected should have its values altered in db
@@ -22,6 +21,29 @@ function Transactions(props: Props) {
   // Passed in params are the account id passed from accounts.
   // use params.name to get the name of bank. params.id to get the id from the url
   const params = useParams();
+
+  // Collection of all Category groups, which also contain Categories
+  const categoryGroups: QuerySnapshot = useSelector(
+    (state: any) => state.categoryGroupsReducer.value
+  );
+
+  // test for finding category sums
+  const [individualCategories, setIndividualCategories] = useState<any>([
+    { title: "Ready to Assign" },
+  ]);
+
+  useEffect(() => {
+    categoryGroups.docs.forEach((categoryGroup) => {
+      categoryGroup.data().categories.forEach((category: any) => {
+        setIndividualCategories((individualCategories: any) => [
+          ...individualCategories,
+          category,
+        ]);
+      });
+    });
+  }, []);
+
+  console.log("individual categories", individualCategories);
 
   // Collection of all categories
   const allCategories = useSelector(
@@ -42,6 +64,10 @@ function Transactions(props: Props) {
   const [outflow, setOutflow] = useState("");
   const [inflow, setInflow] = useState("");
   const [isSaveClicked, setIsSaveClicked] = useState(false);
+  const [isValidToLoadTransactions, setIsValidToLoadTransactions] =
+    useState(false);
+
+  useEffect(() => {});
 
   return (
     <div>
@@ -84,7 +110,7 @@ function Transactions(props: Props) {
                   id="categoryType"
                   onChange={({ target: { value } }) => setCategory(value)}
                 >
-                  {allCategories.map((category: any) => {
+                  {individualCategories.map((category: any) => {
                     return (
                       <option value={category.title}>{category.title}</option>
                     );

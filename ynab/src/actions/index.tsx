@@ -1,4 +1,4 @@
-import { QueryDocumentSnapshot } from "@firebase/firestore";
+import { QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
 
 export const setBankAccounts = (bankAccount: QueryDocumentSnapshot[]) => {
   return {
@@ -28,12 +28,18 @@ export const setAllTransactions = (transactions: QueryDocumentSnapshot[]) => {
   };
 };
 
-export const setCategoryGroups = (categoryGroups: QueryDocumentSnapshot[]) => {
+export const setCategoryGroups = (categoryGroups: QuerySnapshot) => {
   return {
     type: "categoryGroups/addCategoryGroup",
     payload: categoryGroups,
   };
 };
+// export const setCategoryGroups = (categoryGroups: QueryDocumentSnapshot[]) => {
+//   return {
+//     type: "categoryGroups/addCategoryGroup",
+//     payload: categoryGroups,
+//   };
+// };
 
 // Available is the available money in category group
 export const setAllCategories = (amount: {
