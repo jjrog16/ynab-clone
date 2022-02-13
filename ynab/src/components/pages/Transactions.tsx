@@ -43,8 +43,6 @@ function Transactions(props: Props) {
     });
   }, []);
 
-  console.log("individual categories", individualCategories);
-
   // Collection of all categories
   const allCategories = useSelector(
     (state: any) => state.allCategoriesReducer.value
