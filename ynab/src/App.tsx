@@ -27,6 +27,7 @@ function App() {
 
   // Controls if we should rerender the accounts
   const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
+  const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
 
   useEffect(() => {
     // Get the running total for category amounts
@@ -75,6 +76,8 @@ function App() {
                   runningCategoryGroupAmount.available
                 }
                 runningAccountAmount={runningAccountAmount?.data().amount}
+                isValidToLoadCategories={isValidToLoadCategories}
+                setIsValidToLoadCategories={setIsValidToLoadCategories}
               />
             }
           />

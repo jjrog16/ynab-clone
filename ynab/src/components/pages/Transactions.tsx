@@ -45,10 +45,6 @@ function Transactions(props: Props) {
   // Collection of all accounts
   const accounts = useSelector((state: any) => state.bankAccountsReducer.value);
 
-  accounts.forEach((account: any) => {
-    console.log(account.id);
-  });
-
   // The location for where accounts are stored
   const accountDbLocation = collection(getFirestore(), "accounts");
   const transactionDbLocation = collection(getFirestore(), "transactions");

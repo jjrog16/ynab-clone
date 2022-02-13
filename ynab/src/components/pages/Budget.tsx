@@ -22,6 +22,8 @@ import { setCategoryGroups } from "../../actions";
 interface Props {
   runningCategoryGroupAmount: number;
   runningAccountAmount: number;
+  isValidToLoadCategories: boolean;
+  setIsValidToLoadCategories: any;
 }
 
 function Budget(props: Props) {
@@ -36,8 +38,6 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
-  const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
-
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -48,7 +48,7 @@ function Budget(props: Props) {
    */
   const loadCategoryGroups = useCallback(async (query: Query) => {
     try {
-      if (isValidToLoadCategories) {
+      if (props.isValidToLoadCategories) {
         // Asynchronous load of all accounts based off query
         const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
         // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
@@ -69,11 +69,11 @@ function Budget(props: Props) {
   // Use for initial render of Category Groups and Categories
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
-    if (isValidToLoadCategories) {
+    if (props.isValidToLoadCategories) {
       loadCategoryGroups(groupsQuery);
-      setIsValidToLoadCategories(false);
+      props.setIsValidToLoadCategories(false);
     }
-  }, [isValidToLoadCategories]);
+  }, [props.isValidToLoadCategories]);
 
   // Sort responses based on position once they are in
   categoryGroups.doc?.sort(
@@ -123,7 +123,7 @@ function Budget(props: Props) {
                 componentType={"categoryGroups"}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
                 addLocationForDbAsDocumentReference={null}
-                setIsValidToLoadCategories={setIsValidToLoadCategories}
+                setIsValidToLoadCategories={props.setIsValidToLoadCategories}
               />
             ) : null}
           </div>
@@ -152,8 +152,10 @@ function Budget(props: Props) {
                         key={categoryGroup.id}
                         group={categoryGroup}
                         categoryGroupIndex={categoryGroupIndex}
-                        isValidToLoadCategories={isValidToLoadCategories}
-                        setIsValidToLoadCategories={setIsValidToLoadCategories}
+                        isValidToLoadCategories={props.isValidToLoadCategories}
+                        setIsValidToLoadCategories={
+                          props.setIsValidToLoadCategories
+                        }
                       />
                     );
                   }
