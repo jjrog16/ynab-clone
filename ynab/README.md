@@ -1,10 +1,10 @@
 # You Need A Budget (YNAB) Replica
 
 This project showcases the following technologies:
-React
-Redux
-TypeScript
-Firebase (NoSQL DB)
+React,
+Redux,
+TypeScript,
+Firebase (NoSQL DB),
 SCSS
 
 ## Outline of Features:
