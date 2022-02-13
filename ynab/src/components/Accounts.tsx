@@ -23,6 +23,8 @@ interface Props {
   runningAccountAmount: number;
   isValidToLoadAccounts: boolean;
   setIsValidToLoadAccounts: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function Accounts(props: Props) {
@@ -122,6 +124,10 @@ function Accounts(props: Props) {
                   setEditAccountPopupStatus={setEditAccountPopupStatus}
                   isValidToLoadAccounts={props.isValidToLoadAccounts}
                   setIsValidToLoadAccounts={props.setIsValidToLoadAccounts}
+                  isValidToLoadTransactions={props.isValidToLoadTransactions}
+                  setIsValidToLoadTransactions={
+                    props.setIsValidToLoadTransactions
+                  }
                 />
               );
             })}

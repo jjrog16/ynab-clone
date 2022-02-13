@@ -21,6 +21,8 @@ interface Props {
   setIsValidToLoadAccounts: any;
   isValidToLoadCategories: boolean;
   setIsValidToLoadCategories: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function Transactions(props: Props) {
@@ -83,8 +85,14 @@ function Transactions(props: Props) {
   const [outflow, setOutflow] = useState("");
   const [inflow, setInflow] = useState("");
   const [isSaveClicked, setIsSaveClicked] = useState(false);
-  const [isValidToLoadTransactions, setIsValidToLoadTransactions] =
-    useState(false);
+
+  useEffect(() => {
+    if (isSaveClicked) {
+      addTransactionToDb();
+      setIsSaveClicked(false);
+      props.setIsValidToLoadTransactions(false);
+    }
+  }, [isSaveClicked]);
 
   const addTransactionToDb = async () => {
     // Update the category based on inflow or outflow in db
@@ -137,60 +145,65 @@ function Transactions(props: Props) {
         (individual: any) => individual.title === category
       );
 
+      console.log("Chosen category", chosenCategory[0]);
+      console.log("Chosen category id", chosenCategory[0].id);
+
       // Remove the old entry
 
       // Location to remove category
-      const categoryGroupDbLocation: DocumentReference = doc(
-        collection(getFirestore(), "categoryGroups"),
-        chosenCategory.id
-      );
+      // const categoryGroupDbLocation: DocumentReference = doc(
+      //   collection(getFirestore(), "categoryGroups"),
+      //   chosenCategory[0].id
+      // );
 
-      await updateDoc(categoryGroupDbLocation, {
-        categories: arrayRemove({
-          available: chosenCategory.available,
-          title: chosenCategory.title,
-          position: chosenCategory.position,
-        }),
-      });
+      // await updateDoc(categoryGroupDbLocation, {
+      //   categories: arrayRemove({
+      //     available: chosenCategory[0].available,
+      //     title: chosenCategory[0].title,
+      //     position: chosenCategory[0].position,
+      //   }),
+      // });
 
-      // Add the new entry to the array
-      await updateDoc(categoryGroupDbLocation, {
-        categories: arrayUnion({
-          available: chosenCategory.available - outflowToNum,
-          title: chosenCategory.title,
-          position: chosenCategory.position,
-        }),
-      });
+      // // Add the new entry to the array
+      // await updateDoc(categoryGroupDbLocation, {
+      //   categories: arrayUnion({
+      //     available: chosenCategory[0].available - outflowToNum,
+      //     title: chosenCategory[0].title,
+      //     position: chosenCategory[0].position,
+      //   }),
+      // });
 
       // Get correct account
       const chosenAccount = accounts.filter(
         (account: any) => params.id === account.id
       );
 
+      console.log("chosen account", chosenAccount[0].data());
+
       // update account
-      await setDoc(doc(accountDbLocation, params.id), {
-        amount: chosenAccount.amount - outflowToNum,
-        title: chosenAccount.title,
-      });
+      // await setDoc(doc(accountDbLocation, params.id), {
+      //   amount: chosenAccount[0].amount - outflowToNum,
+      //   title: chosenAccount[0].title,
+      // });
     }
 
-    // Push transaction to db
-    await addDoc(transactionDbLocation, {
-      date,
-      payee,
-      category,
-      outflow,
-      inflow,
-    });
+    // // Push transaction to db
+    // await addDoc(transactionDbLocation, {
+    //   date,
+    //   payee,
+    //   category,
+    //   outflow: Number(outflow),
+    //   inflow: Number(inflow),
+    // });
 
     // Set isValidToLoadAccounts(true)
-    props.setIsValidToLoadAccounts(true);
+    //props.setIsValidToLoadAccounts(true);
 
     // Set isValidToLoadCategories(true)
-    props.setIsValidToLoadCategories(true);
+    //props.setIsValidToLoadCategories(true);
 
     // Set isValidToLoadTransactions(true)
-    setIsValidToLoadTransactions(true);
+    //props.setIsValidToLoadTransactions(true);
   };
 
   return (

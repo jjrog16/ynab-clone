@@ -56,10 +56,10 @@ function AddComponentPopup(props: Props) {
   const addComponentToDb = useCallback(
     async (location: any) => {
       // don't send again while we are sending
-      if (isSending) return;
+      //if (isSending) return;
 
       // update state
-      setIsSending(true);
+      //setIsSending(true);
 
       switch (props.componentType) {
         case "categoryGroups":
@@ -73,7 +73,7 @@ function AddComponentPopup(props: Props) {
 
             // once the request is sent, update state again
             // only update if we are still mounted
-            if (isMounted.current) setIsSending(false);
+            //if (isMounted.current) setIsSending(false);
 
             // Set reload of CategoryGroups to true
             props.setIsValidToLoadCategories(true);

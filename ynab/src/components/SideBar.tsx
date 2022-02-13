@@ -9,6 +9,8 @@ interface Props {
   runningAccountAmount: number;
   isValidToLoadAccounts: boolean;
   setIsValidToLoadAccounts: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function SideBar(props: Props) {
@@ -27,6 +29,8 @@ function SideBar(props: Props) {
         runningAccountAmount={props.runningAccountAmount}
         isValidToLoadAccounts={props.isValidToLoadAccounts}
         setIsValidToLoadAccounts={props.setIsValidToLoadAccounts}
+        isValidToLoadTransactions={props.isValidToLoadTransactions}
+        setIsValidToLoadTransactions={props.setIsValidToLoadTransactions}
       />
     </aside>
   );

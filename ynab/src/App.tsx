@@ -28,10 +28,13 @@ function App() {
   // Controls if we should rerender the accounts
   const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
   const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
+  const [isValidToLoadTransactions, setIsValidToLoadTransactions] =
+    useState(false);
 
   useEffect(() => {
     // Get the running total for category amounts
     if (allCategories.length > 0) {
+      console.log("running Category groups called");
       setRunningCategoryGroupAmount(
         allCategories.reduce((prev: any, curr: any) => {
           return { available: prev.available + curr.available };
@@ -66,6 +69,8 @@ function App() {
           runningAccountAmount={runningAccountAmount?.data().amount}
           isValidToLoadAccounts={isValidToLoadAccounts}
           setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+          isValidToLoadTransactions={isValidToLoadTransactions}
+          setIsValidToLoadTransactions={setIsValidToLoadTransactions}
         />
         <Routes>
           <Route
@@ -89,6 +94,8 @@ function App() {
                 setIsValidToLoadAccounts={setIsValidToLoadAccounts}
                 isValidToLoadCategories={isValidToLoadCategories}
                 setIsValidToLoadCategories={setIsValidToLoadCategories}
+                isValidToLoadTransactions={isValidToLoadTransactions}
+                setIsValidToLoadTransactions={setIsValidToLoadTransactions}
               />
             }
           />
