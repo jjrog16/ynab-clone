@@ -47,8 +47,6 @@ function Transactions(props: Props) {
   // Collection of all accounts
   const accounts = useSelector((state: any) => state.bankAccountsReducer.value);
 
-  // The location for where accounts are stored
-  const accountDbLocation = collection(getFirestore(), "accounts");
   const transactionDbLocation = collection(getFirestore(), "transactions");
 
   // Holds all categories for the dropdown
@@ -61,15 +59,17 @@ function Transactions(props: Props) {
      * Build the individual categories by looping through each category group
      * and for each catgory group record its parent's id and the category contents
      */
-    categoryGroups.docs.forEach((categoryGroup) => {
-      categoryGroup.data().categories.forEach((category: any) => {
-        setIndividualCategories((individualCategories: any) => [
-          ...individualCategories,
-          { ...category, id: categoryGroup.id },
-        ]);
+    if (categoryGroups.docs !== undefined) {
+      categoryGroups.docs.forEach((categoryGroup) => {
+        categoryGroup.data().categories.forEach((category: any) => {
+          setIndividualCategories((individualCategories: any) => [
+            ...individualCategories,
+            { ...category, id: categoryGroup.id },
+          ]);
+        });
       });
-    });
-  }, []);
+    }
+  }, [categoryGroups]);
 
   // Collection of all transactions
   const transactions = useSelector(
@@ -79,7 +79,6 @@ function Transactions(props: Props) {
   // Determines if new row to add transaction is shown.
   const [isAddTransactionClicked, setIsAddTransactionClicked] = useState(false);
 
-  const [date, setDate] = useState("");
   const [payee, setPayee] = useState("");
   const [category, setCategory] = useState("");
   const [outflow, setOutflow] = useState("");
@@ -95,14 +94,22 @@ function Transactions(props: Props) {
   }, [isSaveClicked]);
 
   const addTransactionToDb = async () => {
-    // Update the category based on inflow or outflow in db
-    if (inflow !== "") {
-      const inflowToNum = Number(inflow);
-      const chosenCategory = individualCategories.filter(
-        (individual: any) => individual.title === category
+    if (inflow !== "" || outflow !== "") {
+      // The location for where accounts are stored
+      const accountDbLocation: DocumentReference = doc(
+        collection(getFirestore(), "accounts"),
+        params.id
       );
 
-      // Remove the old entry
+      // Get the correct category
+      const chosenCategory = individualCategories.filter(
+        (individual: any) => individual.title === category
+      )[0];
+
+      // Get correct account
+      const chosenAccount = accounts.filter(
+        (account: any) => params.id === account.id
+      )[0];
 
       // Location to remove category
       const categoryGroupDbLocation: DocumentReference = doc(
@@ -110,6 +117,7 @@ function Transactions(props: Props) {
         chosenCategory.id
       );
 
+      // Remove the old entry
       await updateDoc(categoryGroupDbLocation, {
         categories: arrayRemove({
           available: chosenCategory.available,
@@ -118,92 +126,63 @@ function Transactions(props: Props) {
         }),
       });
 
-      // Add the new entry to the array
-      await updateDoc(categoryGroupDbLocation, {
-        categories: arrayUnion({
-          available: chosenCategory.available + inflowToNum,
-          title: chosenCategory.title,
-          position: chosenCategory.position,
-        }),
+      // Update the category based on inflow or outflow in db
+      if (inflow !== "") {
+        const inflowToNum = Number(inflow);
+
+        // Add the new entry to the array
+        await updateDoc(categoryGroupDbLocation, {
+          categories: arrayUnion({
+            available: chosenCategory.available + inflowToNum,
+            title: chosenCategory.title,
+            position: chosenCategory.position,
+          }),
+        });
+
+        // update account
+        await setDoc(accountDbLocation, {
+          amount: chosenAccount.data().amount + inflowToNum,
+          title: chosenAccount.data().title,
+        });
+      }
+
+      if (outflow !== "") {
+        const outflowToNum = Number(outflow);
+
+        // Add the new entry to the array
+        await updateDoc(categoryGroupDbLocation, {
+          categories: arrayUnion({
+            available: chosenCategory.available - outflowToNum,
+            title: chosenCategory.title,
+            position: chosenCategory.position,
+          }),
+        });
+
+        // update account
+        await setDoc(accountDbLocation, {
+          amount: chosenAccount.data().amount - outflowToNum,
+          title: chosenAccount.data().title,
+        });
+      }
+
+      // // Push transaction to db
+      await addDoc(transactionDbLocation, {
+        payee,
+        category,
+        outflow: Number(outflow),
+        inflow: Number(inflow),
+        accountId: params.id,
       });
 
-      // Get correct account
-      const chosenAccount = accounts.filter(
-        (account: any) => params.id === account.id
-      );
+      // Set isValidToLoadAccounts(true)
+      props.setIsValidToLoadAccounts(true);
 
-      // update account
-      await setDoc(doc(accountDbLocation, params.id), {
-        amount: chosenAccount.amount + inflowToNum,
-        title: chosenAccount.title,
-      });
+      // Set isValidToLoadCategories(true)
+      props.setIsValidToLoadCategories(true);
+
+      // Set isValidToLoadTransactions(true)
+      props.setIsValidToLoadTransactions(true);
     }
-
-    if (outflow !== "") {
-      const outflowToNum = Number(outflow);
-      const chosenCategory = individualCategories.filter(
-        (individual: any) => individual.title === category
-      );
-
-      console.log("Chosen category", chosenCategory[0]);
-      console.log("Chosen category id", chosenCategory[0].id);
-
-      // Remove the old entry
-
-      // Location to remove category
-      // const categoryGroupDbLocation: DocumentReference = doc(
-      //   collection(getFirestore(), "categoryGroups"),
-      //   chosenCategory[0].id
-      // );
-
-      // await updateDoc(categoryGroupDbLocation, {
-      //   categories: arrayRemove({
-      //     available: chosenCategory[0].available,
-      //     title: chosenCategory[0].title,
-      //     position: chosenCategory[0].position,
-      //   }),
-      // });
-
-      // // Add the new entry to the array
-      // await updateDoc(categoryGroupDbLocation, {
-      //   categories: arrayUnion({
-      //     available: chosenCategory[0].available - outflowToNum,
-      //     title: chosenCategory[0].title,
-      //     position: chosenCategory[0].position,
-      //   }),
-      // });
-
-      // Get correct account
-      const chosenAccount = accounts.filter(
-        (account: any) => params.id === account.id
-      );
-
-      console.log("chosen account", chosenAccount[0].data());
-
-      // update account
-      // await setDoc(doc(accountDbLocation, params.id), {
-      //   amount: chosenAccount[0].amount - outflowToNum,
-      //   title: chosenAccount[0].title,
-      // });
-    }
-
-    // // Push transaction to db
-    // await addDoc(transactionDbLocation, {
-    //   date,
-    //   payee,
-    //   category,
-    //   outflow: Number(outflow),
-    //   inflow: Number(inflow),
-    // });
-
-    // Set isValidToLoadAccounts(true)
-    //props.setIsValidToLoadAccounts(true);
-
-    // Set isValidToLoadCategories(true)
-    //props.setIsValidToLoadCategories(true);
-
-    // Set isValidToLoadTransactions(true)
-    //props.setIsValidToLoadTransactions(true);
   };
 
   return (
@@ -222,7 +201,6 @@ function Transactions(props: Props) {
       <table className="list-of-transactions">
         <tbody>
           <tr className="transactions-top-row">
-            <th>DATE</th>
             <th>PAYEE</th>
             <th>CATEGORY</th>
             <th>OUTFLOW</th>
@@ -230,12 +208,6 @@ function Transactions(props: Props) {
           </tr>
           {isAddTransactionClicked && (
             <tr>
-              <td>
-                <input
-                  value={date}
-                  onChange={({ target: { value } }) => setDate(value)}
-                ></input>
-              </td>
               <td>
                 <input
                   value={payee}
@@ -274,7 +246,6 @@ function Transactions(props: Props) {
           {transactions?.map((transaction: any) => {
             return (
               <tr key={transaction.id}>
-                <td className="date">{transaction.data().date}</td>
                 <td className="payee">{transaction.data().payee}</td>
                 <td className="category">{transaction.data().category}</td>
                 <td className="outflow">

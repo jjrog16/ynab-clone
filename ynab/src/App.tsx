@@ -56,7 +56,11 @@ function App() {
   }, [categoryGroups]);
 
   // Holds the amount for bank accounts after array reduce
-  const [runningAccountAmount, setRunningAccountAmount] = useState<any>();
+  const [runningAccountAmount, setRunningAccountAmount] = useState<any>({
+    data: () => {
+      return { amount: 0 };
+    },
+  });
 
   useEffect(() => {
     /**
