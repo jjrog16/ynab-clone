@@ -87,6 +87,8 @@ function App() {
               <Transactions
                 isValidToLoadAccounts={isValidToLoadAccounts}
                 setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+                isValidToLoadCategories={isValidToLoadCategories}
+                setIsValidToLoadCategories={setIsValidToLoadCategories}
               />
             }
           />

@@ -19,17 +19,17 @@ import "../../styles/css/Transactions.css";
 interface Props {
   isValidToLoadAccounts: boolean;
   setIsValidToLoadAccounts: any;
+  isValidToLoadCategories: boolean;
+  setIsValidToLoadCategories: any;
 }
 
 function Transactions(props: Props) {
   /**
    * Tasks to complete:
    *
-   * 2. Allow user to save transaction on button press "Save"
-   * 3. New transaction saved to db.
-   * 4. Category selected should have its values altered in db
-   * 5. Account selected should have its values altered in db
-   * 6. Set isValidToLoadAccounts, isValidToLoadCategories to true to rerender values
+   * 1. Ensure addTransactionToDb works
+   * 2. Enable isValidToLoadTransactions
+   * 3. Enable save
    *
    */
 
@@ -53,14 +53,6 @@ function Transactions(props: Props) {
   const [individualCategories, setIndividualCategories] = useState<any>([
     { title: "Ready to Assign", id: "N/A" },
   ]);
-
-  // The location for where EditComponentPopup will send data
-  // Needs the collection with db, the name of the collection,
-  // and the ID of the item being changed
-  // const categoryGroupDbLocation: DocumentReference = doc(
-  //   collection(getFirestore(), "categoryGroups"),
-  //   props.categoryGroup.id
-  // );
 
   useEffect(() => {
     /**
@@ -192,10 +184,13 @@ function Transactions(props: Props) {
     });
 
     // Set isValidToLoadAccounts(true)
+    props.setIsValidToLoadAccounts(true);
 
     // Set isValidToLoadCategories(true)
+    props.setIsValidToLoadCategories(true);
 
     // Set isValidToLoadTransactions(true)
+    setIsValidToLoadTransactions(true);
   };
 
   return (
