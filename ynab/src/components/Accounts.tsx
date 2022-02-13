@@ -47,10 +47,10 @@ function Accounts(props: Props) {
 
   useEffect(() => {
     if (props.isValidToLoadAccounts) {
+      console.log("Loading Accounts");
       loadAccounts(accountQuery);
       props.setIsValidToLoadAccounts(false);
     }
-    return () => {};
   }, [props.isValidToLoadAccounts]);
 
   const loadAccounts = useCallback(async (accountQuery) => {

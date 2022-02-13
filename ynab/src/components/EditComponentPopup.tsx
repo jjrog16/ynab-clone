@@ -14,7 +14,6 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromAllCategories, updateAllCategories } from "../actions";
 import "../styles/css/EditComponentPopup.css";
 
 interface Props {
@@ -30,20 +29,10 @@ interface Props {
 function EditComponentPopup(props: Props) {
   const dispatch = useDispatch();
 
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
-
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
   // State of input field
   const [inputState, setInputState] = useState<string>(
     props.componentObjectTemplate.title
   );
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
 
   // Monitor States for button press
   const [isOkPressed, setOkPressed] = useState(false);
@@ -92,23 +81,6 @@ function EditComponentPopup(props: Props) {
         case "categories":
           // Change the title of the component based on input if the input has changed
           if (props.componentObjectTemplate["title"] !== inputState) {
-            // Find the category in the categories array before sending the request
-
-            console.log(
-              `Category before awaits: ${props.componentObjectTemplate.title}`
-            );
-
-            const indexToFind = allCategories.findIndex(
-              (element: {
-                title: string;
-                available: number;
-                position: number;
-              }) =>
-                props.componentObjectTemplate.title === element.title &&
-                props.componentObjectTemplate.available === element.available &&
-                props.componentObjectTemplate.position === element.position
-            );
-
             // Remove the old entry in array
             await updateDoc(location, {
               categories: arrayRemove(props.componentObjectTemplate),
@@ -116,16 +88,6 @@ function EditComponentPopup(props: Props) {
 
             // Update the name to the new name
             props.componentObjectTemplate["title"] = inputState;
-
-            // Update allCategories before sending request
-            dispatch(
-              updateAllCategories({
-                title: props.componentObjectTemplate.title,
-                available: props.componentObjectTemplate.available,
-                position: props.componentObjectTemplate.position,
-                index: indexToFind,
-              })
-            );
 
             // Add to the array in the document
             await updateDoc(location, {
@@ -137,67 +99,39 @@ function EditComponentPopup(props: Props) {
           }
       }
     },
-    [isSending, inputState, allCategories]
+    [inputState]
   );
 
-  const deletePassedComponentInDb = useCallback(
-    async (location: any) => {
-      // don't send again while we are sending
-      if (isSending) return;
+  const deletePassedComponentInDb = useCallback(async (location: any) => {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm("Are you sure you want to delete?")) {
+      // Children can be deleted since they have no dependencies
+      if (props.componentType === "categories") {
+        // Remove the old entry in array
+        await updateDoc(location, {
+          categories: arrayRemove(props.componentObjectTemplate),
+        });
 
-      // update state
-      setIsSending(true);
-
-      // eslint-disable-next-line no-restricted-globals
-      if (confirm("Are you sure you want to delete?")) {
-        // Children can be deleted since they have no dependencies
-        if (props.componentType === "categories") {
-          // Remove the old entry in array
-          await updateDoc(location, {
-            categories: arrayRemove(props.componentObjectTemplate),
-          });
-
-          // once the request is sent, update state again
-          // only update if we are still mounted
-          if (isMounted.current) setIsSending(false);
-
-          // Find the category in the categories array and remove
-          const indexToFind = allCategories.findIndex(
-            (element: { title: string; available: number }) =>
-              props.componentObjectTemplate.title === element.title
-          );
-
-          // Remove from the total category group array
-          dispatch(
-            removeFromAllCategories({
-              title: props.componentObjectTemplate.title,
-              available: props.componentObjectTemplate.available,
-              index: indexToFind,
-            })
-          );
-
-          // Set reload of CategoryGroups to true
-          props.setIsValidToLoadCategories(true);
-        }
-
-        // Parent groups need to have all of their children deleted
-        if (props.componentType === "categoryGroups") {
-          // Delete the parent
-          deleteDoc(
-            doc(
-              collection(getFirestore(), props.componentType),
-              props.component.id
-            )
-          );
-        }
         // Set reload of CategoryGroups to true
         props.setIsValidToLoadCategories(true);
-      } else {
-        console.log("Cancelled");
       }
-    },
-    [isSending]
-  );
+
+      // Parent groups need to have all of their children deleted
+      if (props.componentType === "categoryGroups") {
+        // Delete the parent
+        deleteDoc(
+          doc(
+            collection(getFirestore(), props.componentType),
+            props.component.id
+          )
+        );
+      }
+      // Set reload of CategoryGroups to true
+      props.setIsValidToLoadCategories(true);
+    } else {
+      console.log("Cancelled");
+    }
+  }, []);
 
   return (
     <div

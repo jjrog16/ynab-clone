@@ -24,6 +24,7 @@ interface Props {
   runningAccountAmount: number;
   isValidToLoadCategories: boolean;
   setIsValidToLoadCategories: any;
+  setRunningCategoryGroupAmount: any;
 }
 
 function Budget(props: Props) {
@@ -51,11 +52,7 @@ function Budget(props: Props) {
       if (props.isValidToLoadCategories) {
         // Asynchronous load of all accounts based off query
         const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        // const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-        //   groupsAsQuerySnapshot.docs;
 
-        //dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
         if (!groupsAsQuerySnapshot.empty) {
           dispatch(setCategoryGroups(groupsAsQuerySnapshot));
         }
@@ -70,6 +67,7 @@ function Budget(props: Props) {
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
     if (props.isValidToLoadCategories) {
+      console.log("Loading Categories");
       loadCategoryGroups(groupsQuery);
       props.setIsValidToLoadCategories(false);
     }

@@ -8,14 +8,9 @@ import { getFirebaseConfig } from "./firebase-config";
 
 import Transactions from "./components/pages/Transactions";
 import { useSelector } from "react-redux";
-import { QuerySnapshot } from "@firebase/firestore";
+import { QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
 
 function App() {
-  // An array of Categories as objects, independent of their CategoryGroup parent
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
-
   // Collection of all Category groups, which also contain Categories
   const categoryGroups = useSelector(
     (state: any) => state.categoryGroupsReducer.value
@@ -31,46 +26,42 @@ function App() {
     available: number;
   }>({ available: 0 });
 
-  // Controls if we should rerender the accounts
+  // Controls if we should rerender
   const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
   const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
   const [isValidToLoadTransactions, setIsValidToLoadTransactions] =
     useState(true);
 
   useEffect(() => {
-    // Get the running total for category amounts
-    // if (allCategories.length > 0) {
-    //   console.log("running Category groups called");
-    //   setRunningCategoryGroupAmount(
-    //     allCategories.reduce((prev: any, curr: any) => {
-    //       return { available: prev.available + curr.available };
-    //     })
-    //   );
-    // }
-
     /**
      * Calculate the total amount of all categories
      */
     if (categoryGroups.docs !== undefined) {
+      // Set to zero so each rerender does not start with the total
+      // running amount from last render
+      setRunningCategoryGroupAmount({ available: 0 });
       categoryGroups.docs.forEach((categoryGroup: any) => {
-        const reducedValue = categoryGroup
-          .data()
-          .categories.reduce((prev: any, curr: any) => {
+        const reducedValue = categoryGroup.data().categories.reduce(
+          (prev: any, curr: any) => {
             return { available: prev.available + curr.available };
-          });
+          },
+          { available: 0 }
+        );
+
         setRunningCategoryGroupAmount((running: any) => {
           return { available: running.available + reducedValue.available };
         });
       });
     }
-
-    return () => {};
   }, [categoryGroups]);
 
   // Holds the amount for bank accounts after array reduce
   const [runningAccountAmount, setRunningAccountAmount] = useState<any>();
 
   useEffect(() => {
+    /**
+     * Calculate the total amount of all accounts
+     */
     if (bankAccounts.length > 0) {
       setRunningAccountAmount(
         bankAccounts.reduce((prev: any, curr: any) => {
@@ -105,6 +96,7 @@ function App() {
                 runningAccountAmount={runningAccountAmount?.data().amount}
                 isValidToLoadCategories={isValidToLoadCategories}
                 setIsValidToLoadCategories={setIsValidToLoadCategories}
+                setRunningCategoryGroupAmount={setRunningCategoryGroupAmount}
               />
             }
           />

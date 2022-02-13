@@ -12,8 +12,6 @@ import {
 } from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAllCategories, updateAllCategories } from "../actions";
-import allCategories from "../reducers/allCategories";
 import "../styles/css/Category.css";
 import EditComponentPopup from "./EditComponentPopup";
 
@@ -33,10 +31,6 @@ function Category(props: Props) {
   const LIGHT_BLUE = "#4795d8";
   const DARK_GRAY = "#656568";
 
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
-
   // Use to know whether or not to show the component for editing a
   const [editComponentPopupStatus, setEditComponentPopupStatus] =
     useState<boolean>(false);
@@ -49,49 +43,6 @@ function Category(props: Props) {
 
   // State for performing subtraction
   const [isMinusActive, setIsMinusActive] = useState(false);
-
-  // Status for loading API call
-  const [isSending, setIsSending] = useState(false);
-
-  // Keep track of when the component is unmounted
-  const isMounted = useRef(true);
-
-  // Using useEffect on setTotalCategoryGroupAmount prevents warning with
-  // being unable to update a component while rendering a different componenet
-  useEffect(() => {
-    // Set the total amount for the categories in a category group
-    const indexToFind = allCategories.findIndex(
-      (element: { title: string; available: number; position: number }) => {
-        return (
-          props.category.title === element.title &&
-          props.category.available === element.available &&
-          props.category.position === element.position
-        );
-      }
-    );
-    // If  you cannot find the index, then it is not in the array. So load it
-    if (indexToFind === -1) {
-      dispatch(
-        setAllCategories({
-          title: props.category.title,
-          available: props.category.available,
-          position: props.index,
-        })
-      );
-    } else {
-      // Value exists, so just update it
-      dispatch(
-        updateAllCategories({
-          title: props.category.title,
-          available: props.category.available,
-          position: props.category.position,
-          index: indexToFind,
-        })
-      );
-    }
-    // Set loading to done when category is mounted
-    return () => {};
-  }, []);
 
   // Implement context menu //
 
@@ -139,20 +90,6 @@ function Category(props: Props) {
     const strToNum: number = Number(inputState);
 
     if (!Number.isNaN(strToNum)) {
-      // don't send again while we are sending
-      //if (isSending) return;
-
-      // update state
-      //setIsSending(true);
-
-      // Find the category in the categories array before sending the request
-      const indexToFind = allCategories.findIndex(
-        (element: { title: string; available: number; position: number }) =>
-          props.category.title === element.title &&
-          props.category.available === element.available &&
-          props.category.position === element.position
-      );
-
       // Remove the old entry in array
       await updateDoc(categoryGroupDbLocation, {
         categories: arrayRemove({
@@ -171,25 +108,12 @@ function Category(props: Props) {
         }),
       });
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      //if (isMounted.current) setIsSending(false);
       props.setIsValidToLoadCategories(true);
-
-      // Update total category groups before sending request
-      dispatch(
-        updateAllCategories({
-          title: props.category.title,
-          available: props.category.available + strToNum,
-          position: props.category.position,
-          index: indexToFind,
-        })
-      );
 
       // Turn off checking for if Plus was clicked
       setIsPlusActive(false);
     }
-  }, [isSending, inputState]);
+  }, [inputState]);
 
   /**
    * When isMinusActive is true, this function
@@ -202,21 +126,7 @@ function Category(props: Props) {
     // Try to convert to number. If fails, exit
     const strToNum: number = Number(inputState);
 
-    if (strToNum) {
-      // don't send again while we are sending
-      //if (isSending) return;
-
-      // update state
-      //setIsSending(true);
-
-      // Find the category in the categories array before sending the request
-      const indexToFind = allCategories.findIndex(
-        (element: { title: string; available: number; position: number }) =>
-          props.category.title === element.title &&
-          props.category.available === element.available &&
-          props.category.position === element.position
-      );
-
+    if (!Number.isNaN(strToNum)) {
       // Remove the old entry in array
       await updateDoc(categoryGroupDbLocation, {
         categories: arrayRemove({
@@ -235,26 +145,12 @@ function Category(props: Props) {
         }),
       });
 
-      // once the request is sent, update state again
-      // only update if we are still mounted
-      //if (isMounted.current) setIsSending(false);
-
       props.setIsValidToLoadCategories(true);
-
-      // Update total category groups before sending request
-      dispatch(
-        updateAllCategories({
-          title: props.category.title,
-          available: props.category.available - strToNum,
-          position: props.category.position,
-          index: indexToFind,
-        })
-      );
 
       // Turn off checking for if Minus was clicked
       setIsMinusActive(false);
     }
-  }, [isSending, inputState]);
+  }, [inputState]);
 
   /**
    * Handles the user input selection and chooses the correct
