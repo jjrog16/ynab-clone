@@ -1,10 +1,25 @@
-import { QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
+import {
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  DocumentReference,
+  getFirestore,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+  setDoc,
+  updateDoc,
+} from "@firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import "../../styles/css/Transactions.css";
 
-interface Props {}
+interface Props {
+  isValidToLoadAccounts: boolean;
+  setIsValidToLoadAccounts: any;
+}
 
 function Transactions(props: Props) {
   /**
@@ -27,26 +42,44 @@ function Transactions(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
-  // test for finding category sums
+  // Collection of all accounts
+  const accounts = useSelector((state: any) => state.bankAccountsReducer.value);
+
+  accounts.forEach((account: any) => {
+    console.log(account.id);
+  });
+
+  // The location for where accounts are stored
+  const accountDbLocation = collection(getFirestore(), "accounts");
+  const transactionDbLocation = collection(getFirestore(), "transactions");
+
+  // Holds all categories for the dropdown
   const [individualCategories, setIndividualCategories] = useState<any>([
-    { title: "Ready to Assign" },
+    { title: "Ready to Assign", id: "N/A" },
   ]);
 
+  // The location for where EditComponentPopup will send data
+  // Needs the collection with db, the name of the collection,
+  // and the ID of the item being changed
+  // const categoryGroupDbLocation: DocumentReference = doc(
+  //   collection(getFirestore(), "categoryGroups"),
+  //   props.categoryGroup.id
+  // );
+
   useEffect(() => {
+    /**
+     * Build the individual categories by looping through each category group
+     * and for each catgory group record its parent's id and the category contents
+     */
     categoryGroups.docs.forEach((categoryGroup) => {
       categoryGroup.data().categories.forEach((category: any) => {
         setIndividualCategories((individualCategories: any) => [
           ...individualCategories,
-          category,
+          { ...category, id: categoryGroup.id },
         ]);
       });
     });
   }, []);
-
-  // Collection of all categories
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
 
   // Collection of all transactions
   const transactions = useSelector(
@@ -65,7 +98,109 @@ function Transactions(props: Props) {
   const [isValidToLoadTransactions, setIsValidToLoadTransactions] =
     useState(false);
 
-  useEffect(() => {});
+  const addTransactionToDb = async () => {
+    // Update the category based on inflow or outflow in db
+    if (inflow !== "") {
+      const inflowToNum = Number(inflow);
+      const chosenCategory = individualCategories.filter(
+        (individual: any) => individual.title === category
+      );
+
+      // Remove the old entry
+
+      // Location to remove category
+      const categoryGroupDbLocation: DocumentReference = doc(
+        collection(getFirestore(), "categoryGroups"),
+        chosenCategory.id
+      );
+
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: chosenCategory.available,
+          title: chosenCategory.title,
+          position: chosenCategory.position,
+        }),
+      });
+
+      // Add the new entry to the array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: chosenCategory.available + inflowToNum,
+          title: chosenCategory.title,
+          position: chosenCategory.position,
+        }),
+      });
+
+      // Get correct account
+      const chosenAccount = accounts.filter(
+        (account: any) => params.id === account.id
+      );
+
+      // update account
+      await setDoc(doc(accountDbLocation, params.id), {
+        amount: chosenAccount.amount + inflowToNum,
+        title: chosenAccount.title,
+      });
+    }
+
+    if (outflow !== "") {
+      const outflowToNum = Number(outflow);
+      const chosenCategory = individualCategories.filter(
+        (individual: any) => individual.title === category
+      );
+
+      // Remove the old entry
+
+      // Location to remove category
+      const categoryGroupDbLocation: DocumentReference = doc(
+        collection(getFirestore(), "categoryGroups"),
+        chosenCategory.id
+      );
+
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayRemove({
+          available: chosenCategory.available,
+          title: chosenCategory.title,
+          position: chosenCategory.position,
+        }),
+      });
+
+      // Add the new entry to the array
+      await updateDoc(categoryGroupDbLocation, {
+        categories: arrayUnion({
+          available: chosenCategory.available - outflowToNum,
+          title: chosenCategory.title,
+          position: chosenCategory.position,
+        }),
+      });
+
+      // Get correct account
+      const chosenAccount = accounts.filter(
+        (account: any) => params.id === account.id
+      );
+
+      // update account
+      await setDoc(doc(accountDbLocation, params.id), {
+        amount: chosenAccount.amount - outflowToNum,
+        title: chosenAccount.title,
+      });
+    }
+
+    // Push transaction to db
+    await addDoc(transactionDbLocation, {
+      date,
+      payee,
+      category,
+      outflow,
+      inflow,
+    });
+
+    // Set isValidToLoadAccounts(true)
+
+    // Set isValidToLoadCategories(true)
+
+    // Set isValidToLoadTransactions(true)
+  };
 
   return (
     <div>

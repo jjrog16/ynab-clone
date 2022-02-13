@@ -25,6 +25,9 @@ function App() {
     available: number;
   }>({ available: 0 });
 
+  // Controls if we should rerender the accounts
+  const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
+
   useEffect(() => {
     // Get the running total for category amounts
     if (allCategories.length > 0) {
@@ -58,7 +61,11 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <SideBar runningAccountAmount={runningAccountAmount?.data().amount} />
+        <SideBar
+          runningAccountAmount={runningAccountAmount?.data().amount}
+          isValidToLoadAccounts={isValidToLoadAccounts}
+          setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+        />
         <Routes>
           <Route
             path="/"
@@ -73,7 +80,12 @@ function App() {
           />
           <Route
             path="/AccountTransactions/:name/:id"
-            element={<Transactions />}
+            element={
+              <Transactions
+                isValidToLoadAccounts={isValidToLoadAccounts}
+                setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+              />
+            }
           />
         </Routes>
       </BrowserRouter>
