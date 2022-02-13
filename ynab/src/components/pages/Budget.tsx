@@ -22,6 +22,9 @@ import { setCategoryGroups } from "../../actions";
 interface Props {
   runningCategoryGroupAmount: number;
   runningAccountAmount: number;
+  isValidToLoadCategories: boolean;
+  setIsValidToLoadCategories: any;
+  setRunningCategoryGroupAmount: any;
 }
 
 function Budget(props: Props) {
@@ -36,8 +39,6 @@ function Budget(props: Props) {
     (state: any) => state.categoryGroupsReducer.value
   );
 
-  const [isValidToLoadCategories, setIsValidToLoadCategories] = useState(true);
-
   // Controls if popup should be visible
   const [addComponentPopupStatus, setAddComponentPopupStatus] = useState(false);
 
@@ -48,14 +49,13 @@ function Budget(props: Props) {
    */
   const loadCategoryGroups = useCallback(async (query: Query) => {
     try {
-      if (isValidToLoadCategories) {
+      if (props.isValidToLoadCategories) {
         // Asynchronous load of all accounts based off query
         const groupsAsQuerySnapshot: QuerySnapshot = await getDocs(query);
-        // Array of QueryDocumentSnapshots that allows for mapping in AccountItems
-        const arrayOfQueryDocumentSnapshots: QueryDocumentSnapshot[] =
-          groupsAsQuerySnapshot.docs;
 
-        dispatch(setCategoryGroups(arrayOfQueryDocumentSnapshots));
+        if (!groupsAsQuerySnapshot.empty) {
+          dispatch(setCategoryGroups(groupsAsQuerySnapshot));
+        }
       }
     } catch (e) {
       console.log("An error occurred when trying to load your accounts");
@@ -66,14 +66,15 @@ function Budget(props: Props) {
   // Use for initial render of Category Groups and Categories
   // Dependencies need to be empty to allow for rerendering
   useEffect(() => {
-    if (isValidToLoadCategories) {
+    if (props.isValidToLoadCategories) {
+      console.log("Loading Categories");
       loadCategoryGroups(groupsQuery);
-      setIsValidToLoadCategories(false);
+      props.setIsValidToLoadCategories(false);
     }
-  }, [isValidToLoadCategories]);
+  }, [props.isValidToLoadCategories]);
 
   // Sort responses based on position once they are in
-  categoryGroups?.sort(
+  categoryGroups.doc?.sort(
     (a: any, b: any) => a.data().position - b.data().position
   );
 
@@ -120,7 +121,7 @@ function Budget(props: Props) {
                 componentType={"categoryGroups"}
                 setAddComponentPopupStatus={setAddComponentPopupStatus}
                 addLocationForDbAsDocumentReference={null}
-                setIsValidToLoadCategories={setIsValidToLoadCategories}
+                setIsValidToLoadCategories={props.setIsValidToLoadCategories}
               />
             ) : null}
           </div>
@@ -139,7 +140,7 @@ function Budget(props: Props) {
           <div className="budget-contents">
             <div className="groups-wrapper">
               <div className="groups">
-                {categoryGroups?.map(
+                {categoryGroups.docs?.map(
                   (
                     categoryGroup: QueryDocumentSnapshot,
                     categoryGroupIndex: number
@@ -149,8 +150,10 @@ function Budget(props: Props) {
                         key={categoryGroup.id}
                         group={categoryGroup}
                         categoryGroupIndex={categoryGroupIndex}
-                        isValidToLoadCategories={isValidToLoadCategories}
-                        setIsValidToLoadCategories={setIsValidToLoadCategories}
+                        isValidToLoadCategories={props.isValidToLoadCategories}
+                        setIsValidToLoadCategories={
+                          props.setIsValidToLoadCategories
+                        }
                       />
                     );
                   }

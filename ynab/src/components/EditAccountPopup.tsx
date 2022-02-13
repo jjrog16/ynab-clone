@@ -74,7 +74,7 @@ function EditAccountPopup(props: Props) {
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(editAccountWorkingBalanceInput)
+        const bankAmount = !Number.isNaN(Number(editAccountWorkingBalanceInput))
           ? Number(editAccountWorkingBalanceInput)
           : 0;
 
@@ -97,7 +97,7 @@ function EditAccountPopup(props: Props) {
       // Only perform steps if the entered account field is no longer empty
       if (editAccountNameInput !== "") {
         // If the number entered cannot be converted to a number, then pass 0
-        const bankAmount = Number(editAccountWorkingBalanceInput)
+        const bankAmount = !Number.isNaN(Number(editAccountWorkingBalanceInput))
           ? Number(editAccountWorkingBalanceInput)
           : 0;
 

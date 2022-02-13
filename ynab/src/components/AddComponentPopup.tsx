@@ -7,7 +7,6 @@ import {
 } from "@firebase/firestore";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAllCategories, updateAllCategories } from "../actions";
 import "../styles/css/AddComponentPopup.css";
 
 interface Props {
@@ -29,10 +28,6 @@ function AddComponentPopup(props: Props) {
 
   // Keep track of when the component is unmounted
   const isMounted = useRef(true);
-
-  const allCategories = useSelector(
-    (state: any) => state.allCategoriesReducer.value
-  );
 
   const [isOkPressed, setIsOkPressed] = useState(false);
 
@@ -56,10 +51,10 @@ function AddComponentPopup(props: Props) {
   const addComponentToDb = useCallback(
     async (location: any) => {
       // don't send again while we are sending
-      if (isSending) return;
+      //if (isSending) return;
 
       // update state
-      setIsSending(true);
+      //setIsSending(true);
 
       switch (props.componentType) {
         case "categoryGroups":
@@ -73,7 +68,7 @@ function AddComponentPopup(props: Props) {
 
             // once the request is sent, update state again
             // only update if we are still mounted
-            if (isMounted.current) setIsSending(false);
+            //if (isMounted.current) setIsSending(false);
 
             // Set reload of CategoryGroups to true
             props.setIsValidToLoadCategories(true);
@@ -93,38 +88,6 @@ function AddComponentPopup(props: Props) {
             await updateDoc(location, {
               categories: arrayUnion(props.componentObjectAdded),
             });
-
-            const indexToFind = allCategories.findIndex(
-              (element: {
-                title: string;
-                available: number;
-                position: number;
-              }) =>
-                props.componentObjectAdded.title === element.title &&
-                props.componentObjectAdded.available === element.available &&
-                props.componentObjectAdded.position === element.position
-            );
-
-            // If  you cannot find the index, then it is not in the array. So load it
-            if (indexToFind === -1) {
-              dispatch(
-                setAllCategories({
-                  title: props.componentObjectAdded.title,
-                  available: props.componentObjectAdded.available,
-                  position: props.componentObjectAdded.position,
-                })
-              );
-            } else {
-              // Value exists, so just update it
-              dispatch(
-                updateAllCategories({
-                  title: props.componentObjectAdded.title,
-                  available: props.componentObjectAdded.available,
-                  position: props.componentObjectAdded.position,
-                  index: indexToFind,
-                })
-              );
-            }
 
             // Set reload of CategoryGroups to true
             props.setIsValidToLoadCategories(true);

@@ -7,6 +7,10 @@ import { Link } from "react-router-dom";
 
 interface Props {
   runningAccountAmount: number;
+  isValidToLoadAccounts: boolean;
+  setIsValidToLoadAccounts: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function SideBar(props: Props) {
@@ -21,7 +25,13 @@ function SideBar(props: Props) {
           <h3 className="page-overview">Budget</h3>
         </Link>
       </div>
-      <Accounts runningAccountAmount={props.runningAccountAmount} />
+      <Accounts
+        runningAccountAmount={props.runningAccountAmount}
+        isValidToLoadAccounts={props.isValidToLoadAccounts}
+        setIsValidToLoadAccounts={props.setIsValidToLoadAccounts}
+        isValidToLoadTransactions={props.isValidToLoadTransactions}
+        setIsValidToLoadTransactions={props.setIsValidToLoadTransactions}
+      />
     </aside>
   );
 }

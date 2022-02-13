@@ -21,6 +21,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
   runningAccountAmount: number;
+  isValidToLoadAccounts: boolean;
+  setIsValidToLoadAccounts: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function Accounts(props: Props) {
@@ -35,9 +39,6 @@ function Accounts(props: Props) {
   // Sets status for editAccount popup, which appears on edit and on new accounts
   const [editAccountPopupStatus, setEditAccountPopupStatus] = useState(false);
 
-  // Controls if we should rerender the accounts
-  const [isValidToLoadAccounts, setIsValidToLoadAccounts] = useState(true);
-
   // Keep track of the index for accounts in order to send to EditAccountPopup
   const [accountIndex, setAccountIndex] = useState(-1);
 
@@ -45,12 +46,12 @@ function Accounts(props: Props) {
   const accountQuery: Query = query(collection(getFirestore(), "accounts"));
 
   useEffect(() => {
-    if (isValidToLoadAccounts) {
+    if (props.isValidToLoadAccounts) {
+      console.log("Loading Accounts");
       loadAccounts(accountQuery);
-      setIsValidToLoadAccounts(false);
+      props.setIsValidToLoadAccounts(false);
     }
-    return () => {};
-  }, [isValidToLoadAccounts]);
+  }, [props.isValidToLoadAccounts]);
 
   const loadAccounts = useCallback(async (accountQuery) => {
     try {
@@ -107,8 +108,8 @@ function Accounts(props: Props) {
               accountIndex={accountIndex}
               editAccountPopupStatus={editAccountPopupStatus}
               setEditAccountPopupStatus={setEditAccountPopupStatus}
-              isValidToLoadAccounts={isValidToLoadAccounts}
-              setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+              isValidToLoadAccounts={props.isValidToLoadAccounts}
+              setIsValidToLoadAccounts={props.setIsValidToLoadAccounts}
             />
           ) : null}
           <ul className="account-items">
@@ -121,8 +122,12 @@ function Accounts(props: Props) {
                   setAccountIndex={setAccountIndex}
                   editAccountPopupStatus={editAccountPopupStatus}
                   setEditAccountPopupStatus={setEditAccountPopupStatus}
-                  isValidToLoadAccounts={isValidToLoadAccounts}
-                  setIsValidToLoadAccounts={setIsValidToLoadAccounts}
+                  isValidToLoadAccounts={props.isValidToLoadAccounts}
+                  setIsValidToLoadAccounts={props.setIsValidToLoadAccounts}
+                  isValidToLoadTransactions={props.isValidToLoadTransactions}
+                  setIsValidToLoadTransactions={
+                    props.setIsValidToLoadTransactions
+                  }
                 />
               );
             })}

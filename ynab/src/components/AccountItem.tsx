@@ -30,6 +30,8 @@ interface Props {
   setIsValidToLoadAccounts: any;
   index: number;
   setAccountIndex: any;
+  isValidToLoadTransactions: boolean;
+  setIsValidToLoadTransactions: any;
 }
 
 function AccountItem(props: Props) {
@@ -44,6 +46,7 @@ function AccountItem(props: Props) {
     if (isAccountItemClicked) {
       loadTransactions(transactionsQuery);
       setIsAccountItemClicked(false);
+      props.setIsValidToLoadTransactions(false);
     }
 
     return () => {};
