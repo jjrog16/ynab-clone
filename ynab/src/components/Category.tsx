@@ -62,8 +62,6 @@ function Category(props: Props) {
     // Set the total amount for the categories in a category group
     const indexToFind = allCategories.findIndex(
       (element: { title: string; available: number; position: number }) => {
-        console.log("props category", props.category);
-        console.log("element category", element);
         return (
           props.category.title === element.title &&
           props.category.available === element.available &&
@@ -71,7 +69,6 @@ function Category(props: Props) {
         );
       }
     );
-    console.log(indexToFind);
     // If  you cannot find the index, then it is not in the array. So load it
     if (indexToFind === -1) {
       dispatch(
